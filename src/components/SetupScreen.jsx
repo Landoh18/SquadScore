@@ -8,13 +8,15 @@
 //
 // "Add another" and "Start tracking" both commit the in-progress shooter
 // if the form is complete (rosterId and post both set). Start tracking
-// then constructs the round object and hands it to the parent via onStart.
+// then creates the round via the round store (which persists it) and hands
+// the returned round to the parent via onStart.
 
 import { useState, useMemo } from 'react';
 import { IconX } from '@tabler/icons-react';
 import RosterPicker from './RosterPicker.jsx';
 import PostPicker from './PostPicker.jsx';
 import { getRosterEntry } from '../lib/roster.js';
+import { startRound } from '../lib/roundStore.js';
 
 const MAX_SHOOTERS = 5;
 
@@ -49,13 +51,10 @@ export default function SetupScreen({ onStart }) {
   function handleStartTracking() {
     if (!canStart) return;
     const finalShooters = commitDraft();
-    const round = {
-      id: `r-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-      date: new Date().toISOString(),
+    const round = startRound({
       scorerId,
       shooters: finalShooters,
-      shots: [],
-    };
+    });
     onStart?.(round);
   }
 
