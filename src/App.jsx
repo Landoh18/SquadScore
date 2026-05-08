@@ -1,113 +1,170 @@
-// App shell. Renders SetupScreen until a round is started, then a stub of the
-// live scoring screen that wires up SquadStrip + temp Hit/Miss buttons. The
-// real active shooter card and flash overlay land in the next paste; this is
-// just enough to verify the strip rotates correctly on a real phone.
+// src/App.jsx
+import { useState, useMemo, useRef, useEffect } from 'react';
+import { IconChevronLeft, IconCheck, IconX, IconDots } from '@tabler/icons-react';
+import SetupScreen from './components/SetupScreen';
+import SquadStrip from './components/SquadStrip';
+import ActiveShooterCard from './components/ActiveShooterCard';
+import FlashOverlay from './components/FlashOverlay';
+import { getRoster } from './lib/roster';
+import { activeSlot, isRoundComplete } from './lib/scoring';
+import { appendShot } from './lib/roundStore';
 
-import { useState, useMemo } from 'react';
-import { IconChevronLeft } from '@tabler/icons-react';
-import SetupScreen from './components/SetupScreen.jsx';
-import SquadStrip from './components/SquadStrip.jsx';
-import { getRoster } from './lib/roster.js';
-import { activeSlot, isRoundComplete } from './lib/scoring.js';
-import { appendShot } from './lib/roundStore.js';
+function LiveScoringScreen({ round: initialRound, onBack }) {
+  const [round, setRound] = useState(initialRound);
+  const [flashType, setFlashType] = useState(null); // 'hit' | 'miss' | null
+  const [flashFading, setFlashFading] = useState(false);
+  const flashTimers = useRef([]);
 
-export default function App() {
-  const [round, setRound] = useState(null);
-
-  return (
-    <div className="min-h-dvh bg-[var(--color-background-secondary)] flex flex-col">
-      <div className="mx-auto w-full max-w-[560px] bg-[var(--color-background-primary)] flex-1 flex flex-col">
-        {round ? (
-          <LiveScoringStub
-            round={round}
-            onShoot={(hit) => setRound(appendShot(round.id, hit))}
-            onBack={() => setRound(null)}
-          />
-        ) : (
-          <SetupScreen onStart={setRound} />
-        )}
-      </div>
-    </div>
-  );
-}
-
-function LiveScoringStub({ round, onShoot, onBack }) {
+  const roster = useMemo(() => getRoster(), []);
   const rosterById = useMemo(() => {
     const map = {};
-    for (const entry of getRoster()) map[entry.id] = entry;
+    for (const entry of roster) map[entry.id] = entry;
     return map;
-  }, []);
+  }, [roster]);
 
   const slot = activeSlot(round);
   const complete = isRoundComplete(round);
-  const activeShooter = slot
-    ? rosterById[round.shooters[slot.shooterIdx].rosterId]
-    : null;
+
+  const activeShooter = slot ? round.shooters[slot.shooterIdx] : null;
+  const activeRosterEntry = activeShooter ? rosterById[activeShooter.rosterId] : null;
+
+  // Cleanup pending flash timers on unmount
+  useEffect(() => {
+    const timers = flashTimers.current;
+    return () => timers.forEach(clearTimeout);
+  }, []);
+
+  function handleShoot(hit) {
+    if (flashType !== null || complete) return;
+
+    // Persist the shot first; flash plays over the new state
+    const updated = appendShot(round.id, hit);
+    setRound(updated);
+
+    setFlashType(hit ? 'hit' : 'miss');
+    setFlashFading(false);
+
+    const t1 = setTimeout(() => setFlashFading(true), 1000);
+    const t2 = setTimeout(() => {
+      setFlashType(null);
+      setFlashFading(false);
+    }, 1130);
+
+    flashTimers.current.push(t1, t2);
+  }
+
+  const buttonsDisabled = flashType !== null || complete;
 
   return (
-    <div className="flex flex-col flex-1 min-h-full">
-      <header className="h-12 px-3 flex items-center justify-between border-b-[0.5px] border-[var(--color-text-tertiary)] flex-shrink-0">
+    <div className="min-h-screen flex flex-col relative bg-[var(--color-background-primary)]">
+      {/* Top bar */}
+      <div
+        className="flex items-center justify-between px-3 py-3"
+        style={{ borderBottom: '0.5px solid var(--color-text-tertiary)' }}
+      >
         <button
           onClick={onBack}
-          className="flex items-center text-[var(--color-text-secondary)] -ml-1 px-1"
+          className="p-2 -ml-2"
           aria-label="Save and exit"
         >
-          <IconChevronLeft size={22} />
+          <IconChevronLeft size={22} stroke={1.75} />
         </button>
-        <span className="text-[13px] text-[var(--color-text-secondary)]">
+        <div className="text-[13px] font-medium text-[var(--color-text-secondary)]">
           {complete ? 'Round complete' : 'Round in progress'}
-        </span>
-        <span className="w-6" />
-      </header>
+        </div>
+        {/* Placeholder for stage 3 item 6 (3-dot menu); spacer for symmetry */}
+        <div className="p-2 -mr-2 opacity-0 pointer-events-none">
+          <IconDots size={22} stroke={1.75} />
+        </div>
+      </div>
 
-      <div className="flex-1 px-[18px] py-4 space-y-5">
+      {/* Squad strip */}
+      <div className="px-[18px] pt-3">
         <SquadStrip
           round={round}
           activeShooterIdx={slot?.shooterIdx ?? null}
           rosterById={rosterById}
         />
-
-        {slot ? (
-          <div className="bg-[var(--color-background-secondary)] rounded-md p-3">
-            <div className="text-[12px] text-[var(--color-text-tertiary)]">
-              Station {slot.physicalPost} · shot {slot.personalStationShot + 1} of 5
-            </div>
-            <div className="text-[28px] font-medium text-[var(--color-text-primary)] mt-1 leading-tight">
-              {activeShooter?.firstName ?? '?'}
-            </div>
-            <div className="text-[12px] text-[var(--color-text-tertiary)] mt-1">
-              shot {round.shots.length + 1} of round
-            </div>
-          </div>
-        ) : (
-          <div className="bg-[var(--color-background-secondary)] rounded-md p-4 text-center text-[14px] text-[var(--color-text-secondary)]">
-            Round complete — {round.shots.length} shots scored
-          </div>
-        )}
-
-        <p className="text-[11px] text-[var(--color-text-tertiary)] uppercase tracking-wider">
-          Stage 3 scratch · proper active card + flash overlay coming next
-        </p>
       </div>
 
+      {/* Active card or round-complete message */}
+      {slot ? (
+        <ActiveShooterCard
+          round={round}
+          slot={slot}
+          rosterEntry={activeRosterEntry}
+        />
+      ) : (
+        <div className="px-[18px] pt-10 pb-4 text-center">
+          <div className="text-[24px] font-medium text-[var(--color-text-primary)]">
+            Round complete
+          </div>
+          <div className="text-[13px] text-[var(--color-text-secondary)] mt-2">
+            {round.shots.length} shots scored. End-of-round screens coming next.
+          </div>
+        </div>
+      )}
+
+      {/* Flex spacer pushes buttons to bottom */}
+      <div className="flex-1" />
+
+      {/* Hit / Miss action row */}
       {!complete && (
-        <div className="px-[18px] pb-5 pt-3 flex-shrink-0 grid grid-cols-2 gap-3">
+        <div
+          className="px-[18px] grid grid-cols-2 gap-3"
+          style={{
+            paddingBottom: 'max(18px, env(safe-area-inset-bottom))',
+            paddingTop: '12px',
+          }}
+        >
           <button
-            onClick={() => onShoot(false)}
-            className="h-16 rounded-md text-white text-[16px] font-medium"
-            style={{ backgroundColor: 'var(--color-text-danger)' }}
+            onClick={() => handleShoot(false)}
+            disabled={buttonsDisabled}
+            className="flex flex-col items-center justify-center gap-2 disabled:opacity-50 transition-opacity"
+            style={{
+              height: '130px',
+              background: '#FBEAEA',
+              color: 'var(--color-text-danger)',
+              borderRadius: 'var(--border-radius-lg)',
+            }}
           >
-            Miss
+            <IconX size={34} stroke={2.5} />
+            <span className="text-[22px] font-medium leading-none">Miss</span>
           </button>
           <button
-            onClick={() => onShoot(true)}
-            className="h-16 rounded-md text-white text-[16px] font-medium"
-            style={{ backgroundColor: 'var(--color-text-success)' }}
+            onClick={() => handleShoot(true)}
+            disabled={buttonsDisabled}
+            className="flex flex-col items-center justify-center gap-2 disabled:opacity-50 transition-opacity"
+            style={{
+              height: '130px',
+              background: 'var(--color-varsity-green-bg)',
+              color: 'var(--color-varsity-green)',
+              borderRadius: 'var(--border-radius-lg)',
+            }}
           >
-            Hit
+            <IconCheck size={34} stroke={2.5} />
+            <span className="text-[22px] font-medium leading-none">Hit</span>
           </button>
         </div>
       )}
+
+      {/* Flash overlay (full viewport) */}
+      <FlashOverlay type={flashType} fading={flashFading} />
     </div>
   );
+}
+
+export default function App() {
+  const [round, setRound] = useState(null);
+
+  if (round) {
+    return (
+      <LiveScoringScreen
+        key={round.id}
+        round={round}
+        onBack={() => setRound(null)}
+      />
+    );
+  }
+  return <SetupScreen onStart={setRound} />;
 }
