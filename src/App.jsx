@@ -1,103 +1,113 @@
-// App shell. Renders SetupScreen until a round is started, then a temporary
-// placeholder showing the captured round data (live scoring is stage 3).
+// App shell. Renders SetupScreen until a round is started, then a stub of the
+// live scoring screen that wires up SquadStrip + temp Hit/Miss buttons. The
+// real active shooter card and flash overlay land in the next paste; this is
+// just enough to verify the strip rotates correctly on a real phone.
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
+import { IconChevronLeft } from '@tabler/icons-react';
 import SetupScreen from './components/SetupScreen.jsx';
-import { getRosterEntry } from './lib/roster.js';
+import SquadStrip from './components/SquadStrip.jsx';
+import { getRoster } from './lib/roster.js';
+import { activeSlot, isRoundComplete } from './lib/scoring.js';
+import { appendShot } from './lib/roundStore.js';
 
 export default function App() {
-  const [activeRound, setActiveRound] = useState(null);
+  const [round, setRound] = useState(null);
 
   return (
     <div className="min-h-dvh bg-[var(--color-background-secondary)] flex flex-col">
       <div className="mx-auto w-full max-w-[560px] bg-[var(--color-background-primary)] flex-1 flex flex-col">
-        {activeRound ? (
-          <StartedPlaceholder
-            round={activeRound}
-            onBack={() => setActiveRound(null)}
+        {round ? (
+          <LiveScoringStub
+            round={round}
+            onShoot={(hit) => setRound(appendShot(round.id, hit))}
+            onBack={() => setRound(null)}
           />
         ) : (
-          <SetupScreen onStart={setActiveRound} />
+          <SetupScreen onStart={setRound} />
         )}
       </div>
     </div>
   );
 }
 
-// Temporary placeholder screen. Shown after "Start tracking" so we can
-// verify the round data flows correctly. Replaced by live scoring in stage 3.
-function StartedPlaceholder({ round, onBack }) {
-  const scorer = getRosterEntry(round.scorerId);
+function LiveScoringStub({ round, onShoot, onBack }) {
+  const rosterById = useMemo(() => {
+    const map = {};
+    for (const entry of getRoster()) map[entry.id] = entry;
+    return map;
+  }, []);
+
+  const slot = activeSlot(round);
+  const complete = isRoundComplete(round);
+  const activeShooter = slot
+    ? rosterById[round.shooters[slot.shooterIdx].rosterId]
+    : null;
 
   return (
     <div className="flex flex-col flex-1 min-h-full">
-      <header className="h-12 flex items-center justify-center border-b-[0.5px] border-[var(--color-text-tertiary)] flex-shrink-0">
-        <h1 className="text-[15px] font-medium text-[var(--color-text-primary)]">
-          Round started
-        </h1>
+      <header className="h-12 px-3 flex items-center justify-between border-b-[0.5px] border-[var(--color-text-tertiary)] flex-shrink-0">
+        <button
+          onClick={onBack}
+          className="flex items-center text-[var(--color-text-secondary)] -ml-1 px-1"
+          aria-label="Save and exit"
+        >
+          <IconChevronLeft size={22} />
+        </button>
+        <span className="text-[13px] text-[var(--color-text-secondary)]">
+          {complete ? 'Round complete' : 'Round in progress'}
+        </span>
+        <span className="w-6" />
       </header>
 
-      <div className="flex-1 px-[18px] py-5 space-y-4">
-        <p className="text-[13px] text-[var(--color-text-secondary)]">
-          Live scoring isn't built yet — this placeholder shows what setup
-          captured. Confirm everything looks right.
+      <div className="flex-1 px-[18px] py-4 space-y-5">
+        <SquadStrip
+          round={round}
+          activeShooterIdx={slot?.shooterIdx ?? null}
+          rosterById={rosterById}
+        />
+
+        {slot ? (
+          <div className="bg-[var(--color-background-secondary)] rounded-md p-3">
+            <div className="text-[12px] text-[var(--color-text-tertiary)]">
+              Station {slot.physicalPost} · shot {slot.personalStationShot + 1} of 5
+            </div>
+            <div className="text-[28px] font-medium text-[var(--color-text-primary)] mt-1 leading-tight">
+              {activeShooter?.firstName ?? '?'}
+            </div>
+            <div className="text-[12px] text-[var(--color-text-tertiary)] mt-1">
+              shot {round.shots.length + 1} of round
+            </div>
+          </div>
+        ) : (
+          <div className="bg-[var(--color-background-secondary)] rounded-md p-4 text-center text-[14px] text-[var(--color-text-secondary)]">
+            Round complete — {round.shots.length} shots scored
+          </div>
+        )}
+
+        <p className="text-[11px] text-[var(--color-text-tertiary)] uppercase tracking-wider">
+          Stage 3 scratch · proper active card + flash overlay coming next
         </p>
-
-        <div className="bg-[var(--color-background-secondary)] rounded-md p-3 space-y-1 text-[13px] text-[var(--color-text-primary)]">
-          <div>
-            <span className="text-[var(--color-text-tertiary)]">Round ID: </span>
-            <span className="font-mono">{round.id}</span>
-          </div>
-          <div>
-            <span className="text-[var(--color-text-tertiary)]">Started: </span>
-            {new Date(round.date).toLocaleString()}
-          </div>
-          <div>
-            <span className="text-[var(--color-text-tertiary)]">Scorer: </span>
-            {scorer ? `${scorer.firstName} ${scorer.lastName}` : 'unknown'}
-            {scorer && (
-              <span className="text-[var(--color-text-tertiary)]"> ({scorer.id})</span>
-            )}
-          </div>
-        </div>
-
-        <div>
-          <h2 className="text-[13px] font-medium text-[var(--color-text-secondary)] mb-2">
-            Shooters ({round.shooters.length})
-          </h2>
-          <div className="space-y-1.5">
-            {round.shooters.map((s) => {
-              const entry = getRosterEntry(s.rosterId);
-              return (
-                <div
-                  key={s.rosterId}
-                  className="flex items-center gap-3 bg-[var(--color-background-secondary)] rounded-md px-3 py-2"
-                >
-                  <div className="w-[30px] h-[30px] rounded-full bg-white border-[0.5px] border-[var(--color-text-tertiary)] flex items-center justify-center text-[13px] font-medium text-[var(--color-text-primary)]">
-                    {s.startingPost}
-                  </div>
-                  <span className="flex-1 text-[15px] text-[var(--color-text-primary)]">
-                    {entry ? `${entry.firstName} ${entry.lastName}` : 'unknown'}
-                  </span>
-                  <span className="text-[12px] text-[var(--color-text-tertiary)] font-mono">
-                    {s.rosterId}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-        </div>
       </div>
 
-      <div className="px-[18px] pb-5 pt-3 flex-shrink-0">
-        <button
-          type="button"
-          onClick={onBack}
-          className="w-full h-12 rounded-md bg-[var(--color-clay-orange)] text-[15px] font-medium text-white"
-        >
-          Back to setup
-        </button>
-      </div>
+      {!complete && (
+        <div className="px-[18px] pb-5 pt-3 flex-shrink-0 grid grid-cols-2 gap-3">
+          <button
+            onClick={() => onShoot(false)}
+            className="h-16 rounded-md text-white text-[16px] font-medium"
+            style={{ backgroundColor: 'var(--color-text-danger)' }}
+          >
+            Miss
+          </button>
+          <button
+            onClick={() => onShoot(true)}
+            className="h-16 rounded-md text-white text-[16px] font-medium"
+            style={{ backgroundColor: 'var(--color-text-success)' }}
+          >
+            Hit
+          </button>
+        </div>
+      )}
     </div>
   );
 }
