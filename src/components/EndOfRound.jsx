@@ -1,13 +1,18 @@
 import { useState, useEffect, useRef } from 'react';
 import { IconChevronLeft, IconChevronRight, IconDots } from '@tabler/icons-react';
-import { isRoundComplete } from '../lib/scoring';
-
-const SCREEN_COUNT = 7;
+import OverviewScreen from './OverviewScreen';
+import PerShooterMock from './PerShooterMock';
+import PdfPreviewMock from './PdfPreviewMock';
 
 export default function EndOfRound({ round, rosterById, onBack, onDelete }) {
+  const SCREEN_COUNT = 2 + round.shooters.length;
   const [screenIdx, setScreenIdx] = useState(0);
   const touchStartX = useRef(null);
   const touchEndX = useRef(null);
+
+  const sortedShooters = round.shooters
+    .map((shooter, idx) => ({ shooter, idx }))
+    .sort((a, b) => a.shooter.startingPost - b.shooter.startingPost);
 
   // Keyboard arrow support for desktop
   useEffect(() => {
@@ -39,12 +44,22 @@ export default function EndOfRound({ round, rosterById, onBack, onDelete }) {
     touchEndX.current = null;
   };
 
-  const screenLabel =
-    screenIdx === 0
-      ? 'Overview'
-      : screenIdx === SCREEN_COUNT - 1
-      ? 'PDF download'
-      : `Shooter ${screenIdx} of ${round.shooters.length}`;
+  const renderScreen = () => {
+    if (screenIdx === 0) {
+      return <OverviewScreen round={round} rosterById={rosterById} />;
+    }
+    if (screenIdx === SCREEN_COUNT - 1) {
+      return <PdfPreviewMock round={round} rosterById={rosterById} />;
+    }
+    const idx = sortedShooters[screenIdx - 1].idx;
+    return (
+      <PerShooterMock
+        round={round}
+        rosterById={rosterById}
+        shooterIdx={idx}
+      />
+    );
+  };
 
   return (
     <div
@@ -117,27 +132,8 @@ export default function EndOfRound({ round, rosterById, onBack, onDelete }) {
           </button>
         )}
 
-        {/* Placeholder screen content */}
-        <div className="flex-1 flex flex-col items-center justify-center px-6 text-center">
-          <div
-            className="text-[14px] mb-2"
-            style={{ color: 'var(--color-text-tertiary)' }}
-          >
-            Screen {screenIdx + 1} of {SCREEN_COUNT}
-          </div>
-          <div
-            className="text-[22px] font-medium"
-            style={{ color: 'var(--color-text-primary)' }}
-          >
-            {screenLabel}
-          </div>
-          <div
-            className="text-[13px] mt-3"
-            style={{ color: 'var(--color-text-tertiary)' }}
-          >
-            (placeholder — content lands in later stage 4 pastes)
-          </div>
-        </div>
+        {/* Screen content */}
+        {renderScreen()}
 
         {/* Pagination dots */}
         <div className="flex items-center justify-center gap-2 pb-3">
