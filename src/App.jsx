@@ -5,14 +5,13 @@ import SetupScreen from './components/SetupScreen';
 import SquadStrip from './components/SquadStrip';
 import ActiveShooterCard from './components/ActiveShooterCard';
 import FlashOverlay from './components/FlashOverlay';
-import ReviewFooter from './components/ReviewFooter';
 import { getRoster } from './lib/roster';
 import { activeSlot, slotForShot, isRoundComplete } from './lib/scoring';
 import { appendShot, editShot } from './lib/roundStore';
 
 function LiveScoringScreen({ round: initialRound, onBack }) {
   const [round, setRound] = useState(initialRound);
-  const [cursorIdx, setCursorIdx] = useState(null); // null = live; otherwise chronological shot idx being reviewed
+  const [cursorIdx, setCursorIdx] = useState(null);
   const [flashType, setFlashType] = useState(null);
   const [flashFading, setFlashFading] = useState(false);
   const flashTimers = useRef([]);
@@ -28,12 +27,10 @@ function LiveScoringScreen({ round: initialRound, onBack }) {
   const complete = isRoundComplete(round);
   const inReviewMode = cursorIdx !== null;
 
-  // Which slot to display: cursor's slot in review, live slot otherwise
   const displaySlot = inReviewMode ? slotForShot(round, cursorIdx) : liveSlot;
   const displayShooter = displaySlot ? round.shooters[displaySlot.shooterIdx] : null;
   const displayRosterEntry = displayShooter ? rosterById[displayShooter.rosterId] : null;
 
-  // The recorded value at cursor (for inset ring on Hit/Miss buttons)
   const recordedAtCursor =
     inReviewMode && cursorIdx < round.shots.length
       ? round.shots[cursorIdx].hit
@@ -59,13 +56,11 @@ function LiveScoringScreen({ round: initialRound, onBack }) {
     if (flashType !== null || complete) return;
 
     if (inReviewMode) {
-      // Commit the edit at cursor and snap back to live
       const updated = editShot(round.id, cursorIdx, hit);
       setRound(updated);
       setCursorIdx(null);
       playFlash(hit);
     } else {
-      // Append a new shot
       const updated = appendShot(round.id, hit);
       setRound(updated);
       playFlash(hit);
@@ -75,7 +70,6 @@ function LiveScoringScreen({ round: initialRound, onBack }) {
   function handlePrev() {
     if (flashType !== null) return;
     if (cursorIdx === null) {
-      // Step back from live to last shot
       if (round.shots.length === 0) return;
       setCursorIdx(round.shots.length - 1);
     } else if (cursorIdx > 0) {
@@ -85,9 +79,8 @@ function LiveScoringScreen({ round: initialRound, onBack }) {
 
   function handleNext() {
     if (flashType !== null) return;
-    if (cursorIdx === null) return; // already live
+    if (cursorIdx === null) return;
     if (cursorIdx >= round.shots.length - 1) {
-      // Past the last shot = back to live
       setCursorIdx(null);
     } else {
       setCursorIdx(cursorIdx + 1);
@@ -95,14 +88,22 @@ function LiveScoringScreen({ round: initialRound, onBack }) {
   }
 
   const buttonsDisabled = flashType !== null || complete;
-  const prevDisabled = flashType !== null || (cursorIdx === 0) || (cursorIdx === null && round.shots.length === 0);
+  const prevDisabled =
+    flashType !== null ||
+    cursorIdx === 0 ||
+    (cursorIdx === null && round.shots.length === 0);
   const nextDisabled = flashType !== null || cursorIdx === null;
 
   return (
-    <div className="min-h-screen flex flex-col relative bg-[var(--color-background-primary)]">
-      {/* Top bar */}
+    <div
+      className="min-h-screen flex flex-col relative bg-[var(--color-background-primary)]"
+      style={{
+        paddingTop: 'max(12px, env(safe-area-inset-top))',
+        paddingBottom: 'max(12px, env(safe-area-inset-bottom))',
+      }}
+    >
       <div
-        className="flex items-center justify-between px-3 py-3"
+        className="flex items-center justify-between px-3 py-2"
         style={{ borderBottom: '0.5px solid var(--color-text-tertiary)' }}
       >
         <button onClick={onBack} className="p-2 -ml-2" aria-label="Save and exit">
@@ -127,8 +128,7 @@ function LiveScoringScreen({ round: initialRound, onBack }) {
         </div>
       </div>
 
-      {/* Squad strip — always live */}
-      <div className="px-[18px] pt-3">
+      <div className="px-[14px] pt-3">
         <SquadStrip
           round={round}
           activeShooterIdx={displaySlot?.shooterIdx ?? null}
@@ -136,7 +136,6 @@ function LiveScoringScreen({ round: initialRound, onBack }) {
         />
       </div>
 
-      {/* Active card or round-complete message */}
       {displaySlot ? (
         <ActiveShooterCard
           round={round}
@@ -156,62 +155,89 @@ function LiveScoringScreen({ round: initialRound, onBack }) {
         </div>
       )}
 
-      <div className="flex-1" />
-
-      {/* Hit / Miss row — visible whenever there's a slot to act on */}
       {displaySlot && (
         <div
-          className="px-[18px] grid grid-cols-2 gap-3"
-          style={{ paddingTop: '12px' }}
+          className="flex-1 flex flex-col px-[14px]"
+          style={{
+            gap: '10px',
+            paddingBottom: '4px',
+            maxHeight: '320px',
+            minHeight: '184px',
+          }}
         >
-          <button
-            onClick={() => handleShoot(false)}
-            disabled={buttonsDisabled}
-            className="flex flex-col items-center justify-center gap-2 disabled:opacity-50 transition-opacity"
-            style={{
-              height: '130px',
-              background: '#FBEAEA',
-              color: 'var(--color-text-danger)',
-              borderRadius: 'var(--border-radius-lg)',
-              boxShadow:
-                inReviewMode && recordedAtCursor === false
-                  ? 'inset 0 0 0 3px var(--color-text-danger)'
-                  : 'none',
-            }}
-          >
-            <IconX size={34} stroke={2.5} />
-            <span className="text-[22px] font-medium leading-none">Miss</span>
-          </button>
-          <button
-            onClick={() => handleShoot(true)}
-            disabled={buttonsDisabled}
-            className="flex flex-col items-center justify-center gap-2 disabled:opacity-50 transition-opacity"
-            style={{
-              height: '130px',
-              background: 'var(--color-varsity-green-bg)',
-              color: 'var(--color-varsity-green)',
-              borderRadius: 'var(--border-radius-lg)',
-              boxShadow:
-                inReviewMode && recordedAtCursor === true
-                  ? 'inset 0 0 0 3px var(--color-varsity-green)'
-                  : 'none',
-            }}
-          >
-            <IconCheck size={34} stroke={2.5} />
-            <span className="text-[22px] font-medium leading-none">Hit</span>
-          </button>
+          <div className="grid grid-cols-2 gap-3" style={{ flex: 3 }}>
+            <button
+              onClick={() => handleShoot(false)}
+              disabled={buttonsDisabled}
+              className="flex flex-col items-center justify-center gap-2 disabled:opacity-50 transition-opacity"
+              style={{
+                background: '#FBEAEA',
+                color: 'var(--color-text-danger)',
+                borderRadius: 'var(--border-radius-lg)',
+                boxShadow:
+                  inReviewMode && recordedAtCursor === false
+                    ? 'inset 0 0 0 3px var(--color-text-danger)'
+                    : 'none',
+              }}
+            >
+              <IconX size={34} stroke={2.5} />
+              <span className="text-[22px] font-medium leading-none">Miss</span>
+            </button>
+            <button
+              onClick={() => handleShoot(true)}
+              disabled={buttonsDisabled}
+              className="flex flex-col items-center justify-center gap-2 disabled:opacity-50 transition-opacity"
+              style={{
+                background: 'var(--color-varsity-green-bg)',
+                color: 'var(--color-varsity-green)',
+                borderRadius: 'var(--border-radius-lg)',
+                boxShadow:
+                  inReviewMode && recordedAtCursor === true
+                    ? 'inset 0 0 0 3px var(--color-varsity-green)'
+                    : 'none',
+              }}
+            >
+              <IconCheck size={34} stroke={2.5} />
+              <span className="text-[22px] font-medium leading-none">Hit</span>
+            </button>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3" style={{ flex: 1 }}>
+            <button
+              onClick={handlePrev}
+              disabled={prevDisabled}
+              className="flex items-center justify-center gap-2 disabled:opacity-30 transition-opacity"
+              style={{
+                background: 'white',
+                color: 'var(--color-text-primary)',
+                border: '0.5px solid var(--color-text-tertiary)',
+                borderRadius: 'var(--border-radius-md)',
+              }}
+            >
+              <IconChevronLeft size={18} stroke={2} />
+              <span className="text-[13px] font-medium">Previous shot</span>
+            </button>
+            <button
+              onClick={handleNext}
+              disabled={nextDisabled}
+              className="flex items-center justify-center gap-2 disabled:opacity-30 transition-opacity"
+              style={{
+                background: 'white',
+                color: 'var(--color-text-primary)',
+                border: '0.5px solid var(--color-text-tertiary)',
+                borderRadius: 'var(--border-radius-md)',
+              }}
+            >
+              <span className="text-[13px] font-medium">Next shot</span>
+              <IconChevronLeft
+                size={18}
+                stroke={2}
+                style={{ transform: 'scaleX(-1)' }}
+              />
+            </button>
+          </div>
         </div>
       )}
-
-      {/* Prev / Next footer */}
-      <div style={{ paddingBottom: 'max(10px, env(safe-area-inset-bottom))' }}>
-        <ReviewFooter
-          onPrev={handlePrev}
-          onNext={handleNext}
-          prevDisabled={prevDisabled}
-          nextDisabled={nextDisabled}
-        />
-      </div>
 
       <FlashOverlay type={flashType} fading={flashFading} />
     </div>
