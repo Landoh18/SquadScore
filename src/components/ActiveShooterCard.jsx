@@ -104,7 +104,7 @@ export default function ActiveShooterCard({
             marginTop: '4px',
           }}
         >
-          Station {roundStation} · shot {personalStationShot} of 5
+          Station {roundStation} · shot {personalStationShot + 1} of 5
         </div>
 
         <div

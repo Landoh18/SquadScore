@@ -32,14 +32,19 @@ export function startingPostAt(physicalPost, roundStation) {
 //   { shooterIdx, roundStation, physicalPost, personalStationShot, personalShotIdx }
 // personalStationShot is 0-indexed within a station (0..4).
 // personalShotIdx is 0-indexed across the shooter's whole round.
+//
+// Firing order at station N: starting-post N leads, then N+1, N+2, N+3, N+4
+// wrapping. So at station 2 the order is S2, S3, S4, S5, S1 — even though
+// S2 is physically at post 3 after rotation. The starting-post number
+// determines order, not physical position.
 export function firingOrder(round) {
   const plan = [];
   const personalShotsPlanned = round.shooters.map(() => 0);
 
   for (let roundStation = 1; roundStation <= 5; roundStation++) {
     for (let cycle = 0; cycle < 5; cycle++) {
-      for (let physicalPost = 1; physicalPost <= 5; physicalPost++) {
-        const startingPost = startingPostAt(physicalPost, roundStation);
+      for (let i = 0; i < 5; i++) {
+        const startingPost = ((roundStation - 1 + i) % 5) + 1;
         const shooterIdx = round.shooters.findIndex(
           (s) => s.startingPost === startingPost
         );
@@ -58,7 +63,7 @@ export function firingOrder(round) {
         plan.push({
           shooterIdx,
           roundStation,
-          physicalPost,
+          physicalPost: physicalPostOf(startingPost, roundStation),
           personalStationShot: cycle,
           personalShotIdx: planned,
         });
