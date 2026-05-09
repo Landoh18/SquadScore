@@ -8,23 +8,42 @@ import {
 
 export default function ActiveShooterCard({
   round,
-  slot,
+  slot,             // the slot to display (cursor slot in review, active slot when live)
   rosterEntry,
   inReviewMode = false,
+  cursorShotIdx = null,  // chronological idx being reviewed; null when live
 }) {
   if (!slot) return null;
 
   const { shooterIdx, roundStation, personalStationShot, personalShotIdx } = slot;
   const allShots = shooterShots(round, shooterIdx);
-  const { hits, total } = shooterScore(round, shooterIdx);
+
+  // Score: cursor-time in review (only counting up to and including the cursor shot for this shooter),
+  // live otherwise.
+  let displayHits, displayTotal;
+  if (inReviewMode && cursorShotIdx !== null) {
+    let hits = 0, total = 0;
+    for (let i = 0; i <= cursorShotIdx && i < round.shots.length; i++) {
+      if (round.shots[i].shooterIdx === shooterIdx) {
+        total += 1;
+        if (round.shots[i].hit) hits += 1;
+      }
+    }
+    displayHits = hits;
+    displayTotal = total;
+  } else {
+    const score = shooterScore(round, shooterIdx);
+    displayHits = score.hits;
+    displayTotal = score.total;
+  }
+
   const streak = currentStreak(allShots);
+  const firstName = rosterEntry?.firstName ?? 'Unknown';
 
   // Which dots in the current station have been shot already?
   const personalStation = Math.floor(personalShotIdx / 5) + 1;
   const stationStart = (personalStation - 1) * 5;
   const stationShotsTaken = allShots.slice(stationStart, stationStart + 5);
-
-  const firstName = rosterEntry?.firstName ?? 'Unknown';
 
   return (
     <div className="px-[18px] pt-5 pb-2">
@@ -41,7 +60,7 @@ export default function ActiveShooterCard({
       <div className="mt-2 flex items-center gap-2 flex-wrap">
         <div className="text-[14px] text-[var(--color-text-secondary)]">
           <span className="text-[17px] text-[var(--color-text-primary)] font-medium">
-            {hits}/{total}
+            {displayHits}/{displayTotal}
           </span>
           <span className="ml-1">so far</span>
         </div>
@@ -64,19 +83,35 @@ export default function ActiveShooterCard({
       <div className="mt-4 flex items-center gap-[10px]">
         {[0, 1, 2, 3, 4].map((i) => {
           const taken = i < stationShotsTaken.length;
-          const isCursor = i === stationShotsTaken.length;
+          const isCursor = inReviewMode
+            ? i === personalShotIdx % 5
+            : i === stationShotsTaken.length;
 
           if (taken) {
             const hit = stationShotsTaken[i].hit;
+            const fillColor = hit
+              ? 'var(--color-text-success)'
+              : 'var(--color-text-danger)';
+
+            if (isCursor && inReviewMode) {
+              return (
+                <div
+                  key={i}
+                  className="w-4 h-4 rounded-full"
+                  style={{
+                    background: fillColor,
+                    outline: '2px solid var(--color-clay-orange)',
+                    outlineOffset: '2px',
+                  }}
+                />
+              );
+            }
+
             return (
               <div
                 key={i}
                 className="w-4 h-4 rounded-full"
-                style={{
-                  background: hit
-                    ? 'var(--color-text-success)'
-                    : 'var(--color-text-danger)',
-                }}
+                style={{ background: fillColor }}
               />
             );
           }

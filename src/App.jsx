@@ -5,13 +5,15 @@ import SetupScreen from './components/SetupScreen';
 import SquadStrip from './components/SquadStrip';
 import ActiveShooterCard from './components/ActiveShooterCard';
 import FlashOverlay from './components/FlashOverlay';
+import ReviewFooter from './components/ReviewFooter';
 import { getRoster } from './lib/roster';
-import { activeSlot, isRoundComplete } from './lib/scoring';
-import { appendShot } from './lib/roundStore';
+import { activeSlot, slotForShot, isRoundComplete } from './lib/scoring';
+import { appendShot, editShot } from './lib/roundStore';
 
 function LiveScoringScreen({ round: initialRound, onBack }) {
   const [round, setRound] = useState(initialRound);
-  const [flashType, setFlashType] = useState(null); // 'hit' | 'miss' | null
+  const [cursorIdx, setCursorIdx] = useState(null); // null = live; otherwise chronological shot idx being reviewed
+  const [flashType, setFlashType] = useState(null);
   const [flashFading, setFlashFading] = useState(false);
   const flashTimers = useRef([]);
 
@@ -22,38 +24,79 @@ function LiveScoringScreen({ round: initialRound, onBack }) {
     return map;
   }, [roster]);
 
-  const slot = activeSlot(round);
+  const liveSlot = activeSlot(round);
   const complete = isRoundComplete(round);
+  const inReviewMode = cursorIdx !== null;
 
-  const activeShooter = slot ? round.shooters[slot.shooterIdx] : null;
-  const activeRosterEntry = activeShooter ? rosterById[activeShooter.rosterId] : null;
+  // Which slot to display: cursor's slot in review, live slot otherwise
+  const displaySlot = inReviewMode ? slotForShot(round, cursorIdx) : liveSlot;
+  const displayShooter = displaySlot ? round.shooters[displaySlot.shooterIdx] : null;
+  const displayRosterEntry = displayShooter ? rosterById[displayShooter.rosterId] : null;
 
-  // Cleanup pending flash timers on unmount
+  // The recorded value at cursor (for inset ring on Hit/Miss buttons)
+  const recordedAtCursor =
+    inReviewMode && cursorIdx < round.shots.length
+      ? round.shots[cursorIdx].hit
+      : null;
+
   useEffect(() => {
     const timers = flashTimers.current;
     return () => timers.forEach(clearTimeout);
   }, []);
 
-  function handleShoot(hit) {
-    if (flashType !== null || complete) return;
-
-    // Persist the shot first; flash plays over the new state
-    const updated = appendShot(round.id, hit);
-    setRound(updated);
-
+  function playFlash(hit) {
     setFlashType(hit ? 'hit' : 'miss');
     setFlashFading(false);
-
     const t1 = setTimeout(() => setFlashFading(true), 1000);
     const t2 = setTimeout(() => {
       setFlashType(null);
       setFlashFading(false);
     }, 1130);
-
     flashTimers.current.push(t1, t2);
   }
 
+  function handleShoot(hit) {
+    if (flashType !== null || complete) return;
+
+    if (inReviewMode) {
+      // Commit the edit at cursor and snap back to live
+      const updated = editShot(round.id, cursorIdx, hit);
+      setRound(updated);
+      setCursorIdx(null);
+      playFlash(hit);
+    } else {
+      // Append a new shot
+      const updated = appendShot(round.id, hit);
+      setRound(updated);
+      playFlash(hit);
+    }
+  }
+
+  function handlePrev() {
+    if (flashType !== null) return;
+    if (cursorIdx === null) {
+      // Step back from live to last shot
+      if (round.shots.length === 0) return;
+      setCursorIdx(round.shots.length - 1);
+    } else if (cursorIdx > 0) {
+      setCursorIdx(cursorIdx - 1);
+    }
+  }
+
+  function handleNext() {
+    if (flashType !== null) return;
+    if (cursorIdx === null) return; // already live
+    if (cursorIdx >= round.shots.length - 1) {
+      // Past the last shot = back to live
+      setCursorIdx(null);
+    } else {
+      setCursorIdx(cursorIdx + 1);
+    }
+  }
+
   const buttonsDisabled = flashType !== null || complete;
+  const prevDisabled = flashType !== null || (cursorIdx === 0) || (cursorIdx === null && round.shots.length === 0);
+  const nextDisabled = flashType !== null || cursorIdx === null;
 
   return (
     <div className="min-h-screen flex flex-col relative bg-[var(--color-background-primary)]">
@@ -62,37 +105,45 @@ function LiveScoringScreen({ round: initialRound, onBack }) {
         className="flex items-center justify-between px-3 py-3"
         style={{ borderBottom: '0.5px solid var(--color-text-tertiary)' }}
       >
-        <button
-          onClick={onBack}
-          className="p-2 -ml-2"
-          aria-label="Save and exit"
-        >
+        <button onClick={onBack} className="p-2 -ml-2" aria-label="Save and exit">
           <IconChevronLeft size={22} stroke={1.75} />
         </button>
-        <div className="text-[13px] font-medium text-[var(--color-text-secondary)]">
-          {complete ? 'Round complete' : 'Round in progress'}
+        <div
+          className="text-[13px] font-medium"
+          style={{
+            color: inReviewMode
+              ? 'var(--color-clay-orange)'
+              : 'var(--color-text-secondary)',
+          }}
+        >
+          {complete
+            ? 'Round complete'
+            : inReviewMode
+            ? 'Reviewing previous shot'
+            : 'Round in progress'}
         </div>
-        {/* Placeholder for stage 3 item 6 (3-dot menu); spacer for symmetry */}
         <div className="p-2 -mr-2 opacity-0 pointer-events-none">
           <IconDots size={22} stroke={1.75} />
         </div>
       </div>
 
-      {/* Squad strip */}
+      {/* Squad strip — always live */}
       <div className="px-[18px] pt-3">
         <SquadStrip
           round={round}
-          activeShooterIdx={slot?.shooterIdx ?? null}
+          activeShooterIdx={displaySlot?.shooterIdx ?? null}
           rosterById={rosterById}
         />
       </div>
 
       {/* Active card or round-complete message */}
-      {slot ? (
+      {displaySlot ? (
         <ActiveShooterCard
           round={round}
-          slot={slot}
-          rosterEntry={activeRosterEntry}
+          slot={displaySlot}
+          rosterEntry={displayRosterEntry}
+          inReviewMode={inReviewMode}
+          cursorShotIdx={cursorIdx}
         />
       ) : (
         <div className="px-[18px] pt-10 pb-4 text-center">
@@ -105,17 +156,13 @@ function LiveScoringScreen({ round: initialRound, onBack }) {
         </div>
       )}
 
-      {/* Flex spacer pushes buttons to bottom */}
       <div className="flex-1" />
 
-      {/* Hit / Miss action row */}
-      {!complete && (
+      {/* Hit / Miss row — visible whenever there's a slot to act on */}
+      {displaySlot && (
         <div
           className="px-[18px] grid grid-cols-2 gap-3"
-          style={{
-            paddingBottom: 'max(18px, env(safe-area-inset-bottom))',
-            paddingTop: '12px',
-          }}
+          style={{ paddingTop: '12px' }}
         >
           <button
             onClick={() => handleShoot(false)}
@@ -126,6 +173,10 @@ function LiveScoringScreen({ round: initialRound, onBack }) {
               background: '#FBEAEA',
               color: 'var(--color-text-danger)',
               borderRadius: 'var(--border-radius-lg)',
+              boxShadow:
+                inReviewMode && recordedAtCursor === false
+                  ? 'inset 0 0 0 3px var(--color-text-danger)'
+                  : 'none',
             }}
           >
             <IconX size={34} stroke={2.5} />
@@ -140,6 +191,10 @@ function LiveScoringScreen({ round: initialRound, onBack }) {
               background: 'var(--color-varsity-green-bg)',
               color: 'var(--color-varsity-green)',
               borderRadius: 'var(--border-radius-lg)',
+              boxShadow:
+                inReviewMode && recordedAtCursor === true
+                  ? 'inset 0 0 0 3px var(--color-varsity-green)'
+                  : 'none',
             }}
           >
             <IconCheck size={34} stroke={2.5} />
@@ -148,7 +203,16 @@ function LiveScoringScreen({ round: initialRound, onBack }) {
         </div>
       )}
 
-      {/* Flash overlay (full viewport) */}
+      {/* Prev / Next footer */}
+      <div style={{ paddingBottom: 'max(10px, env(safe-area-inset-bottom))' }}>
+        <ReviewFooter
+          onPrev={handlePrev}
+          onNext={handleNext}
+          prevDisabled={prevDisabled}
+          nextDisabled={nextDisabled}
+        />
+      </div>
+
       <FlashOverlay type={flashType} fading={flashFading} />
     </div>
   );
