@@ -98,7 +98,6 @@ function LiveScoringScreen({ round: initialRound, onBack, onDelete, onComplete }
       setRound(updated);
       playFlash(hit);
       if (isRoundComplete(updated)) {
-        // Wait for flash to finish, then transition to end-of-round.
         const t = setTimeout(() => onComplete(updated), 1130);
         flashTimers.current.push(t);
       }
@@ -149,8 +148,6 @@ function LiveScoringScreen({ round: initialRound, onBack, onDelete, onComplete }
     setLeaveOpen(false);
     setCursorIdx(null);
     if (isRoundComplete(updated)) {
-      // Edge case: leaving the line completes the round (last remaining
-      // shooter leaves). No flash to wait on, transition immediately.
       onComplete(updated);
     }
   }
@@ -280,3 +277,147 @@ function LiveScoringScreen({ round: initialRound, onBack, onDelete, onComplete }
                   inReviewMode && recordedAtCursor === false
                     ? 'inset 0 0 0 3px var(--color-text-danger)'
                     : 'none',
+              }}
+            >
+              <IconX size={34} stroke={2.5} />
+              <span className="text-[22px] font-medium leading-none">Miss</span>
+            </button>
+            <button
+              onClick={() => handleShoot(true)}
+              disabled={buttonsDisabled}
+              className="flex flex-col items-center justify-center gap-2 disabled:opacity-50 transition-opacity"
+              style={{
+                background: 'var(--color-varsity-green-bg)',
+                color: 'var(--color-varsity-green)',
+                borderRadius: 'var(--border-radius-lg)',
+                boxShadow:
+                  inReviewMode && recordedAtCursor === true
+                    ? 'inset 0 0 0 3px var(--color-varsity-green)'
+                    : 'none',
+              }}
+            >
+              <IconCheck size={34} stroke={2.5} />
+              <span className="text-[22px] font-medium leading-none">Hit</span>
+            </button>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3" style={{ flex: 1 }}>
+            <button
+              onClick={handlePrev}
+              disabled={prevDisabled}
+              className="flex items-center justify-center gap-2 disabled:opacity-30 transition-opacity"
+              style={{
+                background: 'white',
+                color: 'var(--color-text-primary)',
+                border: '0.5px solid var(--color-text-tertiary)',
+                borderRadius: 'var(--border-radius-md)',
+              }}
+            >
+              <IconChevronLeft size={18} stroke={2} />
+              <span className="text-[13px] font-medium">Previous shot</span>
+            </button>
+            <button
+              onClick={handleNext}
+              disabled={nextDisabled}
+              className="flex items-center justify-center gap-2 disabled:opacity-30 transition-opacity"
+              style={{
+                background: 'white',
+                color: 'var(--color-text-primary)',
+                border: '0.5px solid var(--color-text-tertiary)',
+                borderRadius: 'var(--border-radius-md)',
+              }}
+            >
+              <span className="text-[13px] font-medium">Next shot</span>
+              <IconChevronLeft
+                size={18}
+                stroke={2}
+                style={{ transform: 'scaleX(-1)' }}
+              />
+            </button>
+          </div>
+        </div>
+      )}
+
+      <FlashOverlay type={flashType} fading={flashFading} />
+
+      <BottomSheet
+        open={sheetOpen}
+        onClose={() => setSheetOpen(false)}
+        items={menuItems}
+      />
+
+      <EditNameModal
+        open={editNameOpen}
+        onClose={() => setEditNameOpen(false)}
+        currentName={liveRosterEntry?.firstName}
+        onSave={handleEditNameSave}
+      />
+
+      <LeaveTheLineModal
+        open={leaveOpen}
+        onClose={() => setLeaveOpen(false)}
+        shooterName={liveRosterEntry?.firstName}
+        hits={liveScore?.hits ?? 0}
+        total={liveScore?.total ?? 0}
+        onConfirm={handleLeaveConfirm}
+      />
+
+      <DeleteRoundModal
+        open={deleteOpen}
+        onClose={() => setDeleteOpen(false)}
+        shooterCount={round.shooters.length}
+        shotCount={round.shots.length}
+        onConfirm={handleDeleteConfirm}
+      />
+    </div>
+  );
+}
+
+export default function App() {
+  const [round, setRound] = useState(null);
+  const [completedRound, setCompletedRound] = useState(null);
+
+  // Roster lookup for EndOfRound. Recomputed when the completed round changes.
+  const rosterById = useMemo(() => {
+    if (!completedRound) return null;
+    const roster = getRoster();
+    const map = {};
+    for (const entry of roster) map[entry.id] = entry;
+    return map;
+  }, [completedRound]);
+
+  if (completedRound) {
+    return (
+      <EndOfRound
+        round={completedRound}
+        rosterById={rosterById}
+        onBack={() => {
+          setCompletedRound(null);
+          setRound(null);
+        }}
+        onDelete={() => {
+          deleteRound(completedRound.id);
+          setCompletedRound(null);
+          setRound(null);
+        }}
+      />
+    );
+  }
+
+  if (round) {
+    return (
+      <LiveScoringScreen
+        key={round.id}
+        round={round}
+        onBack={() => setRound(null)}
+        onDelete={() => setRound(null)}
+        onComplete={(finalRound) => {
+          setCompletedRound(finalRound);
+          setRound(null);
+        }}
+      />
+    );
+  }
+
+  return <SetupScreen onStart={setRound} />;
+}
