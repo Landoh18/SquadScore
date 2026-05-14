@@ -163,3 +163,34 @@ export function squadByPhysicalPost(round, roundNumber = null) {
   }
   return layout;
 }
+
+// ----- End-of-round helpers -------------------------------------------------
+
+// Shooters sorted by their starting post (ascending). Returns an array of
+// { shooter, idx } where idx is the original index into round.shooters.
+// Used by the Overview and per-shooter screens, and by the PDF.
+export function shootersByStartingPost(round) {
+  return round.shooters
+    .map((shooter, idx) => ({ shooter, idx }))
+    .sort((a, b) => a.shooter.startingPost - b.shooter.startingPost);
+}
+
+// Returns the "left the line" context for a shooter, or null if they finished.
+// Two cases:
+//   { kind: 'clean', stationsCompleted }       — left between stations
+//   { kind: 'mid-station', station, shotsTaken } — left during a station
+// `station` is the shooter's chronological station number (1..5) where they left,
+// matching what their per-shooter view shows (not the physical station number).
+export function leaveContext(round, shooterIdx) {
+  const shooter = round.shooters[shooterIdx];
+  if (shooter.leftAfterShot == null) return null;
+  const n = shooter.leftAfterShot;
+  if (n % 5 === 0) {
+    return { kind: 'clean', stationsCompleted: n / 5 };
+  }
+  return {
+    kind: 'mid-station',
+    station: Math.floor(n / 5) + 1,
+    shotsTaken: n % 5,
+  };
+}

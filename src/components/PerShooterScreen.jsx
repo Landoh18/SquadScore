@@ -1,13 +1,35 @@
-import { IconStar, IconFlame } from '@tabler/icons-react';
-import { shooterShots, shooterScore, longestStreak } from '../lib/scoring';
+// src/components/PerShooterScreen.jsx
+//
+// The real per-shooter end-of-round screen. Renders screens 2..N of the
+// EndOfRound carousel, one per shooter in starting-post order.
+//
+// Visual layout matches PerShooterMock (which this file replaces), with the
+// "Mock preview" banner removed and helpers pulled from scoring.js so this
+// screen and OverviewScreen share the same shootersByStartingPost / leaveContext.
 
+import { IconStar, IconFlame } from '@tabler/icons-react';
+import {
+  shooterShots,
+  shooterScore,
+  longestStreak,
+  physicalPostOf,
+  leaveContext,
+} from '../lib/scoring';
+
+// Build the 5 station boxes for a shooter, in their chronological order
+// (the shooter's path through the session: start, start+1, ... wrapping 5→1).
+// Each box is one of:
+//   { post, kind: 'full',        shots, hits, total: 5 }
+//   { post, kind: 'partial',     shots, unshot, hits, total }
+//   { post, kind: 'didNotShoot', post }
 function buildStations(round, shooterIdx) {
   const shooter = round.shooters[shooterIdx];
   const shots = shooterShots(round, shooterIdx);
   const totalShots = shooter.leftAfterShot ?? 25;
   const stations = [];
+
   for (let stationN = 1; stationN <= 5; stationN++) {
-    const physicalPost = ((shooter.startingPost - 1 + stationN - 1) % 5) + 1;
+    const physicalPost = physicalPostOf(shooter.startingPost, stationN);
     const startIdx = (stationN - 1) * 5;
     const stationShots = shots.slice(startIdx, startIdx + 5);
     const expected = Math.max(0, Math.min(5, totalShots - startIdx));
@@ -38,20 +60,7 @@ function buildStations(round, shooterIdx) {
   return stations;
 }
 
-function leaveContext(shooter) {
-  if (shooter.leftAfterShot == null) return null;
-  const n = shooter.leftAfterShot;
-  if (n % 5 === 0) {
-    return { kind: 'clean', stationsCompleted: n / 5 };
-  }
-  return {
-    kind: 'mid-station',
-    chronologicalStation: Math.floor(n / 5) + 1,
-    shotsTaken: n % 5,
-  };
-}
-
-export default function PerShooterMock({ round, rosterById, shooterIdx }) {
+export default function PerShooterScreen({ round, rosterById, shooterIdx }) {
   const shooter = round.shooters[shooterIdx];
   const firstName = rosterById[shooter.rosterId]?.firstName ?? '?';
   const allShots = shooterShots(round, shooterIdx);
@@ -61,7 +70,7 @@ export default function PerShooterMock({ round, rosterById, shooterIdx }) {
   const isVarsity = !isLeft && hits >= 19 && total === 25;
   const longest = longestStreak(allShots);
   const stations = buildStations(round, shooterIdx);
-  const leave = leaveContext(shooter);
+  const leave = leaveContext(round, shooterIdx);
 
   const scoreText = isLeft ? `${hits}/${total}` : `${hits}/25`;
   const scoreColor = isVarsity ? '#639922' : 'var(--color-text-primary)';
@@ -76,18 +85,11 @@ export default function PerShooterMock({ round, rosterById, shooterIdx }) {
   if (leave?.kind === 'clean') {
     dividerText = `left after station ${leave.stationsCompleted} of 5`;
   } else if (leave?.kind === 'mid-station') {
-    dividerText = `left during station ${leave.chronologicalStation} after ${leave.shotsTaken} shot${leave.shotsTaken === 1 ? '' : 's'}`;
+    dividerText = `left during station ${leave.station} after ${leave.shotsTaken} shot${leave.shotsTaken === 1 ? '' : 's'}`;
   }
 
   return (
     <div className="flex-1 overflow-y-auto px-4 py-4 md:px-12">
-      <div
-        className="mb-3 text-center"
-        style={{ color: 'var(--color-text-tertiary)', fontSize: 11, fontStyle: 'italic' }}
-      >
-        Mock preview · final wiring in progress
-      </div>
-
       <div className="flex items-start justify-between mb-3">
         <div>
           <div style={{ color: 'var(--color-text-tertiary)', fontSize: 12 }}>

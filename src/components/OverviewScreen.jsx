@@ -1,29 +1,9 @@
 import { IconStar, IconPencil } from '@tabler/icons-react';
-import { shooterScore } from '../lib/scoring';
-
-// Local helpers. Will get extracted to scoring.js when paste 3 (per-shooter
-// screens) needs to reuse them — keeping them local for now to keep this paste
-// small.
-
-function shootersByStartingPost(round) {
-  return round.shooters
-    .map((shooter, idx) => ({ shooter, idx }))
-    .sort((a, b) => a.shooter.startingPost - b.shooter.startingPost);
-}
-
-function leaveContext(round, shooterIdx) {
-  const shooter = round.shooters[shooterIdx];
-  if (shooter.leftAfterShot == null) return null;
-  const n = shooter.leftAfterShot;
-  if (n % 5 === 0) {
-    return { kind: 'clean', stationsCompleted: n / 5 };
-  }
-  return {
-    kind: 'mid-station',
-    station: Math.floor(n / 5) + 1,
-    shotsTaken: n % 5,
-  };
-}
+import {
+  shooterScore,
+  shootersByStartingPost,
+  leaveContext,
+} from '../lib/scoring';
 
 function formatDate(iso) {
   const d = new Date(iso);

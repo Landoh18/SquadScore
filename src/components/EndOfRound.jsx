@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { IconChevronLeft, IconChevronRight, IconDots } from '@tabler/icons-react';
 import OverviewScreen from './OverviewScreen';
-import PerShooterMock from './PerShooterMock';
+import PerShooterScreen from './PerShooterScreen';
 import PdfPreviewMock from './PdfPreviewMock';
 
 export default function EndOfRound({ round, rosterById, onBack, onDelete }) {
@@ -53,7 +53,7 @@ export default function EndOfRound({ round, rosterById, onBack, onDelete }) {
     }
     const idx = sortedShooters[screenIdx - 1].idx;
     return (
-      <PerShooterMock
+      <PerShooterScreen
         round={round}
         rosterById={rosterById}
         shooterIdx={idx}
