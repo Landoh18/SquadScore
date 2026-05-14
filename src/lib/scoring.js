@@ -11,27 +11,36 @@
 //
 // shooterIdx in shots is the index into shooters[].
 // leftAfterShot is the count of THAT shooter's own shots taken when they left.
+//
+// Vocabulary:
+//   station       — a fixed physical location (1-5, left to right). Stations don't move.
+//   round         — five shots taken by one squad at one station. After each round,
+//                   the squad rotates one position.
+//   round number  — which round of the session we're on (1-5). The squad visits all
+//                   5 stations across a session.
+//   session       — five rounds. One full play-through = 25 shots per shooter.
+//   starting post — the station number a shooter begins their session at.
 
 // ----- Rotation math --------------------------------------------------------
 
-// Given a starting post and round-station (1-5), where is that shooter physically?
-export function physicalPostOf(startingPost, roundStation) {
-  return ((startingPost - 1 + roundStation - 1) % 5) + 1;
+// Given a starting post and round number (1-5), where is that shooter physically?
+export function physicalPostOf(startingPost, roundNumber) {
+  return ((startingPost - 1 + roundNumber - 1) % 5) + 1;
 }
 
-// Given a physical post and round-station, what starting post would have placed
+// Given a physical post and round number, what starting post would have placed
 // a shooter there? Inverse of physicalPostOf.
-export function startingPostAt(physicalPost, roundStation) {
-  return (((physicalPost - roundStation) % 5) + 5) % 5 + 1;
+export function startingPostAt(physicalPost, roundNumber) {
+  return (((physicalPost - roundNumber) % 5) + 5) % 5 + 1;
 }
 
 // ----- Firing order ---------------------------------------------------------
 
 // Generate the full chronological plan of shot slots for a round, accounting
 // for any "left the line" markers. Each entry describes one slot:
-//   { shooterIdx, roundStation, physicalPost, personalStationShot, personalShotIdx }
+//   { shooterIdx, roundNumber, physicalPost, personalStationShot, personalShotIdx }
 // personalStationShot is 0-indexed within a station (0..4).
-// personalShotIdx is 0-indexed across the shooter's whole round.
+// personalShotIdx is 0-indexed across the shooter's whole session.
 //
 // Across the full session, firing order is always S1, S2, S3, S4, S5 cycling.
 // Round boundaries (squad rotations) don't change the lead — S1 starts every
@@ -41,7 +50,7 @@ export function firingOrder(round) {
   const plan = [];
   const personalShotsPlanned = round.shooters.map(() => 0);
 
-  for (let roundStation = 1; roundStation <= 5; roundStation++) {
+  for (let roundNumber = 1; roundNumber <= 5; roundNumber++) {
     for (let cycle = 0; cycle < 5; cycle++) {
       for (let startingPost = 1; startingPost <= 5; startingPost++) {
         const shooterIdx = round.shooters.findIndex(
@@ -61,8 +70,8 @@ export function firingOrder(round) {
 
         plan.push({
           shooterIdx,
-          roundStation,
-          physicalPost: physicalPostOf(startingPost, roundStation),
+          roundNumber,
+          physicalPost: physicalPostOf(startingPost, roundNumber),
           personalStationShot: cycle,
           personalShotIdx: planned,
         });
@@ -134,22 +143,22 @@ export function currentStreak(shots) {
 
 // ----- Squad-strip helpers --------------------------------------------------
 
-// Round-station the squad is currently at. Defaults to 5 if the round is
-// complete (the squad finishes at station 5).
-export function currentRoundStation(round) {
+// Round number the squad is currently on. Defaults to 5 if the round is
+// complete (the squad finishes at round 5, station 5).
+export function currentRoundNumber(round) {
   const slot = activeSlot(round);
-  return slot ? slot.roundStation : 5;
+  return slot ? slot.roundNumber : 5;
 }
 
-// Physical-post layout of the squad at a given round-station. Returns an array
+// Physical-post layout of the squad at a given round number. Returns an array
 // of length 5 indexed by physicalPost-1; each entry is a shooterIdx or null
 // (null means no shooter has rotated into that post — possible when the squad
 // has fewer than 5 shooters).
-export function squadByPhysicalPost(round, roundStation = null) {
-  const rs = roundStation ?? currentRoundStation(round);
+export function squadByPhysicalPost(round, roundNumber = null) {
+  const rn = roundNumber ?? currentRoundNumber(round);
   const layout = [null, null, null, null, null];
   for (let i = 0; i < round.shooters.length; i++) {
-    const post = physicalPostOf(round.shooters[i].startingPost, rs);
+    const post = physicalPostOf(round.shooters[i].startingPost, rn);
     layout[post - 1] = i;
   }
   return layout;

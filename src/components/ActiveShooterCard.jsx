@@ -15,7 +15,7 @@ export default function ActiveShooterCard({
 }) {
   if (!slot) return null;
 
-  const { shooterIdx, roundStation, personalStationShot, personalShotIdx } = slot;
+  const { shooterIdx, roundNumber, personalStationShot, personalShotIdx } = slot;
   const allShots = shooterShots(round, shooterIdx);
 
   let displayHits, displayTotal;
@@ -104,7 +104,7 @@ export default function ActiveShooterCard({
             marginTop: '4px',
           }}
         >
-          Station {roundStation} · shot {personalStationShot + 1} of 5
+          Station {roundNumber} · shot {personalStationShot + 1} of 5
         </div>
 
         <div
