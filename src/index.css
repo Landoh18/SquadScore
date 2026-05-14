@@ -1,10 +1,12 @@
+/* Fonts: Inter (sans) + Source Serif 4 (serif/wordmark) */
+/* @import must come before @tailwind directives per CSS spec — fixes the
+   "@import must precede all other statements" Vite warning flagged in handoff #10. */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Source+Serif+4:wght@400;500&display=swap');
+
 /* Tailwind directives — these get expanded by PostCSS into all utility classes. */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* Fonts: Inter (sans) + Source Serif 4 (serif/wordmark) */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Source+Serif+4:wght@400;500&display=swap');
 
 /* SquadScore design tokens. Per handoff #1's "Color palette" + "Visual & UX conventions". */
 :root {
@@ -57,6 +59,15 @@ html, body, #root {
   height: 100%;
 }
 
+/* Lock the page so the whole viewport can't be dragged/zoomed.
+   Internal scroll containers (overflow-y-auto inside EndOfRound, etc.) still work. */
+html {
+  /* Disable pull-to-refresh and overscroll bounce. */
+  overscroll-behavior: none;
+  /* Prevent double-tap zoom on iOS. */
+  touch-action: manipulation;
+}
+
 body {
   margin: 0;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
@@ -66,9 +77,22 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+  /* Lock the body — only internal scroll containers can scroll. */
+  overflow: hidden;
+  overscroll-behavior: none;
 }
 
 /* Disable iOS tap highlight on buttons — they have their own active states. */
 button {
   -webkit-tap-highlight-color: transparent;
+}
+
+/* Prevent iOS auto-zoom on input focus.
+   Safari zooms in any time an input has font-size < 16px. Setting all
+   form inputs to 16px minimum stops the zoom (and the failed zoom-back-out
+   that leaves the page scrolled). */
+input,
+textarea,
+select {
+  font-size: 16px;
 }
