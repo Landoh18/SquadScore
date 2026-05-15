@@ -111,7 +111,23 @@ export function generatePdf(round, rosterById) {
   const bodyEndY = drawLogo(doc, footerStartY);
   drawBody(doc, round, rosterById, headerEndY, bodyEndY);
 
-  doc.save(buildFilename(round));
+  const filename = buildFilename(round);
+  const blob = doc.output('blob');
+  const file = new File([blob], filename, { type: 'application/pdf' });
+
+  if (navigator.canShare && navigator.canShare({ files: [file] })) {
+    navigator.share({
+      files: [file],
+      title: 'Trap round scorecard',
+    }).catch((err) => {
+      if (err.name !== 'AbortError') {
+        console.error('Share failed:', err);
+        doc.save(filename);
+      }
+    });
+  } else {
+    doc.save(filename);
+  }
 }
 
 // ---- Filename --------------------------------------------------------------
