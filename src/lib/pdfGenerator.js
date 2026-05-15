@@ -17,6 +17,7 @@ import {
   shootersByStartingPost,
   physicalPostOf,
 } from './scoring.js';
+import { TEAM_LOGO_PNG_BASE64 } from './logo.js';
 
 // ---- Layout constants ------------------------------------------------------
 
@@ -41,12 +42,7 @@ const TOTAL_COL_W = 50;
 const TOTALS_TO_STREAK_GAP = 6;
 const STREAK_COL_W = 40;
 
-// Cell geometry — sized to fit the available width after subtracting all
-// other columns and gaps. With letter landscape (792pt) and 36pt margins,
-// the available horizontal space is 720pt. Subtracting name col, totals,
-// streak, and inter-column gaps leaves ~534pt for the cell grid:
-//   5 groups × (5 × CELL_W) + 4 × STATION_GROUP_GAP = 534
-//   25 × CELL_W + 32 = 534 → CELL_W = 20.08 → round to 20
+// Cell geometry
 const CELL_W = 20;
 const CELL_H = 32;
 const STATION_GROUP_GAP = 8;
@@ -62,14 +58,14 @@ const STATION_LABEL_GAP = 4;
 const NAME_SIZE = 13;
 const TOTAL_SIZE = 14;
 const STREAK_SIZE = 14;
-const SHOOTER_BLOCK_GAP = 10;
 const LEAVE_NOTE_GAP = 6;
 const LEAVE_NOTE_SIZE = 8;
 
-// Totals styling
-const CIRCLE_PAD_X = 4;
-const CIRCLE_PAD_Y = 3;
-const DOUBLE_CIRCLE_GAP = 2;
+// Totals styling — looser padding + a wider double-circle gap so the perfect-
+// round treatment reads instantly distinct from the single-circle 19+ treatment.
+const CIRCLE_PAD_X = 5;
+const CIRCLE_PAD_Y = 4;
+const DOUBLE_CIRCLE_GAP = 4;
 
 // Legend + footer
 const LEGEND_SIZE = 10;
@@ -79,6 +75,11 @@ const FOOTER_SIZE = 9;
 const FOOTER_GAP = 12;
 const LEGEND_SWATCH_SIZE = 8;
 const LEGEND_ITEM_GAP = 14;
+
+// Logo (team-customized, drawn in bottom-right above the legend rule)
+const LOGO_SIZE = 110;            // square logo box width/height in pt
+const LOGO_RIGHT_INSET = 0;       // distance from right margin
+const LOGO_GAP_FROM_LEGEND = 18;  // vertical gap above legend rule
 
 // Colors
 const BLACK = '#000000';
@@ -98,7 +99,8 @@ export function generatePdf(round, rosterById) {
 
   const headerEndY = drawHeader(doc, round, rosterById);
   const footerStartY = drawLegendAndFooter(doc);
-  drawBody(doc, round, rosterById, headerEndY, footerStartY);
+  const bodyEndY = drawLogo(doc, footerStartY);
+  drawBody(doc, round, rosterById, headerEndY, bodyEndY);
 
   doc.save(buildFilename(round));
 }
@@ -167,6 +169,37 @@ function drawHeader(doc, round, rosterById) {
   return ruleY + HEADER_BAND_BOTTOM_GAP;
 }
 
+// ---- Logo ------------------------------------------------------------------
+// Draws the team logo in the bottom-right corner just above the legend rule.
+// Returns the y-coordinate the body should not draw past (i.e. the top of the
+// logo, minus a small gap) so the body's vertical fill calculation can avoid
+// the logo's space when there are few shooters.
+
+function drawLogo(doc, legendRuleY) {
+  const logoX = PAGE_W - MARGIN_X - LOGO_RIGHT_INSET - LOGO_SIZE;
+  const logoY = legendRuleY - LOGO_GAP_FROM_LEGEND - LOGO_SIZE;
+
+  try {
+    doc.addImage(
+      TEAM_LOGO_PNG_BASE64,
+      'PNG',
+      logoX,
+      logoY,
+      LOGO_SIZE,
+      LOGO_SIZE
+    );
+  } catch (err) {
+    // Logo failed to embed — log and continue. Page renders without it.
+    console.error('Logo embed failed:', err);
+  }
+
+  // Body can use space to the left of the logo for its last shooter row, but
+  // for vertical-fill purposes the safest bottom is the top of the logo zone.
+  // Return the top of the logo so drawBody can fan its rows down to that point
+  // without overlapping the logo or the legend.
+  return logoY;
+}
+
 // ---- Legend + footer ------------------------------------------------------
 
 function drawLegendAndFooter(doc) {
@@ -177,13 +210,11 @@ function drawLegendAndFooter(doc) {
   const footerW = doc.getTextWidth(footerText);
   doc.text(footerText, (PAGE_W - footerW) / 2, footerY);
 
-  // Legend items: small drawn swatch + label. Center the whole row.
   const legendY = footerY - FOOTER_GAP - LEGEND_SIZE;
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(LEGEND_SIZE);
   doc.setTextColor(BLACK);
 
-  // Measure each item's combined width (swatch + small gap + label)
   const items = [
     { kind: 'hit', label: 'hit' },
     { kind: 'miss', label: 'miss' },
@@ -226,7 +257,6 @@ function drawLegendAndFooter(doc) {
     cursorX += w + LEGEND_ITEM_GAP;
   }
 
-  // Rule above the legend
   const ruleY = legendY - LEGEND_SIZE - LEGEND_RULE_GAP;
   doc.setLineWidth(LEGEND_RULE_WEIGHT);
   doc.setDrawColor(BLACK);
@@ -236,10 +266,8 @@ function drawLegendAndFooter(doc) {
 }
 
 // ---- Mark drawing ---------------------------------------------------------
-// Both marks are drawn inside a cell-sized box, padded by MARK_PAD.
 
 function drawCheckmark(doc, x, y, size) {
-  // Standard checkmark: short stroke down-right to the elbow, long stroke up-right.
   const x1 = x + size * 0.18;
   const y1 = y + size * 0.55;
   const x2 = x + size * 0.42;
@@ -255,7 +283,6 @@ function drawCheckmark(doc, x, y, size) {
 }
 
 function drawCross(doc, x, y, size) {
-  // Two diagonal strokes corner to corner.
   doc.setLineWidth(MARK_STROKE);
   doc.setDrawColor(BLACK);
   doc.setLineCap('round');
@@ -279,7 +306,9 @@ function computeColumnPositions() {
 
 function drawBody(doc, round, rosterById, bodyStartY, bodyEndY) {
   const sortedShooters = shootersByStartingPost(round);
+  const n = sortedShooters.length;
 
+  // Per-shooter block height (without inter-block gap)
   const blockH =
     STATION_LABEL_SIZE +
     STATION_LABEL_GAP +
@@ -289,9 +318,7 @@ function drawBody(doc, round, rosterById, bodyStartY, bodyEndY) {
 
   const { totalColX, streakColX } = computeColumnPositions();
 
-  let cursorY = bodyStartY;
-
-  // Column header row above the first shooter
+  // Column-header row above the first shooter
   const headerLabelSize = 9;
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(headerLabelSize);
@@ -300,16 +327,29 @@ function drawBody(doc, round, rosterById, bodyStartY, bodyEndY) {
   const streakLabel = 'Streak';
   const totalLabelW = doc.getTextWidth(totalLabel);
   const streakLabelW = doc.getTextWidth(streakLabel);
-  doc.text(totalLabel, totalColX + TOTAL_COL_W - totalLabelW, cursorY + headerLabelSize);
-  doc.text(streakLabel, streakColX + STREAK_COL_W - streakLabelW, cursorY + headerLabelSize);
+  doc.text(totalLabel, totalColX + TOTAL_COL_W - totalLabelW, bodyStartY + headerLabelSize);
+  doc.text(streakLabel, streakColX + STREAK_COL_W - streakLabelW, bodyStartY + headerLabelSize);
   doc.setTextColor(BLACK);
-  cursorY += headerLabelSize + 4;
 
-  for (let i = 0; i < sortedShooters.length; i++) {
+  const bodyTop = bodyStartY + headerLabelSize + 4;
+
+  // Vertical-fill calculation: spread n blocks evenly across the available
+  // height, with a minimum gap between rows for legibility.
+  const availableH = bodyEndY - bodyTop;
+  const totalBlocksH = n * blockH;
+  const remainingForGaps = availableH - totalBlocksH;
+  const MIN_GAP = 10;
+  const MAX_GAP = 36;
+  let gap = n > 1 ? remainingForGaps / (n - 1) : 0;
+  if (gap < MIN_GAP) gap = MIN_GAP;
+  if (gap > MAX_GAP) gap = MAX_GAP;
+
+  let cursorY = bodyTop;
+  for (let i = 0; i < n; i++) {
     const { shooter, idx } = sortedShooters[i];
     drawShooterBlock(doc, round, shooter, idx, rosterById, cursorY);
-    cursorY += blockH + SHOOTER_BLOCK_GAP;
-    if (cursorY + blockH > bodyEndY) break;
+    cursorY += blockH + gap;
+    if (cursorY > bodyEndY) break;
   }
 }
 
@@ -321,7 +361,6 @@ function drawShooterBlock(doc, round, shooter, shooterIdx, rosterById, blockTopY
   const { hits } = shooterScore(round, shooterIdx);
   const longest = longestStreak(shots);
 
-  // Chronological station path (1..5 physical-post numbers)
   const path = [];
   for (let n = 1; n <= 5; n++) {
     path.push(physicalPostOf(shooter.startingPost, n));
@@ -329,7 +368,6 @@ function drawShooterBlock(doc, round, shooter, shooterIdx, rosterById, blockTopY
 
   const { cellsStartX, totalColX, streakColX } = computeColumnPositions();
 
-  // Station label row
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(STATION_LABEL_SIZE);
   doc.setTextColor(META_GRAY);
@@ -344,13 +382,11 @@ function drawShooterBlock(doc, round, shooter, shooterIdx, rosterById, blockTopY
 
   const cellsRowY = blockTopY + STATION_LABEL_SIZE + STATION_LABEL_GAP;
 
-  // Name (vertically centered against the cell row)
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(NAME_SIZE);
   doc.text(firstName, MARGIN_X, cellsRowY + CELL_H / 2 + NAME_SIZE / 3);
   doc.setFont('helvetica', 'normal');
 
-  // 25 cells in 5 groups of 5
   for (let g = 0; g < 5; g++) {
     const groupX = cellsStartX + g * (5 * CELL_W + STATION_GROUP_GAP);
     for (let c = 0; c < 5; c++) {
@@ -358,14 +394,12 @@ function drawShooterBlock(doc, round, shooter, shooterIdx, rosterById, blockTopY
       const cellX = groupX + c * CELL_W;
       const cellY = cellsRowY;
 
-      // Border
       doc.setLineWidth(CELL_BORDER_W);
       doc.setDrawColor(BLACK);
       doc.rect(cellX, cellY, CELL_W, CELL_H);
 
       const isUnshot = cellIdx >= totalShotsTaken;
       if (isUnshot) {
-        // Solid black fill (inset slightly so the cell border still shows)
         doc.setFillColor(UNSHOT_FILL);
         doc.rect(
           cellX + CELL_BORDER_W / 2,
@@ -388,10 +422,8 @@ function drawShooterBlock(doc, round, shooter, shooterIdx, rosterById, blockTopY
     }
   }
 
-  // Total column
   drawTotal(doc, hits, totalShotsTaken, isLeft, totalColX, cellsRowY);
 
-  // Streak column
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(STREAK_SIZE);
   const streakStr = String(longest);
@@ -403,7 +435,6 @@ function drawShooterBlock(doc, round, shooter, shooterIdx, rosterById, blockTopY
   );
   doc.setFont('helvetica', 'normal');
 
-  // Leave-the-line note row
   if (isLeft) {
     const leaveText = buildLeaveNote(shooter.leftAfterShot);
     doc.setFont('helvetica', 'italic');
