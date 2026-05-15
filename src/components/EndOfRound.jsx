@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { IconChevronLeft, IconChevronRight, IconDots, IconTrash } from '@tabler/icons-react';
 import OverviewScreen from './OverviewScreen';
 import PerShooterScreen from './PerShooterScreen';
-import PdfPreviewMock from './PdfPreviewMock';
+import PdfPreviewScreen from './PdfPreviewScreen';
 import StationEditor from './StationEditor';
 import BottomSheet from './BottomSheet';
 import DeleteRoundModal from './DeleteRoundModal';
@@ -188,7 +188,7 @@ export default function EndOfRound({ round: initialRound, rosterById, onBack, on
       );
     }
     if (screenIdx === SCREEN_COUNT - 1) {
-      return <PdfPreviewMock round={round} rosterById={rosterById} />;
+      return <PdfPreviewScreen round={round} rosterById={rosterById} />;
     }
     const idx = sortedShooters[screenIdx - 1].idx;
     return (
