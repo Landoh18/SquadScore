@@ -1,0 +1,1 @@
+﻿{ "ignore": { "customPatterns": ["src/lib/logo.js","public/favicon.svg","src/assets/vite.svg","repomix-output.xml"] } }

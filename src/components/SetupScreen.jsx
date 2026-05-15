@@ -10,18 +10,30 @@
 // if the form is complete (rosterId and post both set). Start tracking
 // then creates the round via the round store (which persists it) and hands
 // the returned round to the parent via onStart.
+//
+// Scorer field pre-fills with the last-used scorer from the most recent
+// round in storage. Falls back to null if there are no prior rounds or
+// the prior scorer's roster entry has been deleted.
+//
+// Back arrow in the header calls onBack — the parent (App.jsx) sends the
+// user back to the home screen.
 
 import { useState, useMemo } from 'react';
-import { IconX } from '@tabler/icons-react';
+import { IconX, IconChevronLeft } from '@tabler/icons-react';
 import RosterPicker from './RosterPicker.jsx';
 import PostPicker from './PostPicker.jsx';
 import { getRosterEntry } from '../lib/roster.js';
-import { startRound } from '../lib/roundStore.js';
+import { getRounds, startRound } from '../lib/roundStore.js';
 
 const MAX_SHOOTERS = 5;
 
-export default function SetupScreen({ onStart }) {
-  const [scorerId, setScorerId] = useState(null);
+export default function SetupScreen({ onStart, onBack }) {
+  const [scorerId, setScorerId] = useState(() => {
+    const recent = getRounds();
+    if (recent.length === 0) return null;
+    const lastScorerId = recent[0].scorerId;
+    return getRosterEntry(lastScorerId) ? lastScorerId : null;
+  });
   const [shooters, setShooters] = useState([]);
   const [draftRosterId, setDraftRosterId] = useState(null);
   const [draftPost, setDraftPost] = useState(null);
@@ -64,9 +76,19 @@ export default function SetupScreen({ onStart }) {
 
   return (
     <div className="flex flex-col flex-1 min-h-full">
-      {/* Top bar — back arrow comes in stage 6 when home screen lands */}
-      <header className="h-12 flex items-center justify-center border-b-[0.5px] border-[var(--color-text-tertiary)] flex-shrink-0">
+      {/* Top bar */}
+      <header className="h-12 flex items-center justify-between px-3 border-b-[0.5px] border-[var(--color-text-tertiary)] flex-shrink-0">
+        <button
+          type="button"
+          onClick={onBack}
+          className="p-2 -ml-2"
+          aria-label="Back"
+        >
+          <IconChevronLeft size={22} stroke={1.75} />
+        </button>
         <h1 className="text-[15px] font-medium text-[var(--color-text-primary)]">New round</h1>
+        {/* Right-side spacer to balance the back arrow */}
+        <div style={{ width: 38 }} />
       </header>
 
       {/* Body */}

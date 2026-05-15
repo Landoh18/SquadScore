@@ -1,327 +1,483 @@
-// src/components/PdfPreviewScreen.jsx
-//
-// The real PDF preview + download surface (carousel screen N). Visual layout
-// matches PdfPreviewMock (which this file replaces); the Download button is
-// now wired to generatePdf.
+// src/App.jsx
+import { useState, useMemo, useRef, useEffect } from 'react';
+import {
+  IconChevronLeft,
+  IconCheck,
+  IconX,
+  IconDots,
+  IconPencil,
+  IconLogout2,
+  IconTrash,
+} from '@tabler/icons-react';
+import HomeScreen from './components/HomeScreen';
+import HistoryScreen from './components/HistoryScreen';
+import SetupScreen from './components/SetupScreen';
+import SquadStrip from './components/SquadStrip';
+import ActiveShooterCard from './components/ActiveShooterCard';
+import FlashOverlay from './components/FlashOverlay';
+import BottomSheet from './components/BottomSheet';
+import EditNameModal from './components/EditNameModal';
+import LeaveTheLineModal from './components/LeaveTheLineModal';
+import DeleteRoundModal from './components/DeleteRoundModal';
+import EndOfRound from './components/EndOfRound';
+import { getRoster } from './lib/roster';
+import {
+  activeSlot,
+  slotForShot,
+  isRoundComplete,
+  shooterScore,
+} from './lib/scoring';
+import {
+  appendShot,
+  editShot,
+  renameShooter,
+  markShooterLeft,
+  deleteRound,
+} from './lib/roundStore';
 
-import { shooterShots, shooterScore, longestStreak } from '../lib/scoring';
-import { generatePdf } from '../lib/pdfGenerator';
+function LiveScoringScreen({ round: initialRound, onBack, onDelete, onComplete }) {
+  const [round, setRound] = useState(initialRound);
+  const [cursorIdx, setCursorIdx] = useState(null);
+  const [flashType, setFlashType] = useState(null);
+  const [flashFading, setFlashFading] = useState(false);
+  const [sheetOpen, setSheetOpen] = useState(false);
+  const [editNameOpen, setEditNameOpen] = useState(false);
+  const [leaveOpen, setLeaveOpen] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [rosterVersion, setRosterVersion] = useState(0);
+  const flashTimers = useRef([]);
 
-const HIT_COLOR = '#97C459';
-const MISS_COLOR = '#F09595';
-const UNSHOT_COLOR = '#2C2C2A';
-const CELL_BORDER = '#2C2C2A';
-const PAPER_BG = '#FFFFFF';
-const PAPER_EDGE = '#B4B2A9';
-const TEXT = '#2C2C2A';
-const TERTIARY = '#999';
+  const roster = useMemo(() => getRoster(), [rosterVersion]);
+  const rosterById = useMemo(() => {
+    const map = {};
+    for (const entry of roster) map[entry.id] = entry;
+    return map;
+  }, [roster]);
 
-function formatDate(iso) {
-  const d = new Date(iso);
-  const datePart = d.toLocaleDateString('en-US', {
-    weekday: 'long',
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric',
-  });
-  const timePart = d.toLocaleTimeString('en-US', {
-    hour: 'numeric',
-    minute: '2-digit',
-  });
-  return `${datePart} · ${timePart}`;
-}
+  const liveSlot = activeSlot(round);
+  const complete = isRoundComplete(round);
+  const inReviewMode = cursorIdx !== null;
 
-function buildShooterRow(round, shooterIdx) {
-  const shooter = round.shooters[shooterIdx];
-  const shots = shooterShots(round, shooterIdx);
-  const path = [];
-  for (let n = 1; n <= 5; n++) {
-    path.push(((shooter.startingPost - 1 + n - 1) % 5) + 1);
+  const displaySlot = inReviewMode ? slotForShot(round, cursorIdx) : liveSlot;
+  const displayShooter = displaySlot ? round.shooters[displaySlot.shooterIdx] : null;
+  const displayRosterEntry = displayShooter ? rosterById[displayShooter.rosterId] : null;
+
+  const liveShooter = liveSlot ? round.shooters[liveSlot.shooterIdx] : null;
+  const liveRosterEntry = liveShooter ? rosterById[liveShooter.rosterId] : null;
+  const liveScore = liveSlot ? shooterScore(round, liveSlot.shooterIdx) : null;
+
+  const recordedAtCursor =
+    inReviewMode && cursorIdx < round.shots.length
+      ? round.shots[cursorIdx].hit
+      : null;
+
+  useEffect(() => {
+    const timers = flashTimers.current;
+    return () => timers.forEach(clearTimeout);
+  }, []);
+
+  function playFlash(hit) {
+    setFlashType(hit ? 'hit' : 'miss');
+    setFlashFading(false);
+    const t1 = setTimeout(() => setFlashFading(true), 1000);
+    const t2 = setTimeout(() => {
+      setFlashType(null);
+      setFlashFading(false);
+    }, 1130);
+    flashTimers.current.push(t1, t2);
   }
-  const cells = [];
-  for (let i = 0; i < 25; i++) {
-    if (i < shots.length) {
-      cells.push({ kind: shots[i].hit ? 'hit' : 'miss' });
+
+  function handleShoot(hit) {
+    if (flashType !== null || complete) return;
+
+    if (inReviewMode) {
+      const updated = editShot(round.id, cursorIdx, hit);
+      setRound(updated);
+      setCursorIdx(null);
+      playFlash(hit);
     } else {
-      cells.push({ kind: 'unshot' });
+      const updated = appendShot(round.id, hit);
+      setRound(updated);
+      playFlash(hit);
+      if (isRoundComplete(updated)) {
+        const t = setTimeout(() => onComplete(updated), 1130);
+        flashTimers.current.push(t);
+      }
     }
   }
-  const { hits } = shooterScore(round, shooterIdx);
-  const longest = longestStreak(shots);
-  const isLeft = shooter.leftAfterShot != null;
-  return { path, cells, hits, longest, isLeft };
-}
 
-function CellGroup({ cells }) {
-  return (
-    <div style={{ display: 'flex' }}>
-      {cells.map((c, i) => (
-        <div
-          key={i}
-          style={{
-            width: 8,
-            height: 10,
-            background:
-              c.kind === 'hit'
-                ? HIT_COLOR
-                : c.kind === 'miss'
-                ? MISS_COLOR
-                : UNSHOT_COLOR,
-            border: `0.5px solid ${CELL_BORDER}`,
-          }}
-        />
-      ))}
-    </div>
-  );
-}
+  function handlePrev() {
+    if (flashType !== null) return;
+    if (cursorIdx === null) {
+      if (round.shots.length === 0) return;
+      setCursorIdx(round.shots.length - 1);
+    } else if (cursorIdx > 0) {
+      setCursorIdx(cursorIdx - 1);
+    }
+  }
 
-function CircledNumber({ value, isLeft }) {
-  if (isLeft || value < 19) {
-    return (
-      <span style={{ fontSize: 9, fontWeight: 500, color: TEXT }}>{value}</span>
-    );
+  function handleNext() {
+    if (flashType !== null) return;
+    if (cursorIdx === null) return;
+    if (cursorIdx >= round.shots.length - 1) {
+      setCursorIdx(null);
+    } else {
+      setCursorIdx(cursorIdx + 1);
+    }
   }
-  if (value === 25) {
-    return (
-      <span
-        style={{
-          display: 'inline-block',
-          fontSize: 9,
-          fontWeight: 500,
-          color: TEXT,
-          border: `0.5px solid ${TEXT}`,
-          borderRadius: '50%',
-          padding: '1px 4px',
-          boxShadow: `0 0 0 1px ${PAPER_BG}, 0 0 0 1.5px ${TEXT}`,
-          lineHeight: 1,
-        }}
-      >
-        {value}
-      </span>
-    );
+
+  function handleEditName() {
+    setSheetOpen(false);
+    setEditNameOpen(true);
   }
+
+  function handleEditNameSave(newName) {
+    if (!liveShooter) return;
+    renameShooter(round.id, liveSlot.shooterIdx, newName);
+    setEditNameOpen(false);
+    setRosterVersion((v) => v + 1);
+  }
+
+  function handleLeaveTheLine() {
+    setSheetOpen(false);
+    setLeaveOpen(true);
+  }
+
+  function handleLeaveConfirm() {
+    if (!liveSlot) return;
+    const updated = markShooterLeft(round.id, liveSlot.shooterIdx);
+    setRound(updated);
+    setLeaveOpen(false);
+    setCursorIdx(null);
+    if (isRoundComplete(updated)) {
+      onComplete(updated);
+    }
+  }
+
+  function handleDeleteRound() {
+    setSheetOpen(false);
+    setDeleteOpen(true);
+  }
+
+  function handleDeleteConfirm() {
+    deleteRound(round.id);
+    setDeleteOpen(false);
+    onDelete();
+  }
+
+  const menuItems = [
+    {
+      label: 'Edit shooter name',
+      icon: IconPencil,
+      onClick: handleEditName,
+    },
+    {
+      label: 'Shooter left the line',
+      icon: IconLogout2,
+      onClick: handleLeaveTheLine,
+    },
+    {
+      label: 'Delete round',
+      icon: IconTrash,
+      onClick: handleDeleteRound,
+      danger: true,
+    },
+  ];
+
+  const buttonsDisabled = flashType !== null || complete;
+  const prevDisabled =
+    flashType !== null ||
+    cursorIdx === 0 ||
+    (cursorIdx === null && round.shots.length === 0);
+  const nextDisabled = flashType !== null || cursorIdx === null;
+
   return (
-    <span
+    <div
+      className="min-h-screen flex flex-col relative bg-[var(--color-background-primary)]"
       style={{
-        display: 'inline-block',
-        fontSize: 9,
-        fontWeight: 500,
-        color: TEXT,
-        border: `0.5px solid ${TEXT}`,
-        borderRadius: '50%',
-        padding: '1px 4px',
-        lineHeight: 1,
+        paddingTop: 'max(12px, env(safe-area-inset-top))',
+        paddingBottom: 'max(12px, env(safe-area-inset-bottom))',
       }}
     >
-      {value}
-    </span>
+      <div
+        className="flex items-center justify-between px-3 py-2"
+        style={{ borderBottom: '0.5px solid var(--color-text-tertiary)' }}
+      >
+        <button onClick={onBack} className="p-2 -ml-2" aria-label="Save and exit">
+          <IconChevronLeft size={22} stroke={1.75} />
+        </button>
+        <div
+          className="text-[13px] font-medium"
+          style={{
+            color: inReviewMode
+              ? 'var(--color-clay-orange)'
+              : 'var(--color-text-secondary)',
+          }}
+        >
+          {complete
+            ? 'Round complete'
+            : inReviewMode
+            ? 'Reviewing previous shot'
+            : 'Round in progress'}
+        </div>
+        <button
+          onClick={() => setSheetOpen(true)}
+          className="p-2 -mr-2"
+          aria-label="More options"
+        >
+          <IconDots size={22} stroke={1.75} />
+        </button>
+      </div>
+
+      <div className="px-[14px] pt-3">
+        <SquadStrip
+          round={round}
+          activeShooterIdx={displaySlot?.shooterIdx ?? null}
+          rosterById={rosterById}
+        />
+      </div>
+
+      {displaySlot ? (
+        <ActiveShooterCard
+          round={round}
+          slot={displaySlot}
+          rosterEntry={displayRosterEntry}
+          inReviewMode={inReviewMode}
+          cursorShotIdx={cursorIdx}
+        />
+      ) : (
+        <div className="px-[18px] pt-10 pb-4 text-center">
+          <div className="text-[24px] font-medium text-[var(--color-text-primary)]">
+            Round complete
+          </div>
+          <div className="text-[13px] text-[var(--color-text-secondary)] mt-2">
+            {round.shots.length} shots scored.
+          </div>
+        </div>
+      )}
+
+      {displaySlot && (
+        <div
+          className="flex-1 flex flex-col px-[14px]"
+          style={{
+            gap: '10px',
+            paddingBottom: '4px',
+            maxHeight: '320px',
+            minHeight: '184px',
+          }}
+        >
+          <div className="grid grid-cols-2 gap-3" style={{ flex: 3 }}>
+            <button
+              onClick={() => handleShoot(false)}
+              disabled={buttonsDisabled}
+              className="flex flex-col items-center justify-center gap-2 disabled:opacity-50 transition-opacity"
+              style={{
+                background: '#FBEAEA',
+                color: 'var(--color-text-danger)',
+                borderRadius: 'var(--border-radius-lg)',
+                boxShadow:
+                  inReviewMode && recordedAtCursor === false
+                    ? 'inset 0 0 0 3px var(--color-text-danger)'
+                    : 'none',
+              }}
+            >
+              <IconX size={34} stroke={2.5} />
+              <span className="text-[22px] font-medium leading-none">Miss</span>
+            </button>
+            <button
+              onClick={() => handleShoot(true)}
+              disabled={buttonsDisabled}
+              className="flex flex-col items-center justify-center gap-2 disabled:opacity-50 transition-opacity"
+              style={{
+                background: 'var(--color-varsity-green-bg)',
+                color: 'var(--color-varsity-green)',
+                borderRadius: 'var(--border-radius-lg)',
+                boxShadow:
+                  inReviewMode && recordedAtCursor === true
+                    ? 'inset 0 0 0 3px var(--color-varsity-green)'
+                    : 'none',
+              }}
+            >
+              <IconCheck size={34} stroke={2.5} />
+              <span className="text-[22px] font-medium leading-none">Hit</span>
+            </button>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3" style={{ flex: 1 }}>
+            <button
+              onClick={handlePrev}
+              disabled={prevDisabled}
+              className="flex items-center justify-center gap-2 disabled:opacity-30 transition-opacity"
+              style={{
+                background: 'white',
+                color: 'var(--color-text-primary)',
+                border: '0.5px solid var(--color-text-tertiary)',
+                borderRadius: 'var(--border-radius-md)',
+              }}
+            >
+              <IconChevronLeft size={18} stroke={2} />
+              <span className="text-[13px] font-medium">Previous shot</span>
+            </button>
+            <button
+              onClick={handleNext}
+              disabled={nextDisabled}
+              className="flex items-center justify-center gap-2 disabled:opacity-30 transition-opacity"
+              style={{
+                background: 'white',
+                color: 'var(--color-text-primary)',
+                border: '0.5px solid var(--color-text-tertiary)',
+                borderRadius: 'var(--border-radius-md)',
+              }}
+            >
+              <span className="text-[13px] font-medium">Next shot</span>
+              <IconChevronLeft
+                size={18}
+                stroke={2}
+                style={{ transform: 'scaleX(-1)' }}
+              />
+            </button>
+          </div>
+        </div>
+      )}
+
+      <FlashOverlay type={flashType} fading={flashFading} />
+
+      <BottomSheet
+        open={sheetOpen}
+        onClose={() => setSheetOpen(false)}
+        items={menuItems}
+      />
+
+      <EditNameModal
+        open={editNameOpen}
+        onClose={() => setEditNameOpen(false)}
+        currentName={liveRosterEntry?.firstName}
+        onSave={handleEditNameSave}
+      />
+
+      <LeaveTheLineModal
+        open={leaveOpen}
+        onClose={() => setLeaveOpen(false)}
+        shooterName={liveRosterEntry?.firstName}
+        hits={liveScore?.hits ?? 0}
+        total={liveScore?.total ?? 0}
+        onConfirm={handleLeaveConfirm}
+      />
+
+      <DeleteRoundModal
+        open={deleteOpen}
+        onClose={() => setDeleteOpen(false)}
+        shooterCount={round.shooters.length}
+        shotCount={round.shots.length}
+        onConfirm={handleDeleteConfirm}
+      />
+    </div>
   );
 }
 
-export default function PdfPreviewScreen({ round, rosterById }) {
-  const sortedShooters = round.shooters
-    .map((shooter, idx) => ({ shooter, idx }))
-    .sort((a, b) => a.shooter.startingPost - b.shooter.startingPost);
+// ---- Top-level app navigation ---------------------------------------------
+//
+// Screens: home | setup | live | end-of-round carousel | history
+//
+// Navigation rules:
+//   • Home is the entry surface. Tapping "New round" → setup.
+//   • Back arrow on setup returns to home.
+//   • Tapping a round on home or history:
+//       completed round → end-of-round carousel
+//       unfinished round → resume live scoring at the correct shot
+//   • Back arrow from any screen returns to home.
+//   • Deleting a round (live, carousel, or history) returns to home.
+//
+// View state is encoded with two pieces:
+//   • `view` — which screen is showing ('home' | 'setup' | 'live' | 'end' | 'history')
+//   • `activeRound` — the round being scored or viewed (null on home/setup/history)
+//
+// A `rosterTick` counter forces the roster lookup to refresh after renames
+// or after a round is added or deleted.
 
-  const scorerEntry = rosterById[round.scorerId];
-  const scorerName = scorerEntry
-    ? `${scorerEntry.firstName} ${scorerEntry.lastName}`
-    : 'Scorer';
+export default function App() {
+  const [view, setView] = useState('home');
+  const [activeRound, setActiveRound] = useState(null);
+  const [rosterTick, setRosterTick] = useState(0);
 
-  const handleDownload = () => {
-    try {
-      generatePdf(round, rosterById);
-    } catch (err) {
-      console.error('PDF generation failed:', err);
-      alert('Could not generate the PDF. Check the browser console for details.');
-    }
-  };
+  const rosterById = useMemo(() => {
+    const roster = getRoster();
+    const map = {};
+    for (const entry of roster) map[entry.id] = entry;
+    return map;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rosterTick, view]);
 
+  function openRound(round) {
+    setActiveRound(round);
+    setView(isRoundComplete(round) ? 'end' : 'live');
+  }
+
+  function goHome() {
+    setActiveRound(null);
+    setView('home');
+    setRosterTick((t) => t + 1);
+  }
+
+  if (view === 'setup') {
+    return (
+      <SetupScreen
+        onBack={goHome}
+        onStart={(round) => {
+          setActiveRound(round);
+          setView('live');
+          setRosterTick((t) => t + 1);
+        }}
+      />
+    );
+  }
+
+  if (view === 'live' && activeRound) {
+    return (
+      <LiveScoringScreen
+        key={activeRound.id}
+        round={activeRound}
+        onBack={goHome}
+        onDelete={goHome}
+        onComplete={(finalRound) => {
+          setActiveRound(finalRound);
+          setView('end');
+        }}
+      />
+    );
+  }
+
+  if (view === 'end' && activeRound) {
+    return (
+      <EndOfRound
+        round={activeRound}
+        rosterById={rosterById}
+        onBack={goHome}
+        onDelete={() => {
+          deleteRound(activeRound.id);
+          goHome();
+        }}
+      />
+    );
+  }
+
+  if (view === 'history') {
+    return (
+      <HistoryScreen
+        rosterById={rosterById}
+        onBack={() => setView('home')}
+        onOpenRound={openRound}
+      />
+    );
+  }
+
+  // Default: home
   return (
-    <div className="flex-1 overflow-y-auto px-4 py-4 md:px-12 flex flex-col items-center">
-      <div className="mb-3 text-center">
-        <div
-          style={{
-            color: 'var(--color-text-primary)',
-            fontSize: 22,
-            fontWeight: 500,
-          }}
-        >
-          Round summary
-        </div>
-        <div
-          style={{
-            color: 'var(--color-text-tertiary)',
-            fontSize: 12,
-            marginTop: 2,
-          }}
-        >
-          Printable scorecard
-        </div>
-      </div>
-
-      <div
-        style={{
-          background: PAPER_BG,
-          border: `0.5px solid ${PAPER_EDGE}`,
-          borderRadius: 2,
-          boxShadow: '0 1px 4px rgba(0,0,0,0.08)',
-          padding: 12,
-          width: 320,
-          maxWidth: '100%',
-          color: TEXT,
-          fontFamily: 'system-ui, sans-serif',
-        }}
-      >
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'flex-start',
-            borderBottom: `1px solid ${TEXT}`,
-            paddingBottom: 6,
-            marginBottom: 6,
-          }}
-        >
-          <div>
-            <div style={{ fontSize: 14, fontFamily: 'Georgia, serif' }}>
-              Trap round scorecard
-            </div>
-            <div style={{ fontSize: 8, color: TERTIARY, marginTop: 2 }}>
-              {formatDate(round.date)}
-            </div>
-            <div style={{ fontSize: 8, color: TERTIARY }}>
-              Scored by {scorerName}
-            </div>
-          </div>
-          <div style={{ textAlign: 'right', fontSize: 8, color: TERTIARY }}>
-            <div>
-              {round.shooters.length} shooter
-              {round.shooters.length === 1 ? '' : 's'} · 25 shots each
-            </div>
-            <div>Listed by starting post</div>
-          </div>
-        </div>
-
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            fontSize: 7,
-            color: TERTIARY,
-            marginBottom: 4,
-          }}
-        >
-          <div style={{ width: 50 }} />
-          <div style={{ flex: 1 }} />
-          <div style={{ width: 24, textAlign: 'right' }}>Total</div>
-          <div style={{ width: 24, textAlign: 'right' }}>Streak</div>
-        </div>
-
-        {sortedShooters.map(({ shooter, idx }) => {
-          const row = buildShooterRow(round, idx);
-          const firstName = rosterById[shooter.rosterId]?.firstName ?? '?';
-          return (
-            <div key={idx} style={{ marginBottom: 6 }}>
-              <div style={{ display: 'flex', alignItems: 'flex-end' }}>
-                <div style={{ width: 50 }} />
-                <div style={{ display: 'flex', gap: 4 }}>
-                  {row.path.map((n, i) => (
-                    <div
-                      key={i}
-                      style={{
-                        width: 40,
-                        textAlign: 'center',
-                        fontSize: 7,
-                        color: TERTIARY,
-                        lineHeight: 1,
-                      }}
-                    >
-                      {n}
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  marginTop: 1,
-                }}
-              >
-                <div style={{ width: 50, fontSize: 9, fontWeight: 500 }}>
-                  {firstName}
-                </div>
-                <div style={{ display: 'flex', gap: 4 }}>
-                  {[0, 1, 2, 3, 4].map((g) => (
-                    <CellGroup
-                      key={g}
-                      cells={row.cells.slice(g * 5, g * 5 + 5)}
-                    />
-                  ))}
-                </div>
-                <div style={{ flex: 1 }} />
-                <div style={{ width: 24, textAlign: 'right' }}>
-                  <CircledNumber value={row.hits} isLeft={row.isLeft} />
-                </div>
-                <div
-                  style={{
-                    width: 24,
-                    textAlign: 'right',
-                    fontSize: 9,
-                    fontWeight: 500,
-                  }}
-                >
-                  {row.longest}
-                </div>
-              </div>
-            </div>
-          );
-        })}
-
-        <div
-          style={{
-            borderTop: `0.5px solid ${TEXT}`,
-            paddingTop: 4,
-            marginTop: 4,
-            fontSize: 7,
-            color: TERTIARY,
-            textAlign: 'center',
-          }}
-        >
-          ✓ hit · ✗ miss · ▪ unshot · single-circled total = 19+ ·
-          double-circled total = 25/25
-        </div>
-
-        <div
-          style={{
-            fontSize: 7,
-            color: TERTIARY,
-            fontStyle: 'italic',
-            textAlign: 'center',
-            marginTop: 6,
-          }}
-        >
-          Generated by SquadScore · squadscore.app
-        </div>
-      </div>
-
-      <button
-        onClick={handleDownload}
-        style={{
-          marginTop: 16,
-          background: '#D85A30',
-          color: 'white',
-          fontSize: 16,
-          fontWeight: 500,
-          padding: '14px 32px',
-          borderRadius: 12,
-          border: 'none',
-          cursor: 'pointer',
-        }}
-      >
-        Download PDF
-      </button>
-    </div>
+    <HomeScreen
+      rosterById={rosterById}
+      onNewRound={() => setView('setup')}
+      onOpenRound={openRound}
+      onSeeAllRounds={() => setView('history')}
+    />
   );
 }

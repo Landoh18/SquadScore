@@ -18,7 +18,13 @@ import { getRound } from '../lib/roundStore';
 //   'moreChanges'     — the "More changes for [Name]?" modal is open (the
 //                       station editor has committed and stepped back to the
 //                       shooter view)
-export default function EndOfRound({ round: initialRound, rosterById, onBack, onDelete }) {
+export default function EndOfRound({
+  round: initialRound,
+  rosterById,
+  onBack,
+  onDelete,
+  onRunItBack,
+}) {
   const SCREEN_COUNT = 2 + initialRound.shooters.length;
   const [screenIdx, setScreenIdx] = useState(0);
   const [sheetOpen, setSheetOpen] = useState(false);
@@ -188,7 +194,13 @@ export default function EndOfRound({ round: initialRound, rosterById, onBack, on
       );
     }
     if (screenIdx === SCREEN_COUNT - 1) {
-      return <PdfPreviewScreen round={round} rosterById={rosterById} />;
+      return (
+        <PdfPreviewScreen
+          round={round}
+          rosterById={rosterById}
+          onRunItBack={onRunItBack}
+        />
+      );
     }
     const idx = sortedShooters[screenIdx - 1].idx;
     return (

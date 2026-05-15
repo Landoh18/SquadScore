@@ -28,6 +28,7 @@ import {
   shooterScore,
 } from './lib/scoring';
 import {
+  startRound,
   appendShot,
   editShot,
   renameShooter,
@@ -381,11 +382,16 @@ function LiveScoringScreen({ round: initialRound, onBack, onDelete, onComplete }
 //
 // Navigation rules:
 //   • Home is the entry surface. Tapping "New round" → setup.
+//   • Back arrow on setup returns to home.
 //   • Tapping a round on home or history:
 //       completed round → end-of-round carousel
 //       unfinished round → resume live scoring at the correct shot
 //   • Back arrow from any screen returns to home.
 //   • Deleting a round (live, carousel, or history) returns to home.
+//   • "Run it back" from the carousel's PDF page starts a new round with the
+//     same scorer + same shooters in the same starting-post order, and jumps
+//     straight to live scoring. leftAfterShot markers from the prior round
+//     are not carried over.
 //
 // View state is encoded with two pieces:
 //   • `view` — which screen is showing ('home' | 'setup' | 'live' | 'end' | 'history')
@@ -418,9 +424,24 @@ export default function App() {
     setRosterTick((t) => t + 1);
   }
 
+  function handleRunItBack(prevRound) {
+    const freshShooters = prevRound.shooters.map((s) => ({
+      rosterId: s.rosterId,
+      startingPost: s.startingPost,
+    }));
+    const newRound = startRound({
+      scorerId: prevRound.scorerId,
+      shooters: freshShooters,
+    });
+    setActiveRound(newRound);
+    setView('live');
+    setRosterTick((t) => t + 1);
+  }
+
   if (view === 'setup') {
     return (
       <SetupScreen
+        onBack={goHome}
         onStart={(round) => {
           setActiveRound(round);
           setView('live');
@@ -455,6 +476,7 @@ export default function App() {
           deleteRound(activeRound.id);
           goHome();
         }}
+        onRunItBack={handleRunItBack}
       />
     );
   }

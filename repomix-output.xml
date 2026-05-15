@@ -1,0 +1,5581 @@
+This file is a merged representation of a subset of the codebase, containing files not matching ignore patterns, combined into a single document by Repomix.
+
+<file_summary>
+This section contains a summary of this file.
+
+<purpose>
+This file contains a packed representation of a subset of the repository's contents that is considered the most important context.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+5. Multiple file entries, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Files matching these patterns are excluded: src/lib/logo.js, public/favicon.svg, src/assets/vite.svg, repomix-output.xml
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Files are sorted by Git change count (files with more changes are at the bottom)
+</notes>
+
+</file_summary>
+
+<directory_structure>
+.gitignore
+eslint.config.js
+index.html
+package.json
+postcss.config.js
+public/icons.svg
+README.md
+repomix.config.json
+src/App.css
+src/App.jsx
+src/assets/hero.png
+src/assets/react.svg
+src/components/ActiveShooterCard.jsx
+src/components/BottomSheet.jsx
+src/components/DeleteRoundModal.jsx
+src/components/EditNameModal.jsx
+src/components/EndOfRound.jsx
+src/components/FlashOverlay.jsx
+src/components/HistoryScreen.jsx
+src/components/HomeScreen.jsx
+src/components/LeaveTheLineModal.jsx
+src/components/Modal.jsx
+src/components/MoreChangesModal.jsx
+src/components/OverviewScreen.jsx
+src/components/PdfPreviewScreen.jsx
+src/components/PerShooterScreen.jsx
+src/components/PostPicker.jsx
+src/components/ReviewFooter.jsx
+src/components/RosterPicker.jsx
+src/components/SetupScreen.jsx
+src/components/SquadStrip.jsx
+src/components/StationEditor.jsx
+src/index.css
+src/lib/pdfGenerator.js
+src/lib/roster.js
+src/lib/rosterIds.js
+src/lib/roundStore.js
+src/lib/scoring.js
+src/lib/seedRoster.js
+src/lib/storage.js
+src/main.jsx
+tailwind.config.js
+vite.config.js
+</directory_structure>
+
+<files>
+This section contains the contents of the repository's files.
+
+<file path="repomix.config.json">
+{ "ignore": { "customPatterns": ["src/lib/logo.js","public/favicon.svg","src/assets/vite.svg","repomix-output.xml"] } }
+</file>
+
+<file path=".gitignore">
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+</file>
+
+<file path="eslint.config.js">
+import js from '@eslint/js'
+import globals from 'globals'
+import reactHooks from 'eslint-plugin-react-hooks'
+import reactRefresh from 'eslint-plugin-react-refresh'
+import { defineConfig, globalIgnores } from 'eslint/config'
+
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{js,jsx}'],
+    extends: [
+      js.configs.recommended,
+      reactHooks.configs.flat.recommended,
+      reactRefresh.configs.vite,
+    ],
+    languageOptions: {
+      globals: globals.browser,
+      parserOptions: { ecmaFeatures: { jsx: true } },
+    },
+  },
+])
+</file>
+
+<file path="index.html">
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>squadscore</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
+</file>
+
+<file path="postcss.config.js">
+export default {
+  plugins: {
+    tailwindcss: {},
+    autoprefixer: {},
+  },
+}
+</file>
+
+<file path="public/icons.svg">
+<svg xmlns="http://www.w3.org/2000/svg">
+  <symbol id="bluesky-icon" viewBox="0 0 16 17">
+    <g clip-path="url(#bluesky-clip)"><path fill="#08060d" d="M7.75 7.735c-.693-1.348-2.58-3.86-4.334-5.097-1.68-1.187-2.32-.981-2.74-.79C.188 2.065.1 2.812.1 3.251s.241 3.602.398 4.13c.52 1.744 2.367 2.333 4.07 2.145-2.495.37-4.71 1.278-1.805 4.512 3.196 3.309 4.38-.71 4.987-2.746.608 2.036 1.307 5.91 4.93 2.746 2.72-2.746.747-4.143-1.747-4.512 1.702.189 3.55-.4 4.07-2.145.156-.528.397-3.691.397-4.13s-.088-1.186-.575-1.406c-.42-.19-1.06-.395-2.741.79-1.755 1.24-3.64 3.752-4.334 5.099"/></g>
+    <defs><clipPath id="bluesky-clip"><path fill="#fff" d="M.1.85h15.3v15.3H.1z"/></clipPath></defs>
+  </symbol>
+  <symbol id="discord-icon" viewBox="0 0 20 19">
+    <path fill="#08060d" d="M16.224 3.768a14.5 14.5 0 0 0-3.67-1.153c-.158.286-.343.67-.47.976a13.5 13.5 0 0 0-4.067 0c-.128-.306-.317-.69-.476-.976A14.4 14.4 0 0 0 3.868 3.77C1.546 7.28.916 10.703 1.231 14.077a14.7 14.7 0 0 0 4.5 2.306q.545-.748.965-1.587a9.5 9.5 0 0 1-1.518-.74q.191-.14.372-.293c2.927 1.369 6.107 1.369 8.999 0q.183.152.372.294-.723.437-1.52.74.418.838.963 1.588a14.6 14.6 0 0 0 4.504-2.308c.37-3.911-.63-7.302-2.644-10.309m-9.13 8.234c-.878 0-1.599-.82-1.599-1.82 0-.998.705-1.82 1.6-1.82.894 0 1.614.82 1.599 1.82.001 1-.705 1.82-1.6 1.82m5.91 0c-.878 0-1.599-.82-1.599-1.82 0-.998.705-1.82 1.6-1.82.893 0 1.614.82 1.599 1.82 0 1-.706 1.82-1.6 1.82"/>
+  </symbol>
+  <symbol id="documentation-icon" viewBox="0 0 21 20">
+    <path fill="none" stroke="#aa3bff" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.35" d="m15.5 13.333 1.533 1.322c.645.555.967.833.967 1.178s-.322.623-.967 1.179L15.5 18.333m-3.333-5-1.534 1.322c-.644.555-.966.833-.966 1.178s.322.623.966 1.179l1.534 1.321"/>
+    <path fill="none" stroke="#aa3bff" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.35" d="M17.167 10.836v-4.32c0-1.41 0-2.117-.224-2.68-.359-.906-1.118-1.621-2.08-1.96-.599-.21-1.349-.21-2.848-.21-2.623 0-3.935 0-4.983.369-1.684.591-3.013 1.842-3.641 3.428C3 6.449 3 7.684 3 10.154v2.122c0 2.558 0 3.838.706 4.726q.306.383.713.671c.76.536 1.79.64 3.581.66"/>
+    <path fill="none" stroke="#aa3bff" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.35" d="M3 10a2.78 2.78 0 0 1 2.778-2.778c.555 0 1.209.097 1.748-.047.48-.129.854-.503.982-.982.145-.54.048-1.194.048-1.749a2.78 2.78 0 0 1 2.777-2.777"/>
+  </symbol>
+  <symbol id="github-icon" viewBox="0 0 19 19">
+    <path fill="#08060d" fill-rule="evenodd" d="M9.356 1.85C5.05 1.85 1.57 5.356 1.57 9.694a7.84 7.84 0 0 0 5.324 7.44c.387.079.528-.168.528-.376 0-.182-.013-.805-.013-1.454-2.165.467-2.616-.935-2.616-.935-.349-.91-.864-1.143-.864-1.143-.71-.48.051-.48.051-.48.787.051 1.2.805 1.2.805.695 1.194 1.817.857 2.268.649.064-.507.27-.857.49-1.052-1.728-.182-3.545-.857-3.545-3.87 0-.857.31-1.558.8-2.104-.078-.195-.349-1 .077-2.078 0 0 .657-.208 2.14.805a7.5 7.5 0 0 1 1.946-.26c.657 0 1.328.092 1.946.26 1.483-1.013 2.14-.805 2.14-.805.426 1.078.155 1.883.078 2.078.502.546.799 1.247.799 2.104 0 3.013-1.818 3.675-3.558 3.87.284.247.528.714.528 1.454 0 1.052-.012 1.896-.012 2.156 0 .208.142.455.528.377a7.84 7.84 0 0 0 5.324-7.441c.013-4.338-3.48-7.844-7.773-7.844" clip-rule="evenodd"/>
+  </symbol>
+  <symbol id="social-icon" viewBox="0 0 20 20">
+    <path fill="none" stroke="#aa3bff" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.35" d="M12.5 6.667a4.167 4.167 0 1 0-8.334 0 4.167 4.167 0 0 0 8.334 0"/>
+    <path fill="none" stroke="#aa3bff" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.35" d="M2.5 16.667a5.833 5.833 0 0 1 8.75-5.053m3.837.474.513 1.035c.07.144.257.282.414.309l.93.155c.596.1.736.536.307.965l-.723.73a.64.64 0 0 0-.152.531l.207.903c.164.715-.213.991-.84.618l-.872-.52a.63.63 0 0 0-.577 0l-.872.52c-.624.373-1.003.094-.84-.618l.207-.903a.64.64 0 0 0-.152-.532l-.723-.729c-.426-.43-.289-.864.306-.964l.93-.156a.64.64 0 0 0 .412-.31l.513-1.034c.28-.562.735-.562 1.012 0"/>
+  </symbol>
+  <symbol id="x-icon" viewBox="0 0 19 19">
+    <path fill="#08060d" fill-rule="evenodd" d="M1.893 1.98c.052.072 1.245 1.769 2.653 3.77l2.892 4.114c.183.261.333.48.333.486s-.068.089-.152.183l-.522.593-.765.867-3.597 4.087c-.375.426-.734.834-.798.905a1 1 0 0 0-.118.148c0 .01.236.017.664.017h.663l.729-.83c.4-.457.796-.906.879-.999a692 692 0 0 0 1.794-2.038c.034-.037.301-.34.594-.675l.551-.624.345-.392a7 7 0 0 1 .34-.374c.006 0 .93 1.306 2.052 2.903l2.084 2.965.045.063h2.275c1.87 0 2.273-.003 2.266-.021-.008-.02-1.098-1.572-3.894-5.547-2.013-2.862-2.28-3.246-2.273-3.266.008-.019.282-.332 2.085-2.38l2-2.274 1.567-1.782c.022-.028-.016-.03-.65-.03h-.674l-.3.342a871 871 0 0 1-1.782 2.025c-.067.075-.405.458-.75.852a100 100 0 0 1-.803.91c-.148.172-.299.344-.99 1.127-.304.343-.32.358-.345.327-.015-.019-.904-1.282-1.976-2.808L6.365 1.85H1.8zm1.782.91 8.078 11.294c.772 1.08 1.413 1.973 1.425 1.984.016.017.241.02 1.05.017l1.03-.004-2.694-3.766L7.796 5.75 5.722 2.852l-1.039-.004-1.039-.004z" clip-rule="evenodd"/>
+  </symbol>
+</svg>
+</file>
+
+<file path="src/App.css">
+.counter {
+  font-size: 16px;
+  padding: 5px 10px;
+  border-radius: 5px;
+  color: var(--accent);
+  background: var(--accent-bg);
+  border: 2px solid transparent;
+  transition: border-color 0.3s;
+  margin-bottom: 24px;
+
+  &:hover {
+    border-color: var(--accent-border);
+  }
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+}
+
+.hero {
+  position: relative;
+
+  .base,
+  .framework,
+  .vite {
+    inset-inline: 0;
+    margin: 0 auto;
+  }
+
+  .base {
+    width: 170px;
+    position: relative;
+    z-index: 0;
+  }
+
+  .framework,
+  .vite {
+    position: absolute;
+  }
+
+  .framework {
+    z-index: 1;
+    top: 34px;
+    height: 28px;
+    transform: perspective(2000px) rotateZ(300deg) rotateX(44deg) rotateY(39deg)
+      scale(1.4);
+  }
+
+  .vite {
+    z-index: 0;
+    top: 107px;
+    height: 26px;
+    width: auto;
+    transform: perspective(2000px) rotateZ(300deg) rotateX(40deg) rotateY(39deg)
+      scale(0.8);
+  }
+}
+
+#center {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  place-content: center;
+  place-items: center;
+  flex-grow: 1;
+
+  @media (max-width: 1024px) {
+    padding: 32px 20px 24px;
+    gap: 18px;
+  }
+}
+
+#next-steps {
+  display: flex;
+  border-top: 1px solid var(--border);
+  text-align: left;
+
+  & > div {
+    flex: 1 1 0;
+    padding: 32px;
+    @media (max-width: 1024px) {
+      padding: 24px 20px;
+    }
+  }
+
+  .icon {
+    margin-bottom: 16px;
+    width: 22px;
+    height: 22px;
+  }
+
+  @media (max-width: 1024px) {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+#docs {
+  border-right: 1px solid var(--border);
+
+  @media (max-width: 1024px) {
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+}
+
+#next-steps ul {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  gap: 8px;
+  margin: 32px 0 0;
+
+  .logo {
+    height: 18px;
+  }
+
+  a {
+    color: var(--text-h);
+    font-size: 16px;
+    border-radius: 6px;
+    background: var(--social-bg);
+    display: flex;
+    padding: 6px 12px;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    transition: box-shadow 0.3s;
+
+    &:hover {
+      box-shadow: var(--shadow);
+    }
+    .button-icon {
+      height: 18px;
+      width: 18px;
+    }
+  }
+
+  @media (max-width: 1024px) {
+    margin-top: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+
+    li {
+      flex: 1 1 calc(50% - 8px);
+    }
+
+    a {
+      width: 100%;
+      justify-content: center;
+      box-sizing: border-box;
+    }
+  }
+}
+
+#spacer {
+  height: 88px;
+  border-top: 1px solid var(--border);
+  @media (max-width: 1024px) {
+    height: 48px;
+  }
+}
+
+.ticks {
+  position: relative;
+  width: 100%;
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    top: -4.5px;
+    border: 5px solid transparent;
+  }
+
+  &::before {
+    left: 0;
+    border-left-color: var(--border);
+  }
+  &::after {
+    right: 0;
+    border-right-color: var(--border);
+  }
+}
+</file>
+
+<file path="src/assets/react.svg">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img" class="iconify iconify--logos" width="35.93" height="32" preserveAspectRatio="xMidYMid meet" viewBox="0 0 256 228"><path fill="#00D8FF" d="M210.483 73.824a171.49 171.49 0 0 0-8.24-2.597c.465-1.9.893-3.777 1.273-5.621c6.238-30.281 2.16-54.676-11.769-62.708c-13.355-7.7-35.196.329-57.254 19.526a171.23 171.23 0 0 0-6.375 5.848a155.866 155.866 0 0 0-4.241-3.917C100.759 3.829 77.587-4.822 63.673 3.233C50.33 10.957 46.379 33.89 51.995 62.588a170.974 170.974 0 0 0 1.892 8.48c-3.28.932-6.445 1.924-9.474 2.98C17.309 83.498 0 98.307 0 113.668c0 15.865 18.582 31.778 46.812 41.427a145.52 145.52 0 0 0 6.921 2.165a167.467 167.467 0 0 0-2.01 9.138c-5.354 28.2-1.173 50.591 12.134 58.266c13.744 7.926 36.812-.22 59.273-19.855a145.567 145.567 0 0 0 5.342-4.923a168.064 168.064 0 0 0 6.92 6.314c21.758 18.722 43.246 26.282 56.54 18.586c13.731-7.949 18.194-32.003 12.4-61.268a145.016 145.016 0 0 0-1.535-6.842c1.62-.48 3.21-.974 4.76-1.488c29.348-9.723 48.443-25.443 48.443-41.52c0-15.417-17.868-30.326-45.517-39.844Zm-6.365 70.984c-1.4.463-2.836.91-4.3 1.345c-3.24-10.257-7.612-21.163-12.963-32.432c5.106-11 9.31-21.767 12.459-31.957c2.619.758 5.16 1.557 7.61 2.4c23.69 8.156 38.14 20.213 38.14 29.504c0 9.896-15.606 22.743-40.946 31.14Zm-10.514 20.834c2.562 12.94 2.927 24.64 1.23 33.787c-1.524 8.219-4.59 13.698-8.382 15.893c-8.067 4.67-25.32-1.4-43.927-17.412a156.726 156.726 0 0 1-6.437-5.87c7.214-7.889 14.423-17.06 21.459-27.246c12.376-1.098 24.068-2.894 34.671-5.345a134.17 134.17 0 0 1 1.386 6.193ZM87.276 214.515c-7.882 2.783-14.16 2.863-17.955.675c-8.075-4.657-11.432-22.636-6.853-46.752a156.923 156.923 0 0 1 1.869-8.499c10.486 2.32 22.093 3.988 34.498 4.994c7.084 9.967 14.501 19.128 21.976 27.15a134.668 134.668 0 0 1-4.877 4.492c-9.933 8.682-19.886 14.842-28.658 17.94ZM50.35 144.747c-12.483-4.267-22.792-9.812-29.858-15.863c-6.35-5.437-9.555-10.836-9.555-15.216c0-9.322 13.897-21.212 37.076-29.293c2.813-.98 5.757-1.905 8.812-2.773c3.204 10.42 7.406 21.315 12.477 32.332c-5.137 11.18-9.399 22.249-12.634 32.792a134.718 134.718 0 0 1-6.318-1.979Zm12.378-84.26c-4.811-24.587-1.616-43.134 6.425-47.789c8.564-4.958 27.502 2.111 47.463 19.835a144.318 144.318 0 0 1 3.841 3.545c-7.438 7.987-14.787 17.08-21.808 26.988c-12.04 1.116-23.565 2.908-34.161 5.309a160.342 160.342 0 0 1-1.76-7.887Zm110.427 27.268a347.8 347.8 0 0 0-7.785-12.803c8.168 1.033 15.994 2.404 23.343 4.08c-2.206 7.072-4.956 14.465-8.193 22.045a381.151 381.151 0 0 0-7.365-13.322Zm-45.032-43.861c5.044 5.465 10.096 11.566 15.065 18.186a322.04 322.04 0 0 0-30.257-.006c4.974-6.559 10.069-12.652 15.192-18.18ZM82.802 87.83a323.167 323.167 0 0 0-7.227 13.238c-3.184-7.553-5.909-14.98-8.134-22.152c7.304-1.634 15.093-2.97 23.209-3.984a321.524 321.524 0 0 0-7.848 12.897Zm8.081 65.352c-8.385-.936-16.291-2.203-23.593-3.793c2.26-7.3 5.045-14.885 8.298-22.6a321.187 321.187 0 0 0 7.257 13.246c2.594 4.48 5.28 8.868 8.038 13.147Zm37.542 31.03c-5.184-5.592-10.354-11.779-15.403-18.433c4.902.192 9.899.29 14.978.29c5.218 0 10.376-.117 15.453-.343c-4.985 6.774-10.018 12.97-15.028 18.486Zm52.198-57.817c3.422 7.8 6.306 15.345 8.596 22.52c-7.422 1.694-15.436 3.058-23.88 4.071a382.417 382.417 0 0 0 7.859-13.026a347.403 347.403 0 0 0 7.425-13.565Zm-16.898 8.101a358.557 358.557 0 0 1-12.281 19.815a329.4 329.4 0 0 1-23.444.823c-7.967 0-15.716-.248-23.178-.732a310.202 310.202 0 0 1-12.513-19.846h.001a307.41 307.41 0 0 1-10.923-20.627a310.278 310.278 0 0 1 10.89-20.637l-.001.001a307.318 307.318 0 0 1 12.413-19.761c7.613-.576 15.42-.876 23.31-.876H128c7.926 0 15.743.303 23.354.883a329.357 329.357 0 0 1 12.335 19.695a358.489 358.489 0 0 1 11.036 20.54a329.472 329.472 0 0 1-11 20.722Zm22.56-122.124c8.572 4.944 11.906 24.881 6.52 51.026c-.344 1.668-.73 3.367-1.15 5.09c-10.622-2.452-22.155-4.275-34.23-5.408c-7.034-10.017-14.323-19.124-21.64-27.008a160.789 160.789 0 0 1 5.888-5.4c18.9-16.447 36.564-22.941 44.612-18.3ZM128 90.808c12.625 0 22.86 10.235 22.86 22.86s-10.235 22.86-22.86 22.86s-22.86-10.235-22.86-22.86s10.235-22.86 22.86-22.86Z"></path></svg>
+</file>
+
+<file path="src/components/BottomSheet.jsx">
+// BottomSheet.jsx
+// Generic bottom sheet wrapper. Slides up from the bottom of the screen
+// with a backdrop. Used for the live-scoring 3-dot menu in v1; reusable.
+//
+// Props:
+//   open      — boolean, controls visibility
+//   onClose   — called when backdrop tapped or Cancel pressed
+//   items     — array of { label, icon, onClick, danger? }
+//               icon is a Tabler icon component (e.g. IconPencil)
+
+import { useEffect } from 'react';
+
+export default function BottomSheet({ open, onClose, items }) {
+  // Lock body scroll while the sheet is open
+  useEffect(() => {
+    if (open) {
+      const prev = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      return () => { document.body.style.overflow = prev; };
+    }
+  }, [open]);
+
+  if (!open) return null;
+
+  return (
+    <>
+      {/* Backdrop */}
+      <div
+        onClick={onClose}
+        style={{
+          position: 'fixed',
+          inset: 0,
+          background: 'rgba(0,0,0,0.5)',
+          zIndex: 100,
+          animation: 'sheetFade 220ms ease-out',
+        }}
+      />
+
+      {/* Sheet */}
+      <div
+        style={{
+          position: 'fixed',
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'var(--color-background-primary)',
+          borderTopLeftRadius: 'var(--border-radius-lg)',
+          borderTopRightRadius: 'var(--border-radius-lg)',
+          zIndex: 101,
+          paddingBottom: 'max(8px, env(safe-area-inset-bottom))',
+          animation: 'sheetSlide 220ms ease-out',
+        }}
+      >
+        {/* Handle */}
+        <div style={{ display: 'flex', justifyContent: 'center', padding: '10px 0 6px' }}>
+          <div
+            style={{
+              width: 36,
+              height: 4,
+              borderRadius: 2,
+              background: 'var(--color-text-tertiary)',
+              opacity: 0.4,
+            }}
+          />
+        </div>
+
+        {/* Items */}
+        <div>
+          {items.map((item, idx) => {
+            const Icon = item.icon;
+            return (
+              <button
+                key={idx}
+                onClick={() => { item.onClick(); }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 14,
+                  width: '100%',
+                  padding: '14px 18px',
+                  background: 'transparent',
+                  border: 'none',
+                  borderTop: idx === 0 ? 'none' : '0.5px solid var(--color-background-tertiary)',
+                  fontSize: 15,
+                  fontWeight: 500,
+                  textAlign: 'left',
+                  color: item.danger ? 'var(--color-text-danger)' : 'var(--color-text-primary)',
+                  cursor: 'pointer',
+                  fontFamily: 'inherit',
+                }}
+              >
+                {Icon && <Icon size={20} stroke={1.75} />}
+                <span>{item.label}</span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Cancel */}
+        <div style={{ padding: '8px 12px 12px' }}>
+          <button
+            onClick={onClose}
+            style={{
+              width: '100%',
+              padding: '14px 18px',
+              background: 'var(--color-background-secondary)',
+              border: 'none',
+              borderRadius: 'var(--border-radius-md)',
+              fontSize: 15,
+              fontWeight: 500,
+              color: 'var(--color-text-secondary)',
+              cursor: 'pointer',
+              fontFamily: 'inherit',
+            }}
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+
+      <style>{`
+        @keyframes sheetSlide {
+          from { transform: translateY(100%); }
+          to   { transform: translateY(0); }
+        }
+        @keyframes sheetFade {
+          from { opacity: 0; }
+          to   { opacity: 1; }
+        }
+      `}</style>
+    </>
+  );
+}
+</file>
+
+<file path="src/components/DeleteRoundModal.jsx">
+// DeleteRoundModal.jsx
+// Permanently deletes the current round. Concrete numbers in the body
+// (N shooters, M shots) make the consequence land — at round start "0 shots
+// scored" reads as low-stakes; mid-round, the real shot count makes it real.
+
+import Modal from './Modal';
+
+export default function DeleteRoundModal({
+  open,
+  onClose,
+  shooterCount,
+  shotCount,
+  onConfirm,
+}) {
+  const shooterWord = shooterCount === 1 ? 'shooter' : 'shooters';
+  const shotWord = shotCount === 1 ? 'shot' : 'shots';
+
+  return (
+    <Modal
+      open={open}
+      onClose={onClose}
+      title="Delete this round?"
+      actions={[
+        { label: 'Cancel', onClick: onClose, variant: 'cancel' },
+        { label: 'Delete', onClick: onConfirm, variant: 'destructive' },
+      ]}
+    >
+      All {shooterCount} {shooterWord} and {shotCount} {shotWord} scored so far
+      will be permanently deleted. This can't be undone.
+    </Modal>
+  );
+}
+</file>
+
+<file path="src/components/EditNameModal.jsx">
+// EditNameModal.jsx
+// Renames the live active shooter. Mutates the roster entry's firstName,
+// which propagates to every past and future round (per the identity model
+// in handoff #2). No flash — this isn't a scoring action.
+
+import { useState, useEffect } from 'react';
+import Modal from './Modal';
+
+export default function EditNameModal({ open, onClose, currentName, onSave }) {
+  const [value, setValue] = useState(currentName || '');
+
+  // Reset the input each time the modal opens with a fresh name
+  useEffect(() => {
+    if (open) setValue(currentName || '');
+  }, [open, currentName]);
+
+  function handleSave() {
+    const trimmed = value.trim();
+    if (!trimmed) return;
+    onSave(trimmed);
+  }
+
+  const canSave = value.trim().length > 0 && value.trim() !== currentName;
+
+  return (
+    <Modal
+      open={open}
+      onClose={onClose}
+      title={`Edit ${currentName}'s name`}
+      actions={[
+        { label: 'Cancel', onClick: onClose, variant: 'cancel' },
+        { label: 'Save', onClick: handleSave, variant: 'primary', disabled: !canSave },
+      ]}
+    >
+      <input
+        type="text"
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        autoFocus
+        style={{
+          width: '100%',
+          padding: '10px 12px',
+          fontSize: 15,
+          border: '0.5px solid var(--color-text-tertiary)',
+          borderRadius: 8,
+          fontFamily: 'inherit',
+          color: 'var(--color-text-primary)',
+          background: 'white',
+          outline: 'none',
+          boxSizing: 'border-box',
+        }}
+      />
+    </Modal>
+  );
+}
+</file>
+
+<file path="src/components/FlashOverlay.jsx">
+// src/components/FlashOverlay.jsx
+import { IconCheck, IconX } from '@tabler/icons-react';
+
+export default function FlashOverlay({ type, fading }) {
+  if (!type) return null;
+  const isHit = type === 'hit';
+  const Icon = isHit ? IconCheck : IconX;
+  const label = isHit ? 'Hit' : 'Miss';
+  const bg = isHit ? 'var(--color-flash-hit)' : 'var(--color-flash-miss)';
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex flex-col items-center justify-center"
+      style={{
+        background: bg,
+        color: 'white',
+        opacity: fading ? 0 : 1,
+        transition: 'opacity 130ms ease-out',
+        pointerEvents: 'none',
+      }}
+    >
+      <Icon size={110} stroke={2.5} />
+      <div className="mt-3 text-[44px] font-medium leading-none">{label}</div>
+    </div>
+  );
+}
+</file>
+
+<file path="src/components/HomeScreen.jsx">
+// src/components/HomeScreen.jsx
+//
+// The app's entry surface. Brand row, big "New round" CTA, recent rounds list,
+// and a "See all rounds →" link to the full history view.
+//
+// Ordering rule: unfinished rounds first (newest among unfinished), then
+// completed rounds (newest among completed). Position itself signals state.
+//
+// Empty state: when there's no round history, the recent-rounds section and
+// the "See all rounds →" link hide entirely. Just the brand row + hero CTA.
+// Per handoff #1's settled design.
+
+import { useMemo } from 'react';
+import { IconPlus, IconChevronRight, IconStar } from '@tabler/icons-react';
+import { getRounds } from '../lib/roundStore';
+import {
+  isRoundComplete,
+  shootersByStartingPost,
+  shooterScore,
+} from '../lib/scoring';
+
+const MAX_RECENT = 5;
+
+// Per handoff #1's date format rule:
+//   "Today"               for today's date
+//   "Tue, May 5, 2026"    for everything else
+function formatRoundDate(iso) {
+  const d = new Date(iso);
+  const now = new Date();
+  const sameDay =
+    d.getFullYear() === now.getFullYear() &&
+    d.getMonth() === now.getMonth() &&
+    d.getDate() === now.getDate();
+  if (sameDay) return 'Today';
+  return d.toLocaleDateString('en-US', {
+    weekday: 'short',
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  });
+}
+
+function formatTime(iso) {
+  return new Date(iso).toLocaleTimeString('en-US', {
+    hour: 'numeric',
+    minute: '2-digit',
+  });
+}
+
+function sortForDisplay(rounds) {
+  const sorted = [...rounds];
+  sorted.sort((a, b) => {
+    const aComplete = isRoundComplete(a);
+    const bComplete = isRoundComplete(b);
+    if (aComplete !== bComplete) return aComplete ? 1 : -1;
+    return b.date.localeCompare(a.date);
+  });
+  return sorted;
+}
+
+export default function HomeScreen({ rosterById, onNewRound, onOpenRound, onSeeAllRounds }) {
+  const recent = useMemo(() => {
+    const all = sortForDisplay(getRounds());
+    return all.slice(0, MAX_RECENT);
+  }, []);
+
+  const hasHistory = recent.length > 0;
+
+  return (
+    <div
+      className="min-h-screen flex flex-col"
+      style={{
+        background: 'var(--color-background-primary)',
+        paddingTop: 'max(12px, env(safe-area-inset-top))',
+        paddingBottom: 'max(12px, env(safe-area-inset-bottom))',
+        paddingLeft: 18,
+        paddingRight: 18,
+      }}
+    >
+      {/* Brand row */}
+      <div className="text-center mt-2 mb-5">
+        <div
+          style={{
+            fontFamily: 'var(--font-serif)',
+            fontSize: 22,
+            fontWeight: 400,
+            color: 'var(--color-text-primary)',
+          }}
+        >
+          SquadScore
+        </div>
+      </div>
+
+      {/* Hero CTA */}
+      <button
+        onClick={onNewRound}
+        className="w-full flex items-center justify-center gap-2"
+        style={{
+          height: 68,
+          background: 'var(--color-clay-orange)',
+          color: 'white',
+          borderRadius: 'var(--border-radius-lg)',
+          fontSize: 17,
+          fontWeight: 500,
+          border: 'none',
+        }}
+      >
+        <IconPlus size={22} stroke={2.25} />
+        <span>New round</span>
+      </button>
+
+      {/* Recent rounds (hidden in empty state) */}
+      {hasHistory && (
+        <>
+          <div
+            className="mt-7 mb-2"
+            style={{
+              fontSize: 13,
+              fontWeight: 500,
+              color: 'var(--color-text-secondary)',
+            }}
+          >
+            Recent rounds
+          </div>
+
+          <div className="flex flex-col gap-2">
+            {recent.map((round) => (
+              <RoundCard
+                key={round.id}
+                round={round}
+                rosterById={rosterById}
+                onClick={() => onOpenRound(round)}
+              />
+            ))}
+          </div>
+
+          <button
+            onClick={onSeeAllRounds}
+            className="mt-4 mx-auto"
+            style={{
+              fontSize: 13,
+              color: 'var(--color-text-secondary)',
+              background: 'transparent',
+              border: 'none',
+            }}
+          >
+            See all rounds →
+          </button>
+        </>
+      )}
+    </div>
+  );
+}
+
+function RoundCard({ round, rosterById, onClick }) {
+  const complete = isRoundComplete(round);
+  const scorer = rosterById[round.scorerId];
+  const scorerName = scorer ? scorer.firstName : 'Unknown';
+
+  const sortedShooters = shootersByStartingPost(round);
+  const shooterNames = sortedShooters.map(({ shooter, idx }) => {
+    const entry = rosterById[shooter.rosterId];
+    const firstName = entry ? entry.firstName : '?';
+    const { hits, total } = shooterScore(round, idx);
+    const isPerfect = complete && hits === 25 && total === 25;
+    return { firstName, isPerfect };
+  });
+
+  return (
+    <button
+      onClick={onClick}
+      className="w-full flex items-center text-left"
+      style={{
+        background: 'var(--color-background-secondary)',
+        borderRadius: 'var(--border-radius-md)',
+        border: 'none',
+        padding: '12px 14px',
+        gap: 8,
+      }}
+    >
+      <div className="flex-1 min-w-0">
+        <div
+          style={{
+            fontSize: 12,
+            color: 'var(--color-text-tertiary)',
+            marginBottom: 4,
+          }}
+        >
+          {formatRoundDate(round.date)} · {formatTime(round.date)} · scored by {scorerName}
+        </div>
+        <div
+          className="truncate"
+          style={{
+            fontSize: 13,
+            color: 'var(--color-text-primary)',
+          }}
+        >
+          {shooterNames.map((s, i) => (
+            <span key={i}>
+              {i > 0 && ' · '}
+              {s.isPerfect && (
+                <IconStar
+                  size={13}
+                  fill="#854F0B"
+                  color="#854F0B"
+                  style={{ display: 'inline', verticalAlign: '-2px', marginRight: 2 }}
+                />
+              )}
+              {s.firstName}
+            </span>
+          ))}
+        </div>
+      </div>
+      <IconChevronRight
+        size={18}
+        color="var(--color-text-tertiary)"
+        style={{ flexShrink: 0 }}
+      />
+    </button>
+  );
+}
+</file>
+
+<file path="src/components/LeaveTheLineModal.jsx">
+// LeaveTheLineModal.jsx
+// Confirms that the live active shooter is leaving the round early.
+// On confirm, sets leftAfterShot on the round's shooter entry, which causes
+// firingOrder() to skip them on all future slots automatically.
+
+import Modal from './Modal';
+
+export default function LeaveTheLineModal({
+  open,
+  onClose,
+  shooterName,
+  hits,
+  total,
+  onConfirm,
+}) {
+  return (
+    <Modal
+      open={open}
+      onClose={onClose}
+      title={`${shooterName || 'This shooter'} has left the line?`}
+      actions={[
+        { label: 'Cancel', onClick: onClose, variant: 'cancel' },
+        { label: 'Confirm', onClick: onConfirm, variant: 'destructive' },
+      ]}
+    >
+      {shooterName}'s {hits}/{total} so far will be kept. They'll be skipped
+      for the rest of the round.
+    </Modal>
+  );
+}
+</file>
+
+<file path="src/components/Modal.jsx">
+// Modal.jsx
+// Generic modal wrapper. Centered card with backdrop, scale-in animation.
+// Used for the three live-scoring confirmations in v1; reusable.
+//
+// Props:
+//   open       — boolean, controls visibility
+//   onClose    — called when backdrop tapped (or Escape, eventually)
+//   title      — string, centered, 17px weight 500
+//   children   — body content (skip when title alone is enough)
+//   actions    — array of { label, onClick, variant }
+//                variant: 'cancel' | 'destructive' | 'primary'
+
+import { useEffect } from 'react';
+
+export default function Modal({ open, onClose, title, children, actions }) {
+  useEffect(() => {
+    if (open) {
+      const prev = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      return () => { document.body.style.overflow = prev; };
+    }
+  }, [open]);
+
+  if (!open) return null;
+
+  return (
+    <>
+      {/* Backdrop */}
+      <div
+        onClick={onClose}
+        style={{
+          position: 'fixed',
+          inset: 0,
+          background: 'rgba(0,0,0,0.5)',
+          zIndex: 200,
+          animation: 'modalFade 200ms ease-out',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '0 24px',
+        }}
+      >
+        {/* Card */}
+        <div
+          onClick={(e) => e.stopPropagation()}
+          style={{
+            background: 'var(--color-background-primary)',
+            borderRadius: 'var(--border-radius-lg)',
+            padding: '22px 18px 16px',
+            maxWidth: 280,
+            width: '100%',
+            animation: 'modalScale 200ms ease-out',
+          }}
+        >
+          {title && (
+            <div
+              style={{
+                fontSize: 17,
+                fontWeight: 500,
+                textAlign: 'center',
+                color: 'var(--color-text-primary)',
+                marginBottom: children ? 10 : 16,
+              }}
+            >
+              {title}
+            </div>
+          )}
+
+          {children && (
+            <div
+              style={{
+                fontSize: 13,
+                lineHeight: 1.5,
+                color: 'var(--color-text-secondary)',
+                textAlign: 'center',
+                marginBottom: 16,
+              }}
+            >
+              {children}
+            </div>
+          )}
+
+          <div style={{ display: 'flex', gap: 10 }}>
+            {actions.map((action, idx) => {
+              const styles = variantStyles(action.variant);
+              return (
+                <button
+                  key={idx}
+                  onClick={action.onClick}
+                  disabled={action.disabled}
+                  style={{
+                    flex: 1,
+                    height: 44,
+                    borderRadius: 'var(--border-radius-md)',
+                    fontSize: 15,
+                    fontWeight: 500,
+                    fontFamily: 'inherit',
+                    cursor: action.disabled ? 'default' : 'pointer',
+                    opacity: action.disabled ? 0.5 : 1,
+                    ...styles,
+                  }}
+                >
+                  {action.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+      <style>{`
+        @keyframes modalFade {
+          from { opacity: 0; }
+          to   { opacity: 1; }
+        }
+        @keyframes modalScale {
+          from { transform: scale(0.94); opacity: 0; }
+          to   { transform: scale(1);    opacity: 1; }
+        }
+      `}</style>
+    </>
+  );
+}
+
+function variantStyles(variant) {
+  switch (variant) {
+    case 'destructive':
+      return {
+        background: 'var(--color-text-danger)',
+        color: 'white',
+        border: 'none',
+      };
+    case 'primary':
+      return {
+        background: 'var(--color-clay-orange)',
+        color: 'white',
+        border: 'none',
+      };
+    case 'cancel':
+    default:
+      return {
+        background: 'white',
+        color: 'var(--color-text-primary)',
+        border: '0.5px solid var(--color-text-tertiary)',
+      };
+  }
+}
+</file>
+
+<file path="src/components/MoreChangesModal.jsx">
+// src/components/MoreChangesModal.jsx
+//
+// The "More changes for [Name]?" prompt that appears after a station-shot edit
+// commits. Two paths: Edit more (returns to the shooter's per-shooter edit
+// landing) or Done (returns to the carousel overview).
+//
+// Per handoff #1's edit-shooter-score flow.
+
+import Modal from './Modal';
+
+export default function MoreChangesModal({ open, onClose, name, onEditMore, onDone }) {
+  return (
+    <Modal
+      open={open}
+      onClose={onClose}
+      title={`More changes for ${name || 'this shooter'}?`}
+      actions={[
+        {
+          label: 'Edit more',
+          onClick: onEditMore,
+          variant: 'cancel',
+        },
+        {
+          label: 'Done',
+          onClick: onDone,
+          variant: 'primary',
+        },
+      ]}
+    />
+  );
+}
+</file>
+
+<file path="src/components/PdfPreviewScreen.jsx">
+// src/components/PdfPreviewScreen.jsx
+//
+// The real PDF preview + download surface (carousel screen N). Visual layout
+// matches PdfPreviewMock (which this file replaces); the Download button is
+// now wired to generatePdf.
+
+import { shooterShots, shooterScore, longestStreak } from '../lib/scoring';
+import { generatePdf } from '../lib/pdfGenerator';
+
+const HIT_COLOR = '#97C459';
+const MISS_COLOR = '#F09595';
+const UNSHOT_COLOR = '#2C2C2A';
+const CELL_BORDER = '#2C2C2A';
+const PAPER_BG = '#FFFFFF';
+const PAPER_EDGE = '#B4B2A9';
+const TEXT = '#2C2C2A';
+const TERTIARY = '#999';
+
+function formatDate(iso) {
+  const d = new Date(iso);
+  const datePart = d.toLocaleDateString('en-US', {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+  });
+  const timePart = d.toLocaleTimeString('en-US', {
+    hour: 'numeric',
+    minute: '2-digit',
+  });
+  return `${datePart} · ${timePart}`;
+}
+
+function buildShooterRow(round, shooterIdx) {
+  const shooter = round.shooters[shooterIdx];
+  const shots = shooterShots(round, shooterIdx);
+  const path = [];
+  for (let n = 1; n <= 5; n++) {
+    path.push(((shooter.startingPost - 1 + n - 1) % 5) + 1);
+  }
+  const cells = [];
+  for (let i = 0; i < 25; i++) {
+    if (i < shots.length) {
+      cells.push({ kind: shots[i].hit ? 'hit' : 'miss' });
+    } else {
+      cells.push({ kind: 'unshot' });
+    }
+  }
+  const { hits } = shooterScore(round, shooterIdx);
+  const longest = longestStreak(shots);
+  const isLeft = shooter.leftAfterShot != null;
+  return { path, cells, hits, longest, isLeft };
+}
+
+function CellGroup({ cells }) {
+  return (
+    <div style={{ display: 'flex' }}>
+      {cells.map((c, i) => (
+        <div
+          key={i}
+          style={{
+            width: 8,
+            height: 10,
+            background:
+              c.kind === 'hit'
+                ? HIT_COLOR
+                : c.kind === 'miss'
+                ? MISS_COLOR
+                : UNSHOT_COLOR,
+            border: `0.5px solid ${CELL_BORDER}`,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+function CircledNumber({ value, isLeft }) {
+  if (isLeft || value < 19) {
+    return (
+      <span style={{ fontSize: 9, fontWeight: 500, color: TEXT }}>{value}</span>
+    );
+  }
+  if (value === 25) {
+    return (
+      <span
+        style={{
+          display: 'inline-block',
+          fontSize: 9,
+          fontWeight: 500,
+          color: TEXT,
+          border: `0.5px solid ${TEXT}`,
+          borderRadius: '50%',
+          padding: '1px 4px',
+          boxShadow: `0 0 0 1px ${PAPER_BG}, 0 0 0 1.5px ${TEXT}`,
+          lineHeight: 1,
+        }}
+      >
+        {value}
+      </span>
+    );
+  }
+  return (
+    <span
+      style={{
+        display: 'inline-block',
+        fontSize: 9,
+        fontWeight: 500,
+        color: TEXT,
+        border: `0.5px solid ${TEXT}`,
+        borderRadius: '50%',
+        padding: '1px 4px',
+        lineHeight: 1,
+      }}
+    >
+      {value}
+    </span>
+  );
+}
+
+export default function PdfPreviewScreen({ round, rosterById }) {
+  const sortedShooters = round.shooters
+    .map((shooter, idx) => ({ shooter, idx }))
+    .sort((a, b) => a.shooter.startingPost - b.shooter.startingPost);
+
+  const scorerEntry = rosterById[round.scorerId];
+  const scorerName = scorerEntry
+    ? `${scorerEntry.firstName} ${scorerEntry.lastName}`
+    : 'Scorer';
+
+  const handleDownload = () => {
+    try {
+      generatePdf(round, rosterById);
+    } catch (err) {
+      console.error('PDF generation failed:', err);
+      alert('Could not generate the PDF. Check the browser console for details.');
+    }
+  };
+
+  return (
+    <div className="flex-1 overflow-y-auto px-4 py-4 md:px-12 flex flex-col items-center">
+      <div className="mb-3 text-center">
+        <div
+          style={{
+            color: 'var(--color-text-primary)',
+            fontSize: 22,
+            fontWeight: 500,
+          }}
+        >
+          Round summary
+        </div>
+        <div
+          style={{
+            color: 'var(--color-text-tertiary)',
+            fontSize: 12,
+            marginTop: 2,
+          }}
+        >
+          Printable scorecard
+        </div>
+      </div>
+
+      <div
+        style={{
+          background: PAPER_BG,
+          border: `0.5px solid ${PAPER_EDGE}`,
+          borderRadius: 2,
+          boxShadow: '0 1px 4px rgba(0,0,0,0.08)',
+          padding: 12,
+          width: 320,
+          maxWidth: '100%',
+          color: TEXT,
+          fontFamily: 'system-ui, sans-serif',
+        }}
+      >
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'flex-start',
+            borderBottom: `1px solid ${TEXT}`,
+            paddingBottom: 6,
+            marginBottom: 6,
+          }}
+        >
+          <div>
+            <div style={{ fontSize: 14, fontFamily: 'Georgia, serif' }}>
+              Trap round scorecard
+            </div>
+            <div style={{ fontSize: 8, color: TERTIARY, marginTop: 2 }}>
+              {formatDate(round.date)}
+            </div>
+            <div style={{ fontSize: 8, color: TERTIARY }}>
+              Scored by {scorerName}
+            </div>
+          </div>
+          <div style={{ textAlign: 'right', fontSize: 8, color: TERTIARY }}>
+            <div>
+              {round.shooters.length} shooter
+              {round.shooters.length === 1 ? '' : 's'} · 25 shots each
+            </div>
+            <div>Listed by starting post</div>
+          </div>
+        </div>
+
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            fontSize: 7,
+            color: TERTIARY,
+            marginBottom: 4,
+          }}
+        >
+          <div style={{ width: 50 }} />
+          <div style={{ flex: 1 }} />
+          <div style={{ width: 24, textAlign: 'right' }}>Total</div>
+          <div style={{ width: 24, textAlign: 'right' }}>Streak</div>
+        </div>
+
+        {sortedShooters.map(({ shooter, idx }) => {
+          const row = buildShooterRow(round, idx);
+          const firstName = rosterById[shooter.rosterId]?.firstName ?? '?';
+          return (
+            <div key={idx} style={{ marginBottom: 6 }}>
+              <div style={{ display: 'flex', alignItems: 'flex-end' }}>
+                <div style={{ width: 50 }} />
+                <div style={{ display: 'flex', gap: 4 }}>
+                  {row.path.map((n, i) => (
+                    <div
+                      key={i}
+                      style={{
+                        width: 40,
+                        textAlign: 'center',
+                        fontSize: 7,
+                        color: TERTIARY,
+                        lineHeight: 1,
+                      }}
+                    >
+                      {n}
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  marginTop: 1,
+                }}
+              >
+                <div style={{ width: 50, fontSize: 9, fontWeight: 500 }}>
+                  {firstName}
+                </div>
+                <div style={{ display: 'flex', gap: 4 }}>
+                  {[0, 1, 2, 3, 4].map((g) => (
+                    <CellGroup
+                      key={g}
+                      cells={row.cells.slice(g * 5, g * 5 + 5)}
+                    />
+                  ))}
+                </div>
+                <div style={{ flex: 1 }} />
+                <div style={{ width: 24, textAlign: 'right' }}>
+                  <CircledNumber value={row.hits} isLeft={row.isLeft} />
+                </div>
+                <div
+                  style={{
+                    width: 24,
+                    textAlign: 'right',
+                    fontSize: 9,
+                    fontWeight: 500,
+                  }}
+                >
+                  {row.longest}
+                </div>
+              </div>
+            </div>
+          );
+        })}
+
+        <div
+          style={{
+            borderTop: `0.5px solid ${TEXT}`,
+            paddingTop: 4,
+            marginTop: 4,
+            fontSize: 7,
+            color: TERTIARY,
+            textAlign: 'center',
+          }}
+        >
+          ✓ hit · ✗ miss · ▪ unshot · single-circled total = 19+ ·
+          double-circled total = 25/25
+        </div>
+
+        <div
+          style={{
+            fontSize: 7,
+            color: TERTIARY,
+            fontStyle: 'italic',
+            textAlign: 'center',
+            marginTop: 6,
+          }}
+        >
+          Generated by SquadScore · squadscore.app
+        </div>
+      </div>
+
+      <button
+        onClick={handleDownload}
+        style={{
+          marginTop: 16,
+          background: '#D85A30',
+          color: 'white',
+          fontSize: 16,
+          fontWeight: 500,
+          padding: '14px 32px',
+          borderRadius: 12,
+          border: 'none',
+          cursor: 'pointer',
+        }}
+      >
+        Download PDF
+      </button>
+    </div>
+  );
+}
+</file>
+
+<file path="src/components/PostPicker.jsx">
+// 5-column grid of starting-post buttons (posts 1–5).
+//
+// States per handoff #1's setup screen spec:
+//   Available — white bg, 0.5px tertiary border, primary text
+//   Selected  — clay-orange bg, white text
+//   Taken     — bg-secondary + tertiary text + strikethrough, disabled
+//
+// Controlled component: parent owns `value` (currently selected post, or null)
+// and `takenPosts` (array of posts already claimed by other shooters in this round).
+
+export default function PostPicker({
+  value = null,
+  takenPosts = [],
+  onChange,
+  disabled = false,
+}) {
+  const taken = new Set(takenPosts);
+
+  return (
+    <div className="grid grid-cols-5 gap-2">
+      {[1, 2, 3, 4, 5].map((post) => {
+        const isSelected = value === post;
+        const isTaken = taken.has(post) && !isSelected;
+        const isDisabled = disabled || isTaken;
+
+        const base =
+          'h-14 rounded-md text-lg font-medium flex items-center justify-center transition-colors box-border';
+
+        let stateCls;
+        if (isSelected) {
+          stateCls =
+            'bg-[var(--color-clay-orange)] text-white border-[0.5px] border-[var(--color-clay-orange)]';
+        } else if (isTaken) {
+          stateCls =
+            'bg-[var(--color-background-secondary)] text-[var(--color-text-tertiary)] line-through border-[0.5px] border-transparent cursor-not-allowed';
+        } else {
+          stateCls =
+            'bg-white text-[var(--color-text-primary)] border-[0.5px] border-[var(--color-text-tertiary)] active:bg-[var(--color-background-secondary)]';
+        }
+
+        return (
+          <button
+            key={post}
+            type="button"
+            disabled={isDisabled}
+            aria-pressed={isSelected}
+            aria-label={`Starting post ${post}${isTaken ? ' (taken)' : ''}`}
+            onClick={() => !isDisabled && onChange(post)}
+            className={`${base} ${stateCls}`}
+          >
+            {post}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+</file>
+
+<file path="src/components/ReviewFooter.jsx">
+// src/components/ReviewFooter.jsx
+import { IconArrowLeft, IconArrowRight } from '@tabler/icons-react';
+
+export default function ReviewFooter({
+  onPrev,
+  onNext,
+  prevDisabled,
+  nextDisabled,
+}) {
+  return (
+    <div
+      className="px-[18px] grid grid-cols-2 gap-3"
+      style={{
+        paddingTop: '10px',
+        paddingBottom: '10px',
+      }}
+    >
+      <button
+        onClick={onPrev}
+        disabled={prevDisabled}
+        className="flex items-center justify-center gap-2 disabled:opacity-30 transition-opacity"
+        style={{
+          height: '44px',
+          background: 'white',
+          color: 'var(--color-text-primary)',
+          border: '0.5px solid var(--color-text-tertiary)',
+          borderRadius: 'var(--border-radius-md)',
+        }}
+      >
+        <IconArrowLeft size={18} stroke={2} />
+        <span className="text-[13px] font-medium">Previous shot</span>
+      </button>
+      <button
+        onClick={onNext}
+        disabled={nextDisabled}
+        className="flex items-center justify-center gap-2 disabled:opacity-30 transition-opacity"
+        style={{
+          height: '44px',
+          background: 'white',
+          color: 'var(--color-text-primary)',
+          border: '0.5px solid var(--color-text-tertiary)',
+          borderRadius: 'var(--border-radius-md)',
+        }}
+      >
+        <span className="text-[13px] font-medium">Next shot</span>
+        <IconArrowRight size={18} stroke={2} />
+      </button>
+    </div>
+  );
+}
+</file>
+
+<file path="src/components/RosterPicker.jsx">
+// Roster autocomplete picker. Used for the scorer field and each shooter's name field.
+//
+// Controlled component:
+//   value:       the selected entry's ID, or null
+//   onChange:    fn(id|null) called on selection or clear
+//   excludeIds:  array of roster IDs to hide from results (e.g. shooters already in this round)
+//   placeholder, autoFocus: input attributes
+//
+// Behavior:
+//   - No selection: text input + dropdown with ranked matches + "Add new person" row at bottom.
+//   - Selection: read-only chip showing "Last, First" with an X button to clear.
+//   - Strict mode: typed names that don't match the roster don't auto-add — the user has to
+//     explicitly tap "Add new person" and confirm in a modal.
+
+import { useState, useEffect, useRef, useMemo } from 'react';
+import { IconX, IconUserPlus } from '@tabler/icons-react';
+import {
+  searchRoster,
+  addToRoster,
+  getRosterEntry,
+  pickerLabel,
+} from '../lib/roster.js';
+
+export default function RosterPicker({
+  value = null,
+  onChange,
+  excludeIds = [],
+  placeholder = 'Search by name',
+  autoFocus = false,
+}) {
+  const [query, setQuery] = useState('');
+  const [isOpen, setIsOpen] = useState(false);
+  const [highlightIdx, setHighlightIdx] = useState(0);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const containerRef = useRef(null);
+  const inputRef = useRef(null);
+
+  const selectedEntry = useMemo(
+    () => (value ? getRosterEntry(value) : null),
+    [value]
+  );
+
+  const matches = useMemo(() => {
+    const excludeSet = new Set(excludeIds);
+    return searchRoster(query).filter((e) => !excludeSet.has(e.id));
+  }, [query, excludeIds]);
+
+  // Reset keyboard highlight when the result list changes.
+  useEffect(() => {
+    setHighlightIdx(0);
+  }, [matches.length]);
+
+  // Close the dropdown when the user taps outside.
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (containerRef.current && !containerRef.current.contains(e.target)) {
+        setIsOpen(false);
+      }
+    }
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('touchstart', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+    };
+  }, [isOpen]);
+
+  function handleSelect(entry) {
+    onChange?.(entry.id);
+    setQuery('');
+    setIsOpen(false);
+    inputRef.current?.blur();
+  }
+
+  function handleClear() {
+    onChange?.(null);
+    setQuery('');
+    setTimeout(() => inputRef.current?.focus(), 0);
+  }
+
+  function handleKeyDown(e) {
+    if (!isOpen) return;
+    const total = matches.length + 1; // +1 for "Add new person" row
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setHighlightIdx((i) => (i + 1) % total);
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setHighlightIdx((i) => (i - 1 + total) % total);
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      if (highlightIdx < matches.length) handleSelect(matches[highlightIdx]);
+      else setShowAddModal(true);
+    } else if (e.key === 'Escape') {
+      setIsOpen(false);
+      inputRef.current?.blur();
+    }
+  }
+
+  function handleAdded(newEntry) {
+    onChange?.(newEntry.id);
+    setQuery('');
+    setShowAddModal(false);
+    setIsOpen(false);
+  }
+
+  // --- Selected state: chip with clear button -----------------------------
+  if (selectedEntry) {
+    return (
+      <div className="flex items-center justify-between gap-2 h-12 px-3 rounded-md border-[0.5px] border-[var(--color-text-tertiary)] bg-white">
+        <span className="text-[15px] text-[var(--color-text-primary)] truncate">
+          {pickerLabel(selectedEntry)}
+        </span>
+        <button
+          type="button"
+          onClick={handleClear}
+          aria-label="Clear selection"
+          className="p-1 -mr-1 text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)]"
+        >
+          <IconX size={18} />
+        </button>
+      </div>
+    );
+  }
+
+  // --- Empty state: search input + dropdown -------------------------------
+  return (
+    <div ref={containerRef} className="relative">
+      <input
+        ref={inputRef}
+        type="text"
+        value={query}
+        onChange={(e) => {
+          setQuery(e.target.value);
+          setIsOpen(true);
+        }}
+        onFocus={() => setIsOpen(true)}
+        onKeyDown={handleKeyDown}
+        placeholder={placeholder}
+        autoFocus={autoFocus}
+        className="w-full h-12 px-3 rounded-md border-[0.5px] border-[var(--color-text-tertiary)] bg-white text-[15px] text-[var(--color-text-primary)] placeholder:text-[var(--color-text-tertiary)] focus:outline-none focus:border-[var(--color-clay-orange)]"
+      />
+
+      {isOpen && (
+        <div
+          role="listbox"
+          className="absolute left-0 right-0 top-full mt-1 z-10 bg-white rounded-md border-[0.5px] border-[var(--color-text-tertiary)] shadow-lg max-h-[280px] overflow-y-auto"
+        >
+          {matches.length === 0 && (
+            <div className="px-3 py-3 text-[13px] text-[var(--color-text-tertiary)]">
+              No matches.
+            </div>
+          )}
+
+          {matches.map((entry, i) => (
+            <button
+              key={entry.id}
+              type="button"
+              role="option"
+              aria-selected={i === highlightIdx}
+              onClick={() => handleSelect(entry)}
+              onMouseEnter={() => setHighlightIdx(i)}
+              className={`w-full text-left px-3 py-2.5 text-[14px] text-[var(--color-text-primary)] border-b-[0.5px] border-[var(--color-background-secondary)] last:border-b-0 ${
+                i === highlightIdx
+                  ? 'bg-[var(--color-background-secondary)]'
+                  : 'bg-white'
+              }`}
+            >
+              {pickerLabel(entry)}
+            </button>
+          ))}
+
+          <button
+            type="button"
+            onClick={() => setShowAddModal(true)}
+            onMouseEnter={() => setHighlightIdx(matches.length)}
+            className={`w-full flex items-center gap-2 text-left px-3 py-2.5 text-[14px] font-medium text-[var(--color-clay-orange)] ${
+              highlightIdx === matches.length
+                ? 'bg-[var(--color-background-secondary)]'
+                : 'bg-white'
+            }`}
+          >
+            <IconUserPlus size={18} />
+            Add new person to roster
+          </button>
+        </div>
+      )}
+
+      {showAddModal && (
+        <AddToRosterModal
+          initialQuery={query}
+          onCancel={() => setShowAddModal(false)}
+          onAdded={handleAdded}
+        />
+      )}
+    </div>
+  );
+}
+
+// --- Add-to-roster modal --------------------------------------------------
+
+function AddToRosterModal({ initialQuery, onCancel, onAdded }) {
+  const [first, last] = useMemo(() => {
+    const trimmed = initialQuery.trim();
+    if (!trimmed) return ['', ''];
+    const parts = trimmed.split(/\s+/);
+    if (parts.length === 1) return [parts[0], ''];
+    return [parts[0], parts.slice(1).join(' ')];
+  }, [initialQuery]);
+
+  const [firstName, setFirstName] = useState(first);
+  const [lastName, setLastName] = useState(last);
+
+  const canSubmit = firstName.trim() && lastName.trim();
+
+  function handleSubmit() {
+    if (!canSubmit) return;
+    const entry = addToRoster({
+      firstName: firstName.trim(),
+      lastName: lastName.trim(),
+    });
+    onAdded(entry);
+  }
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-5"
+      onClick={onCancel}
+    >
+      <div
+        className="bg-white rounded-lg p-5 w-full max-w-[280px]"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <h3 className="text-[17px] font-medium text-center text-[var(--color-text-primary)] mb-4">
+          Add to roster
+        </h3>
+
+        <div className="space-y-3">
+          <div>
+            <label className="block text-[12px] font-medium text-[var(--color-text-secondary)] mb-1">
+              First name
+            </label>
+            <input
+              type="text"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              autoFocus
+              className="w-full h-11 px-3 rounded-md border-[0.5px] border-[var(--color-text-tertiary)] bg-white text-[15px] text-[var(--color-text-primary)] focus:outline-none focus:border-[var(--color-clay-orange)]"
+            />
+          </div>
+          <div>
+            <label className="block text-[12px] font-medium text-[var(--color-text-secondary)] mb-1">
+              Last name
+            </label>
+            <input
+              type="text"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              className="w-full h-11 px-3 rounded-md border-[0.5px] border-[var(--color-text-tertiary)] bg-white text-[15px] text-[var(--color-text-primary)] focus:outline-none focus:border-[var(--color-clay-orange)]"
+            />
+          </div>
+        </div>
+
+        <div className="flex gap-2.5 mt-5">
+          <button
+            type="button"
+            onClick={onCancel}
+            className="flex-1 h-11 rounded-md bg-white border-[0.5px] border-[var(--color-text-tertiary)] text-[15px] text-[var(--color-text-primary)]"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            disabled={!canSubmit}
+            onClick={handleSubmit}
+            className={`flex-1 h-11 rounded-md text-[15px] text-white transition-opacity ${
+              canSubmit
+                ? 'bg-[var(--color-clay-orange)]'
+                : 'bg-[var(--color-clay-orange)] opacity-50 cursor-not-allowed'
+            }`}
+          >
+            Add
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+</file>
+
+<file path="src/components/SquadStrip.jsx">
+// src/components/SquadStrip.jsx
+//
+// Visual-only. Reads the round, renders 5 mini cards in physical-post order
+// (left to right, post 1 → post 5). Re-orders as the squad rotates. The active
+// mini gets a coral outline; left-the-line shooters are dimmed to 0.4 opacity.
+//
+// Props:
+//   round              — the round object
+//   activeShooterIdx   — shooter index whose mini gets the coral outline
+//                        (null = no highlight, e.g. round complete)
+//   rosterById         — { [rosterId]: rosterEntry } lookup for first names
+
+import { squadByPhysicalPost, shooterScore } from '../lib/scoring.js';
+
+export default function SquadStrip({ round, activeShooterIdx, rosterById }) {
+  const layout = squadByPhysicalPost(round);
+
+  return (
+    <div className="grid grid-cols-5 gap-1.5">
+      {layout.map((shooterIdx, idx) => {
+        const physicalPost = idx + 1;
+        if (shooterIdx === null) {
+          return <EmptyMini key={physicalPost} post={physicalPost} />;
+        }
+        const shooter = round.shooters[shooterIdx];
+        return (
+          <Mini
+            key={physicalPost}
+            post={physicalPost}
+            shooter={shooter}
+            rosterEntry={rosterById?.[shooter.rosterId]}
+            score={shooterScore(round, shooterIdx)}
+            isActive={shooterIdx === activeShooterIdx}
+          />
+        );
+      })}
+    </div>
+  );
+}
+
+function Mini({ post, shooter, rosterEntry, score, isActive }) {
+  const hasLeft = shooter.leftAfterShot != null;
+  const name = rosterEntry?.firstName ?? '?';
+
+  return (
+    <div
+      className="flex flex-col items-center text-center px-1 py-2"
+      style={{
+        backgroundColor: 'var(--color-background-secondary)',
+        borderRadius: 'var(--border-radius-md)',
+        outline: isActive ? '2px solid var(--color-clay-orange)' : 'none',
+        opacity: hasLeft ? 0.4 : 1,
+      }}
+    >
+      <div
+        className="text-[11px] leading-tight"
+        style={{ color: 'var(--color-text-tertiary)' }}
+      >
+        post {post}
+      </div>
+      <div
+        className="text-[13px] font-medium leading-tight mt-1 truncate w-full"
+        style={{ color: 'var(--color-text-primary)' }}
+      >
+        {name}
+      </div>
+      <div
+        className="text-[12px] leading-tight mt-1"
+        style={{ color: 'var(--color-text-secondary)' }}
+      >
+        {score.hits}/{score.total}
+        {hasLeft && ' · left'}
+      </div>
+    </div>
+  );
+}
+
+function EmptyMini({ post }) {
+  return (
+    <div
+      className="flex flex-col items-center text-center px-1 py-2"
+      style={{
+        backgroundColor: 'var(--color-background-secondary)',
+        borderRadius: 'var(--border-radius-md)',
+        opacity: 0.3,
+      }}
+    >
+      <div
+        className="text-[11px] leading-tight"
+        style={{ color: 'var(--color-text-tertiary)' }}
+      >
+        post {post}
+      </div>
+      <div className="text-[13px] leading-tight mt-1">&nbsp;</div>
+      <div className="text-[12px] leading-tight mt-1">&nbsp;</div>
+    </div>
+  );
+}
+</file>
+
+<file path="src/components/StationEditor.jsx">
+// src/components/StationEditor.jsx
+//
+// Station-scoped shot editor. Reached from PerShooterScreen's edit-mode landing
+// when a station row is tapped. Like live scoring's active card, but:
+//   - No squad strip (single shooter)
+//   - Status text reads "Editing station N" in coral
+//   - Prev/next only cycles within this station's 5 shots
+//   - Hit/Miss commits the change to that specific shot, plays the flash,
+//     then fires onCommit so the parent can open the "More changes?" modal
+//
+// Per handoff #1's "Station shot editor" section.
+
+import { useState, useRef, useEffect } from 'react';
+import {
+  IconChevronLeft,
+  IconCheck,
+  IconX,
+} from '@tabler/icons-react';
+import {
+  shooterShots,
+  physicalPostOf,
+  slotForShot,
+} from '../lib/scoring';
+import { editShot } from '../lib/roundStore';
+import FlashOverlay from './FlashOverlay';
+
+export default function StationEditor({
+  round,
+  shooterIdx,
+  stationN,             // 1..5, the shooter's chronological station (not physical)
+  rosterEntry,
+  onBack,               // exit editor without committing
+  onCommit,             // called after a successful Hit/Miss commit, after flash
+}) {
+  // The 5 chronological shot indices for this shooter's nth station.
+  // We need the round-level shotIdx for each so editShot can target it.
+  const shooterShotIndices = [];
+  for (let i = 0; i < round.shots.length; i++) {
+    if (round.shots[i].shooterIdx === shooterIdx) {
+      shooterShotIndices.push(i);
+    }
+  }
+  const stationStart = (stationN - 1) * 5;
+  const stationShotRoundIndices = shooterShotIndices.slice(
+    stationStart,
+    stationStart + 5
+  );
+  // Personal shot indices (0..total-1 for this shooter) at this station.
+  const stationPersonalIndices = [];
+  for (let i = 0; i < stationShotRoundIndices.length; i++) {
+    stationPersonalIndices.push(stationStart + i);
+  }
+
+  const totalAtStation = stationShotRoundIndices.length;
+
+  const [cursor, setCursor] = useState(0); // 0..(totalAtStation-1)
+  const [currentRound, setCurrentRound] = useState(round);
+  const [flashType, setFlashType] = useState(null);
+  const [flashFading, setFlashFading] = useState(false);
+  const flashTimers = useRef([]);
+
+  useEffect(() => {
+    const timers = flashTimers.current;
+    return () => timers.forEach(clearTimeout);
+  }, []);
+
+  if (totalAtStation === 0) {
+    // Shouldn't happen — edit-mode tap rows are gated on "shots actually taken
+    // at this station". Guard anyway.
+    return (
+      <div className="p-6 text-center text-[var(--color-text-secondary)]">
+        No shots recorded at this station.
+      </div>
+    );
+  }
+
+  const currentShooterShots = shooterShots(currentRound, shooterIdx);
+  const stationShotsTaken = currentShooterShots.slice(stationStart, stationStart + totalAtStation);
+  const cursorShot = stationShotsTaken[cursor];
+  const cursorRoundShotIdx = stationShotRoundIndices[cursor];
+
+  const slot = slotForShot(currentRound, cursorRoundShotIdx);
+  const physicalPost = slot
+    ? slot.physicalPost
+    : physicalPostOf(round.shooters[shooterIdx].startingPost, stationN);
+
+  const stationHits = stationShotsTaken.filter((s) => s.hit).length;
+  const firstName = rosterEntry?.firstName ?? '?';
+
+  function playFlash(hit) {
+    setFlashType(hit ? 'hit' : 'miss');
+    setFlashFading(false);
+    const t1 = setTimeout(() => setFlashFading(true), 1000);
+    const t2 = setTimeout(() => {
+      setFlashType(null);
+      setFlashFading(false);
+      onCommit();
+    }, 1130);
+    flashTimers.current.push(t1, t2);
+  }
+
+  function handleShoot(hit) {
+    if (flashType !== null) return;
+    const updated = editShot(currentRound.id, cursorRoundShotIdx, hit);
+    setCurrentRound(updated);
+    playFlash(hit);
+  }
+
+  function handlePrev() {
+    if (flashType !== null) return;
+    if (cursor > 0) setCursor(cursor - 1);
+  }
+
+  function handleNext() {
+    if (flashType !== null) return;
+    if (cursor < totalAtStation - 1) setCursor(cursor + 1);
+  }
+
+  const recordedHit = cursorShot?.hit;
+  const prevDisabled = flashType !== null || cursor === 0;
+  const nextDisabled = flashType !== null || cursor >= totalAtStation - 1;
+  const buttonsDisabled = flashType !== null;
+
+  const nameSize = 'clamp(38px, 13vw, 60px)';
+  const stationHeaderSize = 'clamp(11px, 3.4vw, 14px)';
+  const totalSize = 'clamp(12px, 3.6vw, 15px)';
+  const dotSize = 'clamp(20px, 7vw, 32px)';
+
+  return (
+    <div
+      className="flex flex-col relative bg-[var(--color-background-primary)]"
+      style={{
+        height: '100vh',
+        paddingTop: 'max(12px, env(safe-area-inset-top))',
+        paddingBottom: 'max(12px, env(safe-area-inset-bottom))',
+      }}
+    >
+      {/* Top bar */}
+      <div
+        className="flex items-center justify-between px-3 py-2"
+        style={{
+          borderBottom: '0.5px solid var(--color-text-tertiary)',
+          flexShrink: 0,
+        }}
+      >
+        <button onClick={onBack} className="p-2 -ml-2" aria-label="Back">
+          <IconChevronLeft size={22} stroke={1.75} />
+        </button>
+        <div
+          className="text-[13px] font-medium"
+          style={{ color: 'var(--color-clay-orange)' }}
+        >
+          Editing station {physicalPost}
+        </div>
+        <div style={{ width: 38 }} />
+      </div>
+
+      {/* Active card */}
+      <div
+        className="mx-[14px] mt-3 mb-3"
+        style={{
+          border: '0.5px solid var(--color-text-tertiary)',
+          borderRadius: 'var(--border-radius-lg)',
+          background: 'var(--color-background-primary)',
+          overflow: 'hidden',
+        }}
+      >
+        <div style={{ padding: '14px' }}>
+          <div
+            className="font-medium text-[var(--color-text-primary)]"
+            style={{
+              fontSize: nameSize,
+              textAlign: 'center',
+              letterSpacing: '-0.01em',
+              lineHeight: 1.05,
+            }}
+          >
+            {firstName}
+          </div>
+
+          <div
+            className="text-[var(--color-text-tertiary)]"
+            style={{
+              fontSize: stationHeaderSize,
+              textAlign: 'center',
+              marginTop: '4px',
+            }}
+          >
+            Station {physicalPost} · shot {cursor + 1} of {totalAtStation}
+          </div>
+
+          <div
+            className="flex items-center justify-around"
+            style={{ marginTop: '14px' }}
+          >
+            {Array.from({ length: totalAtStation }).map((_, i) => {
+              const shot = stationShotsTaken[i];
+              const hit = shot.hit;
+              const fillColor = hit
+                ? 'var(--color-text-success)'
+                : 'var(--color-text-danger)';
+              const isCursor = i === cursor;
+              return (
+                <div
+                  key={i}
+                  style={{
+                    width: dotSize,
+                    height: dotSize,
+                    borderRadius: '50%',
+                    background: fillColor,
+                    outline: isCursor ? '2px solid var(--color-clay-orange)' : 'none',
+                    outlineOffset: isCursor ? '2px' : '0',
+                  }}
+                />
+              );
+            })}
+          </div>
+
+          <div
+            style={{
+              textAlign: 'center',
+              marginTop: '14px',
+              fontSize: totalSize,
+              color: 'var(--color-text-tertiary)',
+            }}
+          >
+            Station score ·{' '}
+            <span style={{ color: 'var(--color-text-primary)' }}>
+              {stationHits}/{totalAtStation}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Action zone — Hit/Miss buttons + prev/next */}
+      <div
+        className="flex-1 flex flex-col px-[14px]"
+        style={{
+          gap: '10px',
+          paddingBottom: '4px',
+          maxHeight: '320px',
+          minHeight: '184px',
+        }}
+      >
+        <div className="grid grid-cols-2 gap-3" style={{ flex: 3 }}>
+          <button
+            onClick={() => handleShoot(false)}
+            disabled={buttonsDisabled}
+            className="flex flex-col items-center justify-center gap-2 disabled:opacity-50 transition-opacity"
+            style={{
+              background: '#FBEAEA',
+              color: 'var(--color-text-danger)',
+              borderRadius: 'var(--border-radius-lg)',
+              boxShadow:
+                recordedHit === false
+                  ? 'inset 0 0 0 3px var(--color-text-danger)'
+                  : 'none',
+            }}
+          >
+            <IconX size={34} stroke={2.5} />
+            <span className="text-[22px] font-medium leading-none">Miss</span>
+          </button>
+          <button
+            onClick={() => handleShoot(true)}
+            disabled={buttonsDisabled}
+            className="flex flex-col items-center justify-center gap-2 disabled:opacity-50 transition-opacity"
+            style={{
+              background: 'var(--color-varsity-green-bg)',
+              color: 'var(--color-varsity-green)',
+              borderRadius: 'var(--border-radius-lg)',
+              boxShadow:
+                recordedHit === true
+                  ? 'inset 0 0 0 3px var(--color-varsity-green)'
+                  : 'none',
+            }}
+          >
+            <IconCheck size={34} stroke={2.5} />
+            <span className="text-[22px] font-medium leading-none">Hit</span>
+          </button>
+        </div>
+
+        <div className="grid grid-cols-2 gap-3" style={{ flex: 1 }}>
+          <button
+            onClick={handlePrev}
+            disabled={prevDisabled}
+            className="flex items-center justify-center gap-2 disabled:opacity-30 transition-opacity"
+            style={{
+              background: 'white',
+              color: 'var(--color-text-primary)',
+              border: '0.5px solid var(--color-text-tertiary)',
+              borderRadius: 'var(--border-radius-md)',
+            }}
+          >
+            <IconChevronLeft size={18} stroke={2} />
+            <span className="text-[13px] font-medium">Previous shot</span>
+          </button>
+          <button
+            onClick={handleNext}
+            disabled={nextDisabled}
+            className="flex items-center justify-center gap-2 disabled:opacity-30 transition-opacity"
+            style={{
+              background: 'white',
+              color: 'var(--color-text-primary)',
+              border: '0.5px solid var(--color-text-tertiary)',
+              borderRadius: 'var(--border-radius-md)',
+            }}
+          >
+            <span className="text-[13px] font-medium">Next shot</span>
+            <IconChevronLeft
+              size={18}
+              stroke={2}
+              style={{ transform: 'scaleX(-1)' }}
+            />
+          </button>
+        </div>
+      </div>
+
+      <FlashOverlay type={flashType} fading={flashFading} />
+    </div>
+  );
+}
+</file>
+
+<file path="src/lib/roster.js">
+// Roster query + mutation helpers.
+//
+// Match rules (per handoff #2):
+//   - Substring, case-insensitive.
+//   - Tier 0 = query appears in lastName.
+//   - Tier 1 = query appears in firstName.
+//   - Tier 2 = query only matches when lastName + " " + firstName are concatenated
+//              (e.g. searching "smith j" matches "Smith Jen").
+//   - Within a tier, sort alphabetically by Last, First.
+//
+// Sort: alphabetical by lastName, then firstName. Case-insensitive.
+
+import { generateRosterId } from './rosterIds.js';
+import { loadState, saveState } from './storage.js';
+
+function bySortName(a, b) {
+  const al = a.lastName.toLowerCase();
+  const bl = b.lastName.toLowerCase();
+  if (al < bl) return -1;
+  if (al > bl) return 1;
+  const af = a.firstName.toLowerCase();
+  const bf = b.firstName.toLowerCase();
+  if (af < bf) return -1;
+  if (af > bf) return 1;
+  return 0;
+}
+
+/** Full roster, sorted Last, First. */
+export function getRoster() {
+  const state = loadState();
+  return [...state.roster].sort(bySortName);
+}
+
+/**
+ * Look up one entry by ID. Returns undefined if not found.
+ */
+export function getRosterEntry(id) {
+  if (!id) return undefined;
+  const state = loadState();
+  return state.roster.find((r) => r.id === id);
+}
+
+/**
+ * Search the roster. Empty / whitespace-only query returns the full sorted list.
+ * Returns matched entries ranked by tier, then by Last, First.
+ */
+export function searchRoster(query) {
+  const all = getRoster();
+  const q = (query || '').trim().toLowerCase();
+  if (!q) return all;
+
+  return all
+    .map((entry) => {
+      const last = entry.lastName.toLowerCase();
+      const first = entry.firstName.toLowerCase();
+      let tier = 3; // 3 = no match
+      if (last.includes(q)) tier = 0;
+      else if (first.includes(q)) tier = 1;
+      else if (`${last} ${first}`.includes(q)) tier = 2;
+      return { entry, tier };
+    })
+    .filter((x) => x.tier < 3)
+    .sort((a, b) => a.tier - b.tier || bySortName(a.entry, b.entry))
+    .map((x) => x.entry);
+}
+
+/**
+ * Add a new person to the roster. Generates a unique ID, persists, returns the entry.
+ *
+ * @param {{firstName: string, lastName: string, team?: string}} input
+ * @returns {{id: string, firstName: string, lastName: string, team: string}}
+ */
+export function addToRoster({ firstName, lastName, team }) {
+  const fn = (firstName ?? '').trim();
+  const ln = (lastName ?? '').trim();
+  if (!fn || !ln) throw new Error('Both firstName and lastName are required.');
+
+  const state = loadState();
+  const existingIds = state.roster.map((r) => r.id);
+  const id = generateRosterId(fn, ln, existingIds);
+
+  // Default team to whatever existing entries use, falling back to empty string.
+  const teamValue = team ?? state.roster[0]?.team ?? '';
+
+  const entry = { id, firstName: fn, lastName: ln, team: teamValue };
+  state.roster.push(entry);
+  saveState(state);
+  return entry;
+}
+
+// --- Display formatters --------------------------------------------------
+// Picker shows "Last, First" for unambiguous selection.
+// In-round surfaces (squad strip, active card, end-of-round, PDF) show bare first name.
+
+export function pickerLabel(entry) {
+  return `${entry.lastName}, ${entry.firstName}`;
+}
+
+export function fullName(entry) {
+  return `${entry.firstName} ${entry.lastName}`;
+}
+</file>
+
+<file path="src/lib/rosterIds.js">
+// Roster ID generation per handoff #2's "ID generation rule".
+//
+// Format: [FirstInitial][First3OfLast][2DigitSuffix], all uppercase, always 6 chars.
+// - Strip apostrophes, periods, spaces, and any other non-letters from names.
+// - Short-last-name fallback: borrow letters from the first name to fill the 4-letter prefix.
+//     last >= 3 letters: 1 from first + 3 from last
+//     last  = 2 letters: 2 from first + 2 from last
+//     last  = 1 letter : 3 from first + 1 from last
+// - Universal '01' padding (no collision-only suffix), so every ID looks identical in shape.
+// - Collisions on the same prefix increment to '02', '03', ... up to '99'.
+
+/** Strip everything that isn't an A–Z letter, then uppercase. */
+function lettersOnly(str) {
+  return (str || '').replace(/[^A-Za-z]/g, '').toUpperCase();
+}
+
+/**
+ * Build the 4-letter prefix for a name. Pure — no roster knowledge.
+ */
+export function rosterIdPrefix(firstName, lastName) {
+  const f = lettersOnly(firstName);
+  const l = lettersOnly(lastName);
+
+  if (!f || !l) {
+    // Defensive fallback. Real use will always have both.
+    return (f + l + 'XXXX').slice(0, 4).padEnd(4, 'X');
+  }
+
+  // Standard case: 1 from first + 3 from last.
+  if (l.length >= 3) return (f.slice(0, 1) + l.slice(0, 3));
+  // Last is 2 letters: 2 from first + 2 from last.
+  if (l.length === 2) return (f.slice(0, 2) + l);
+  // Last is 1 letter: 3 from first + 1 from last.
+  return (f.slice(0, 3) + l);
+}
+
+/**
+ * Generate a full 6-character roster ID, accounting for collisions against
+ * an existing set of IDs already in use.
+ *
+ * @param {string} firstName
+ * @param {string} lastName
+ * @param {Set<string>|Array<string>|Iterable<string>} existingIds  IDs already taken (case-insensitive).
+ * @returns {string} the new ID, e.g. 'ABEN01'
+ * @throws if 99 collisions are exceeded for a single prefix (will not happen in practice).
+ */
+export function generateRosterId(firstName, lastName, existingIds = []) {
+  const taken = new Set(
+    Array.from(existingIds).map((s) => String(s).toUpperCase())
+  );
+  const prefix = rosterIdPrefix(firstName, lastName);
+
+  for (let n = 1; n <= 99; n++) {
+    const candidate = prefix + String(n).padStart(2, '0');
+    if (!taken.has(candidate)) return candidate;
+  }
+  throw new Error(`Cannot generate roster ID: 99 collisions exhausted for prefix ${prefix}`);
+}
+</file>
+
+<file path="src/lib/roundStore.js">
+// src/lib/roundStore.js
+//
+// Wraps storage.js with round mutations. Stage-3 scoring components call into
+// this; nothing here knows about React.
+//
+// Round shape (from handoff #2):
+//   round = {
+//     id, date, scorerId, tag, notes,
+//     shooters: [{ rosterId, startingPost, leftAfterShot? }],
+//     shots: [{ shooterIdx, hit }]
+//   }
+
+import { loadState, saveState } from "./storage.js";
+import { firingOrder } from "./scoring.js";
+
+// ----- Internal helpers -----------------------------------------------------
+
+function generateRoundId() {
+  return (
+    "r" +
+    Date.now().toString(36) +
+    Math.random().toString(36).slice(2, 8)
+  );
+}
+
+function findRoundOrThrow(state, roundId) {
+  const round = state.rounds.find((r) => r.id === roundId);
+  if (!round) throw new Error(`Round not found: ${roundId}`);
+  return round;
+}
+
+// ----- Reads ----------------------------------------------------------------
+
+export function getRound(roundId) {
+  const state = loadState();
+  return state.rounds.find((r) => r.id === roundId) || null;
+}
+
+// All rounds, newest first.
+export function getRounds() {
+  const state = loadState();
+  return [...state.rounds].sort((a, b) => b.date.localeCompare(a.date));
+}
+
+// ----- Mutations ------------------------------------------------------------
+
+// Create a new round and persist it. Returns the created round (with id).
+//
+// shooters: [{ rosterId, startingPost }]
+// scorerId: roster id of the scorer
+// tag: 'practice' | 'league' | 'tournament' (defaults to 'practice')
+// notes: free text (defaults to '')
+export function startRound({
+  scorerId,
+  shooters,
+  tag = "practice",
+  notes = "",
+}) {
+  if (!scorerId) throw new Error("startRound: scorerId is required");
+  if (!Array.isArray(shooters) || shooters.length === 0) {
+    throw new Error("startRound: at least one shooter required");
+  }
+
+  const state = loadState();
+  const round = {
+    id: generateRoundId(),
+    date: new Date().toISOString(),
+    scorerId,
+    tag,
+    notes,
+    shooters: shooters.map((s) => ({
+      rosterId: s.rosterId,
+      startingPost: s.startingPost,
+    })),
+    shots: [],
+  };
+  state.rounds.push(round);
+  saveState(state);
+  return round;
+}
+
+// Record the live shot. shooterIdx is derived from firing order's active slot,
+// so callers just pass hit=true|false. Returns the updated round.
+export function appendShot(roundId, hit) {
+  const state = loadState();
+  const round = findRoundOrThrow(state, roundId);
+
+  const plan = firingOrder(round);
+  const slot = plan[round.shots.length];
+  if (!slot) throw new Error("Round is already complete");
+
+  round.shots.push({ shooterIdx: slot.shooterIdx, hit: !!hit });
+  saveState(state);
+  return round;
+}
+
+// Replace the hit/miss value at a given chronological shot index. Used by both
+// live-scoring review-mode commits and the end-of-round edit-shooter-score
+// flow. Returns the updated round.
+export function editShot(roundId, shotIdx, hit) {
+  const state = loadState();
+  const round = findRoundOrThrow(state, roundId);
+
+  if (shotIdx < 0 || shotIdx >= round.shots.length) {
+    throw new Error(`Shot index out of range: ${shotIdx}`);
+  }
+
+  round.shots[shotIdx] = { ...round.shots[shotIdx], hit: !!hit };
+  saveState(state);
+  return round;
+}
+
+// Mark a shooter as having left the line. Their leftAfterShot is set to the
+// number of THEIR shots taken so far, so future slots in firing order are
+// skipped. Returns the updated round.
+export function markShooterLeft(roundId, shooterIdx) {
+  const state = loadState();
+  const round = findRoundOrThrow(state, roundId);
+
+  const shooter = round.shooters[shooterIdx];
+  if (!shooter) throw new Error(`Shooter not found: idx ${shooterIdx}`);
+  if (shooter.leftAfterShot != null) {
+    throw new Error("Shooter already marked as left");
+  }
+
+  const personalShotsTaken = round.shots.filter(
+    (s) => s.shooterIdx === shooterIdx
+  ).length;
+  shooter.leftAfterShot = personalShotsTaken;
+  saveState(state);
+  return round;
+}
+
+// Rename a shooter by editing the underlying roster entry's firstName. Note:
+// because all rounds reference the roster by stable id, this propagates the
+// new name to every past and future round — matches the handoff #2 design
+// where the roster entry IS the source of truth and the displayed name is
+// just a label.
+export function renameShooter(roundId, shooterIdx, newFirstName) {
+  const trimmed = (newFirstName || "").trim();
+  if (!trimmed) throw new Error("Name cannot be empty");
+
+  const state = loadState();
+  const round = findRoundOrThrow(state, roundId);
+
+  const shooter = round.shooters[shooterIdx];
+  if (!shooter) throw new Error(`Shooter not found: idx ${shooterIdx}`);
+
+  const entry = state.roster.find((r) => r.id === shooter.rosterId);
+  if (!entry) {
+    throw new Error(`Roster entry not found: ${shooter.rosterId}`);
+  }
+
+  entry.firstName = trimmed;
+  saveState(state);
+  return round;
+}
+
+// Permanently delete a round. Returns true if removed, false if not found.
+export function deleteRound(roundId) {
+  const state = loadState();
+  const idx = state.rounds.findIndex((r) => r.id === roundId);
+  if (idx === -1) return false;
+  state.rounds.splice(idx, 1);
+  saveState(state);
+  return true;
+}
+</file>
+
+<file path="src/lib/seedRoster.js">
+// The 70-entry seed roster from handoff #3.
+// Used by storage.js to populate localStorage on first load.
+
+export const SEED_ROSTER = [
+  { id: 'ABEN01', lastName: 'Bennett',     firstName: 'Andrew',    team: 'VIS/STA' },
+  { id: 'OBER01', lastName: 'Bergson',     firstName: 'Owen',      team: 'VIS/STA' },
+  { id: 'PBLA01', lastName: 'Blake',       firstName: 'Parker',    team: 'VIS/STA' },
+  { id: 'FBRO01', lastName: 'Bronson',     firstName: 'Ford',      team: 'VIS/STA' },
+  { id: 'DBRO01', lastName: 'Brost',       firstName: 'Daniel',    team: 'VIS/STA' },
+  { id: 'MBRO01', lastName: 'Brost',       firstName: 'Matthew',   team: 'VIS/STA' },
+  { id: 'EBUD01', lastName: 'Budd',        firstName: 'Evan',      team: 'VIS/STA' },
+  { id: 'GCAR01', lastName: 'Carey',       firstName: 'Grace',     team: 'VIS/STA' },
+  { id: 'CCAT01', lastName: 'Cattanach',   firstName: 'Calvin',    team: 'VIS/STA' },
+  { id: 'PCAT01', lastName: 'Cattanach',   firstName: 'Penelope',  team: 'VIS/STA' },
+  { id: 'RCEL01', lastName: 'Celichowski', firstName: 'Roland',    team: 'VIS/STA' },
+  { id: 'CCHA01', lastName: 'Chard',       firstName: 'Chris',     team: 'VIS/STA' },
+  { id: 'LCLE01', lastName: 'Cleary',      firstName: 'Leo',       team: 'VIS/STA' },
+  { id: 'MCLO01', lastName: 'Closmore',    firstName: 'Mason',     team: 'VIS/STA' },
+  { id: 'JCOH01', lastName: 'Cohn',        firstName: 'Joseph',    team: 'VIS/STA' },
+  { id: 'QCRO01', lastName: 'Crotteau',    firstName: 'Quentyn',   team: 'VIS/STA' },
+  { id: 'CCRO01', lastName: 'Crow',        firstName: 'Connor',    team: 'VIS/STA' },
+  { id: 'LDAL01', lastName: 'Dalglish',    firstName: 'Liv',       team: 'VIS/STA' },
+  { id: 'CDEE01', lastName: 'Deering',     firstName: 'Chase',     team: 'VIS/STA' },
+  { id: 'LFRI01', lastName: 'Fricton',     firstName: 'Lucas',     team: 'VIS/STA' },
+  { id: 'MGEI01', lastName: 'Geis',        firstName: 'Matthew',   team: 'VIS/STA' },
+  { id: 'LGJE01', lastName: 'Gjerde',      firstName: 'Leighton',  team: 'VIS/STA' },
+  { id: 'SGRE01', lastName: 'Grebner',     firstName: 'Sophia',    team: 'VIS/STA' },
+  { id: 'KGRI01', lastName: 'Grinwis',     firstName: 'Kennedy',   team: 'VIS/STA' },
+  { id: 'MHEW01', lastName: 'Hewitt',      firstName: 'Max',       team: 'VIS/STA' },
+  { id: 'THIL01', lastName: 'Hill',        firstName: 'Troy',      team: 'VIS/STA' },
+  { id: 'LHOW01', lastName: 'Howard',      firstName: 'Liam',      team: 'VIS/STA' },
+  { id: 'MHOW01', lastName: 'Howard',      firstName: 'Mitchell',  team: 'VIS/STA' },
+  { id: 'SHUE01', lastName: 'Huerta',      firstName: 'Sonya',     team: 'VIS/STA' },
+  { id: 'MHUL01', lastName: 'Hulting',     firstName: 'Molly',     team: 'VIS/STA' },
+  { id: 'EIMK01', lastName: 'Imker',       firstName: 'Everett',   team: 'VIS/STA' },
+  { id: 'LJOH01', lastName: 'Johnsen',     firstName: 'Lachlan',   team: 'VIS/STA' },
+  { id: 'QKAR01', lastName: 'Karlen',      firstName: 'Quinn',     team: 'VIS/STA' },
+  { id: 'ALAR01', lastName: 'Larson',      firstName: 'Alex',      team: 'VIS/STA' },
+  { id: 'BRLE01', lastName: 'Le',          firstName: 'Bryce',     team: 'VIS/STA' },
+  { id: 'LMAR01', lastName: 'Marvin',      firstName: 'Luke',      team: 'VIS/STA' },
+  { id: 'MMER01', lastName: 'Merman',      firstName: 'Mo',        team: 'VIS/STA' },
+  { id: 'CMET01', lastName: 'Metzger',     firstName: 'Cohen',     team: 'VIS/STA' },
+  { id: 'CMEY01', lastName: 'Meyer',       firstName: 'Cooper',    team: 'VIS/STA' },
+  { id: 'MMIC01', lastName: 'Michaud',     firstName: 'Molly',     team: 'VIS/STA' },
+  { id: 'JMIL01', lastName: 'Miley',       firstName: 'James',     team: 'VIS/STA' },
+  { id: 'PMOL01', lastName: 'Molinaro',    firstName: 'Peter',     team: 'VIS/STA' },
+  { id: 'JMOR01', lastName: 'Morales',     firstName: 'Johann',    team: 'VIS/STA' },
+  { id: 'JMUR01', lastName: 'Murray',      firstName: 'Joseph',    team: 'VIS/STA' },
+  { id: 'ENGU01', lastName: 'Nguyen',      firstName: 'Ethan',     team: 'VIS/STA' },
+  { id: 'EOCO01', lastName: "O'Connell",   firstName: 'Erin',      team: 'VIS/STA' },
+  { id: 'SPET01', lastName: 'Peterson',    firstName: 'Sofia',     team: 'VIS/STA' },
+  { id: 'MPET01', lastName: 'Petschel',    firstName: 'Margaret',  team: 'VIS/STA' },
+  { id: 'CPLE01', lastName: 'Plessner',    firstName: 'Charlotte', team: 'VIS/STA' },
+  { id: 'MPOT01', lastName: 'Potts',       firstName: 'Mathias',   team: 'VIS/STA' },
+  { id: 'EPRE01', lastName: 'Prettyman',   firstName: 'Everett',   team: 'VIS/STA' },
+  { id: 'AQAR01', lastName: 'Qarmout',     firstName: 'Andrew',    team: 'VIS/STA' },
+  { id: 'RQAR01', lastName: 'Qarmout',     firstName: 'Rami',      team: 'VIS/STA' },
+  { id: 'SQUI01', lastName: 'Quinn',       firstName: 'Sam',       team: 'VIS/STA' },
+  { id: 'JREI01', lastName: 'Reissner',    firstName: 'James',     team: 'VIS/STA' },
+  { id: 'DROG01', lastName: 'Rogers',      firstName: 'Deacon',    team: 'VIS/STA' },
+  { id: 'OROS01', lastName: 'Rosedahl',    firstName: 'Owen',      team: 'VIS/STA' },
+  { id: 'CRUC01', lastName: 'Rucker',      firstName: 'Carter',    team: 'VIS/STA' },
+  { id: 'LSCI01', lastName: 'Scibora',     firstName: 'Liam',      team: 'VIS/STA' },
+  { id: 'ESIS01', lastName: 'Sislo',       firstName: 'Edward',    team: 'VIS/STA' },
+  { id: 'RSLA01', lastName: 'Slade',       firstName: 'Richard',   team: 'VIS/STA' },
+  { id: 'LSPA01', lastName: 'Spaulding',   firstName: 'Leo',       team: 'VIS/STA' },
+  { id: 'JSTO01', lastName: 'St. Ores',    firstName: 'James',     team: 'VIS/STA' },
+  { id: 'ESTE01', lastName: 'Steenberg',   firstName: 'Elsa',      team: 'VIS/STA' },
+  { id: 'NSTE01', lastName: 'Steiner',     firstName: 'Nicholas',  team: 'VIS/STA' },
+  { id: 'WSTO01', lastName: 'Stoyke',      firstName: 'William',   team: 'VIS/STA' },
+  { id: 'HSTR01', lastName: 'Stranik',     firstName: 'Hugo',      team: 'VIS/STA' },
+  { id: 'JWAL01', lastName: 'Wallin',      firstName: 'Jack',      team: 'VIS/STA' },
+  { id: 'BWIN01', lastName: 'Winter',      firstName: 'Boden',     team: 'VIS/STA' },
+  { id: 'JWIN01', lastName: 'Winter',      firstName: 'Jackson',   team: 'VIS/STA' },
+];
+</file>
+
+<file path="src/lib/storage.js">
+// localStorage persistence layer for SquadScore.
+//
+// Single key ('squadscore:state') holds the full app state as JSON:
+//   { version, roster, rounds }
+//
+// On first load (no key present) the seed roster from handoff #3 is written.
+// Corrupted JSON triggers a reseed with a console warning — extremely rare,
+// but defensive so a bad localStorage value can't brick the app.
+
+import { SEED_ROSTER } from './seedRoster.js';
+
+const STATE_KEY = 'squadscore:state';
+
+function defaultState() {
+  return {
+    version: 1,
+    roster: SEED_ROSTER.map((e) => ({ ...e })), // shallow clone — primitives only
+    rounds: [],
+  };
+}
+
+/**
+ * Read the full app state. Seeds + saves on first call.
+ * Always returns a valid state object; never throws.
+ */
+export function loadState() {
+  let raw;
+  try {
+    raw = localStorage.getItem(STATE_KEY);
+  } catch (err) {
+    console.error('SquadScore: localStorage unavailable, using in-memory default.', err);
+    return defaultState();
+  }
+
+  if (!raw) {
+    const fresh = defaultState();
+    saveState(fresh);
+    return fresh;
+  }
+
+  try {
+    const parsed = JSON.parse(raw);
+    // Minimal shape sanity check; reseed on serious corruption.
+    if (!parsed || !Array.isArray(parsed.roster) || !Array.isArray(parsed.rounds)) {
+      throw new Error('Invalid state shape');
+    }
+    return parsed;
+  } catch (err) {
+    console.error('SquadScore: stored state corrupted, reseeding.', err);
+    const fresh = defaultState();
+    saveState(fresh);
+    return fresh;
+  }
+}
+
+/** Persist the full state. Logs and continues on quota / privacy errors. */
+export function saveState(state) {
+  try {
+    localStorage.setItem(STATE_KEY, JSON.stringify(state));
+  } catch (err) {
+    console.error('SquadScore: failed to persist state.', err);
+  }
+}
+
+/** Wipe everything. Useful for dev / debugging via the browser console. */
+export function clearState() {
+  try {
+    localStorage.removeItem(STATE_KEY);
+  } catch (err) {
+    console.error('SquadScore: failed to clear state.', err);
+  }
+}
+</file>
+
+<file path="src/main.jsx">
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+import './index.css'
+import App from './App.jsx'
+
+createRoot(document.getElementById('root')).render(
+  <StrictMode>
+    <App />
+  </StrictMode>,
+)
+</file>
+
+<file path="tailwind.config.js">
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: [
+    "./index.html",
+    "./src/**/*.jsx",
+    "./src/**/*.js",
+  ],
+  theme: {
+    extend: {
+      fontFamily: {
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+        serif: ['"Source Serif 4"', 'Georgia', 'serif'],
+      },
+    },
+  },
+  plugins: [],
+}
+</file>
+
+<file path="vite.config.js">
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
+// https://vite.dev/config/
+export default defineConfig({
+  plugins: [react()],
+})
+</file>
+
+<file path="package.json">
+{
+  "name": "squadscore",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@tabler/icons-react": "^3.43.0",
+    "jspdf": "^4.2.1",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.1",
+    "autoprefixer": "^10.5.0",
+    "eslint": "^10.2.1",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.2",
+    "globals": "^17.5.0",
+    "postcss": "^8.5.14",
+    "tailwindcss": "^3.4.19",
+    "vite": "^8.0.10"
+  }
+}
+</file>
+
+<file path="README.md">
+# React + Vite
+
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+
+Currently, two official plugins are available:
+
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+
+## React Compiler
+
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+
+## Expanding the ESLint configuration
+
+If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+</file>
+
+<file path="src/components/HistoryScreen.jsx">
+// src/components/HistoryScreen.jsx
+//
+// The full rounds-history view. Reached from the "See all rounds →" link on
+// the home screen.
+//
+// Layout: top bar (chevron-left back arrow + centered "All rounds" title) +
+// chronological list of rounds grouped under date section headers.
+//
+// Ordering rule matches HomeScreen: unfinished rounds at the very top
+// (newest first), then completed rounds (newest first) grouped under date
+// section headers. Empty state hides everything below the top bar.
+//
+// Height: this screen uses fixed viewport height (h-screen) rather than
+// min-h-screen so the inner flex-1 body has a bounded height for its
+// overflow-y-auto to scroll inside. With body { overflow: hidden } locked
+// globally, min-h-screen would let the page grow past the viewport and
+// the inner scroll would clip instead of scrolling.
+
+import { useMemo } from 'react';
+import { IconChevronLeft, IconChevronRight, IconStar } from '@tabler/icons-react';
+import { getRounds } from '../lib/roundStore';
+import {
+  isRoundComplete,
+  shootersByStartingPost,
+  shooterScore,
+} from '../lib/scoring';
+
+function dateKey(iso) {
+  const d = new Date(iso);
+  return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+}
+
+function formatSectionHeader(iso) {
+  const d = new Date(iso);
+  const now = new Date();
+  const sameDay =
+    d.getFullYear() === now.getFullYear() &&
+    d.getMonth() === now.getMonth() &&
+    d.getDate() === now.getDate();
+  if (sameDay) return 'Today';
+  return d.toLocaleDateString('en-US', {
+    weekday: 'short',
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  });
+}
+
+function formatTime(iso) {
+  return new Date(iso).toLocaleTimeString('en-US', {
+    hour: 'numeric',
+    minute: '2-digit',
+  });
+}
+
+export default function HistoryScreen({ rosterById, onBack, onOpenRound }) {
+  const { unfinished, completedByDate } = useMemo(() => {
+    const all = getRounds(); // already newest-first
+    const unfinished = [];
+    const completed = [];
+    for (const r of all) {
+      if (isRoundComplete(r)) completed.push(r);
+      else unfinished.push(r);
+    }
+
+    // Group completed by date key in insertion order (already newest-first).
+    const byDate = [];
+    const seen = new Map();
+    for (const r of completed) {
+      const key = dateKey(r.date);
+      if (!seen.has(key)) {
+        const group = { key, headerIso: r.date, rounds: [] };
+        seen.set(key, group);
+        byDate.push(group);
+      }
+      seen.get(key).rounds.push(r);
+    }
+
+    return { unfinished, completedByDate: byDate };
+  }, []);
+
+  const hasAny = unfinished.length > 0 || completedByDate.length > 0;
+
+  return (
+    <div
+      className="flex flex-col"
+      style={{
+        height: '100vh',
+        background: 'var(--color-background-primary)',
+        paddingTop: 'max(12px, env(safe-area-inset-top))',
+        paddingBottom: 'max(12px, env(safe-area-inset-bottom))',
+      }}
+    >
+      {/* Top bar */}
+      <div
+        className="flex items-center justify-between px-3 pb-3"
+        style={{
+          borderBottom: '0.5px solid var(--color-text-tertiary)',
+          flexShrink: 0,
+        }}
+      >
+        <button onClick={onBack} className="p-2 -ml-2" aria-label="Back">
+          <IconChevronLeft size={22} stroke={1.75} />
+        </button>
+        <div
+          style={{
+            fontSize: 15,
+            fontWeight: 500,
+            color: 'var(--color-text-primary)',
+          }}
+        >
+          All rounds
+        </div>
+        {/* Right-side spacer to balance the back arrow */}
+        <div style={{ width: 38 }} />
+      </div>
+
+      {/* Body — scrollable */}
+      <div
+        className="flex-1 overflow-y-auto"
+        style={{
+          padding: '0 18px 16px',
+          minHeight: 0,
+        }}
+      >
+        {!hasAny && null}
+
+        {unfinished.length > 0 && (
+          <div>
+            <div
+              style={{
+                fontSize: 12,
+                fontWeight: 500,
+                color: 'var(--color-text-secondary)',
+                padding: '18px 4px 8px',
+              }}
+            >
+              In progress
+            </div>
+            <div className="flex flex-col gap-2">
+              {unfinished.map((round) => (
+                <RoundRow
+                  key={round.id}
+                  round={round}
+                  rosterById={rosterById}
+                  onClick={() => onOpenRound(round)}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {completedByDate.map((group, gi) => (
+          <div key={group.key}>
+            <div
+              style={{
+                fontSize: 12,
+                fontWeight: 500,
+                color: 'var(--color-text-secondary)',
+                padding:
+                  gi === 0 && unfinished.length === 0
+                    ? '18px 4px 8px'
+                    : '22px 4px 8px',
+              }}
+            >
+              {formatSectionHeader(group.headerIso)}
+            </div>
+            <div className="flex flex-col gap-2">
+              {group.rounds.map((round) => (
+                <RoundRow
+                  key={round.id}
+                  round={round}
+                  rosterById={rosterById}
+                  onClick={() => onOpenRound(round)}
+                />
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function RoundRow({ round, rosterById, onClick }) {
+  const complete = isRoundComplete(round);
+  const scorer = rosterById[round.scorerId];
+  const scorerName = scorer ? scorer.firstName : 'Unknown';
+
+  const sortedShooters = shootersByStartingPost(round);
+  const shooterNames = sortedShooters.map(({ shooter, idx }) => {
+    const entry = rosterById[shooter.rosterId];
+    const firstName = entry ? entry.firstName : '?';
+    const { hits, total } = shooterScore(round, idx);
+    const isPerfect = complete && hits === 25 && total === 25;
+    return { firstName, isPerfect };
+  });
+
+  return (
+    <button
+      onClick={onClick}
+      className="w-full flex items-center text-left"
+      style={{
+        background: 'var(--color-background-secondary)',
+        borderRadius: 'var(--border-radius-md)',
+        border: 'none',
+        padding: '12px 14px',
+        gap: 8,
+      }}
+    >
+      <div className="flex-1 min-w-0">
+        <div
+          style={{
+            fontSize: 12,
+            color: 'var(--color-text-tertiary)',
+            marginBottom: 4,
+          }}
+        >
+          {formatTime(round.date)} · scored by {scorerName}
+        </div>
+        <div
+          className="truncate"
+          style={{
+            fontSize: 13,
+            color: 'var(--color-text-primary)',
+          }}
+        >
+          {shooterNames.map((s, i) => (
+            <span key={i}>
+              {i > 0 && ' · '}
+              {s.isPerfect && (
+                <IconStar
+                  size={13}
+                  fill="#854F0B"
+                  color="#854F0B"
+                  style={{ display: 'inline', verticalAlign: '-2px', marginRight: 2 }}
+                />
+              )}
+              {s.firstName}
+            </span>
+          ))}
+        </div>
+      </div>
+      <IconChevronRight
+        size={18}
+        color="var(--color-text-tertiary)"
+        style={{ flexShrink: 0 }}
+      />
+    </button>
+  );
+}
+</file>
+
+<file path="src/components/PerShooterScreen.jsx">
+// src/components/PerShooterScreen.jsx
+//
+// The real per-shooter end-of-round screen. Renders screens 2..N of the
+// EndOfRound carousel, one per shooter in starting-post order.
+//
+// Edit mode: when editMode=true, station rows that have shots become tappable
+// buttons that fire onStationTap(stationN). The parent (EndOfRound) opens the
+// StationEditor for that station. "Did not shoot" rows stay non-tappable.
+
+import { IconStar, IconFlame } from '@tabler/icons-react';
+import {
+  shooterShots,
+  shooterScore,
+  longestStreak,
+  physicalPostOf,
+  leaveContext,
+} from '../lib/scoring';
+
+function buildStations(round, shooterIdx) {
+  const shooter = round.shooters[shooterIdx];
+  const shots = shooterShots(round, shooterIdx);
+  const totalShots = shooter.leftAfterShot ?? 25;
+  const stations = [];
+
+  for (let stationN = 1; stationN <= 5; stationN++) {
+    const physicalPost = physicalPostOf(shooter.startingPost, stationN);
+    const startIdx = (stationN - 1) * 5;
+    const stationShots = shots.slice(startIdx, startIdx + 5);
+    const expected = Math.max(0, Math.min(5, totalShots - startIdx));
+
+    if (expected === 0) {
+      stations.push({ stationN, post: physicalPost, kind: 'didNotShoot' });
+    } else if (expected < 5) {
+      const hits = stationShots.filter((s) => s.hit).length;
+      stations.push({
+        stationN,
+        post: physicalPost,
+        kind: 'partial',
+        shots: stationShots,
+        unshot: 5 - stationShots.length,
+        hits,
+        total: stationShots.length,
+      });
+    } else {
+      const hits = stationShots.filter((s) => s.hit).length;
+      stations.push({
+        stationN,
+        post: physicalPost,
+        kind: 'full',
+        shots: stationShots,
+        hits,
+        total: 5,
+      });
+    }
+  }
+  return stations;
+}
+
+export default function PerShooterScreen({
+  round,
+  rosterById,
+  shooterIdx,
+  editMode = false,
+  onStationTap,
+}) {
+  const shooter = round.shooters[shooterIdx];
+  const firstName = rosterById[shooter.rosterId]?.firstName ?? '?';
+  const allShots = shooterShots(round, shooterIdx);
+  const { hits, total } = shooterScore(round, shooterIdx);
+  const isLeft = shooter.leftAfterShot != null;
+  const isPerfect = !isLeft && hits === 25;
+  const isVarsity = !isLeft && hits >= 19 && total === 25;
+  const longest = longestStreak(allShots);
+  const stations = buildStations(round, shooterIdx);
+  const leave = leaveContext(round, shooterIdx);
+
+  const scoreText = isLeft ? `${hits}/${total}` : `${hits}/25`;
+  const scoreColor = isVarsity ? '#639922' : 'var(--color-text-primary)';
+
+  let chipLabel = null;
+  if (isPerfect) chipLabel = 'Perfect round';
+  else if (longest >= 2) chipLabel = `Longest run · ${longest}`;
+
+  const firstDnsIdx = stations.findIndex((s) => s.kind === 'didNotShoot');
+
+  let dividerText = null;
+  if (leave?.kind === 'clean') {
+    dividerText = `left after station ${leave.stationsCompleted} of 5`;
+  } else if (leave?.kind === 'mid-station') {
+    dividerText = `left during station ${leave.station} after ${leave.shotsTaken} shot${leave.shotsTaken === 1 ? '' : 's'}`;
+  }
+
+  return (
+    <div className="flex-1 overflow-y-auto px-4 py-4 md:px-12">
+      {editMode && (
+        <div
+          className="mb-3 text-center"
+          style={{
+            color: 'var(--color-clay-orange)',
+            fontSize: 12,
+            fontWeight: 500,
+          }}
+        >
+          Tap a station to edit its shots
+        </div>
+      )}
+
+      <div className="flex items-start justify-between mb-3">
+        <div>
+          <div style={{ color: 'var(--color-text-tertiary)', fontSize: 12 }}>
+            Started on post {shooter.startingPost}
+          </div>
+          <div
+            style={{
+              color: 'var(--color-text-primary)',
+              fontSize: 28,
+              fontWeight: 500,
+              lineHeight: 1.1,
+            }}
+          >
+            {firstName}
+          </div>
+          {chipLabel && (
+            <div
+              className="inline-flex items-center gap-1 mt-2"
+              style={{
+                background: '#FAEEDA',
+                color: '#854F0B',
+                fontSize: 12,
+                fontWeight: 500,
+                padding: '4px 10px',
+                borderRadius: 999,
+              }}
+            >
+              <IconFlame size={13} />
+              <span>{chipLabel}</span>
+            </div>
+          )}
+        </div>
+        <div className="flex items-center gap-1.5">
+          {isPerfect && <IconStar size={18} fill="#854F0B" color="#854F0B" />}
+          <div style={{ color: scoreColor, fontSize: 24, fontWeight: 500 }}>{scoreText}</div>
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        {stations.map((station, i) => (
+          <div key={i}>
+            {dividerText && i === firstDnsIdx && (
+              <div className="flex items-center gap-2 my-2">
+                <div
+                  style={{
+                    flex: 1,
+                    height: 0.5,
+                    background: 'var(--color-text-tertiary)',
+                    opacity: 0.4,
+                  }}
+                />
+                <div
+                  style={{
+                    fontSize: 11,
+                    color: 'var(--color-text-tertiary)',
+                    fontStyle: 'italic',
+                  }}
+                >
+                  {dividerText}
+                </div>
+                <div
+                  style={{
+                    flex: 1,
+                    height: 0.5,
+                    background: 'var(--color-text-tertiary)',
+                    opacity: 0.4,
+                  }}
+                />
+              </div>
+            )}
+            <StationBox
+              station={station}
+              editMode={editMode}
+              onTap={() => onStationTap && onStationTap(station.stationN)}
+            />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function StationBox({ station, editMode, onTap }) {
+  if (station.kind === 'didNotShoot') {
+    return (
+      <div
+        className="flex items-center rounded-md"
+        style={{
+          padding: '12px 14px',
+          background: 'transparent',
+          border: '0.5px solid var(--color-text-tertiary)',
+          opacity: 0.7,
+        }}
+      >
+        <div
+          style={{
+            width: 70,
+            fontSize: 13,
+            fontWeight: 500,
+            color: 'var(--color-text-tertiary)',
+          }}
+        >
+          Station {station.post}
+        </div>
+        <div
+          style={{
+            flex: 1,
+            textAlign: 'center',
+            fontSize: 13,
+            color: 'var(--color-text-tertiary)',
+          }}
+        >
+          Did not shoot
+        </div>
+      </div>
+    );
+  }
+
+  const isPerfectStation = station.kind === 'full' && station.hits === 5;
+
+  const content = (
+    <>
+      <div
+        style={{
+          width: 70,
+          fontSize: 13,
+          fontWeight: 500,
+          color: 'var(--color-text-primary)',
+        }}
+      >
+        Station {station.post}
+      </div>
+      <div className="flex-1 flex items-center justify-center" style={{ gap: 8 }}>
+        {station.shots.map((s, i) => (
+          <div
+            key={`s${i}`}
+            style={{
+              width: 14,
+              height: 14,
+              borderRadius: '50%',
+              background: s.hit ? '#639922' : '#E24B4A',
+            }}
+          />
+        ))}
+        {station.kind === 'partial' &&
+          Array.from({ length: station.unshot }).map((_, i) => (
+            <div
+              key={`u${i}`}
+              style={{
+                width: 14,
+                height: 14,
+                borderRadius: '50%',
+                background: '#2C2C2A',
+              }}
+            />
+          ))}
+      </div>
+      <div
+        style={{
+          fontSize: 13,
+          fontWeight: 500,
+          color: isPerfectStation ? '#639922' : 'var(--color-text-primary)',
+        }}
+      >
+        {station.hits}/{station.total}
+      </div>
+    </>
+  );
+
+  const baseStyle = {
+    padding: '12px 14px',
+    background: isPerfectStation ? '#EAF3DE' : 'var(--color-background-secondary)',
+    border: isPerfectStation ? '2px solid #639922' : 'none',
+  };
+
+  if (editMode) {
+    return (
+      <button
+        onClick={onTap}
+        className="w-full flex items-center rounded-md text-left"
+        style={{ ...baseStyle, cursor: 'pointer' }}
+      >
+        {content}
+      </button>
+    );
+  }
+
+  return (
+    <div className="flex items-center rounded-md" style={baseStyle}>
+      {content}
+    </div>
+  );
+}
+</file>
+
+<file path="src/components/SetupScreen.jsx">
+// Setup screen — bookends every round.
+//
+// State tracked here:
+//   scorerId         — selected scorer's roster ID, or null
+//   shooters         — committed shooters: [{rosterId, startingPost}]
+//   draftRosterId    — in-progress shooter's roster ID, or null
+//   draftPost        — in-progress shooter's starting post, or null
+//
+// "Add another" and "Start tracking" both commit the in-progress shooter
+// if the form is complete (rosterId and post both set). Start tracking
+// then creates the round via the round store (which persists it) and hands
+// the returned round to the parent via onStart.
+
+import { useState, useMemo } from 'react';
+import { IconX } from '@tabler/icons-react';
+import RosterPicker from './RosterPicker.jsx';
+import PostPicker from './PostPicker.jsx';
+import { getRosterEntry } from '../lib/roster.js';
+import { startRound } from '../lib/roundStore.js';
+
+const MAX_SHOOTERS = 5;
+
+export default function SetupScreen({ onStart }) {
+  const [scorerId, setScorerId] = useState(null);
+  const [shooters, setShooters] = useState([]);
+  const [draftRosterId, setDraftRosterId] = useState(null);
+  const [draftPost, setDraftPost] = useState(null);
+
+  const takenPosts = useMemo(() => shooters.map((s) => s.startingPost), [shooters]);
+  const excludeIds = useMemo(() => shooters.map((s) => s.rosterId), [shooters]);
+
+  const draftComplete = draftRosterId !== null && draftPost !== null;
+  const totalAfterCommit = shooters.length + (draftComplete ? 1 : 0);
+  const canStart = scorerId !== null && totalAfterCommit > 0;
+  const canAddAnother = draftComplete && shooters.length < MAX_SHOOTERS;
+
+  function commitDraft() {
+    if (!draftComplete) return shooters;
+    const next = [...shooters, { rosterId: draftRosterId, startingPost: draftPost }];
+    setShooters(next);
+    setDraftRosterId(null);
+    setDraftPost(null);
+    return next;
+  }
+
+  function handleAddAnother() {
+    if (!canAddAnother) return;
+    commitDraft();
+  }
+
+  function handleStartTracking() {
+    if (!canStart) return;
+    const finalShooters = commitDraft();
+    const round = startRound({
+      scorerId,
+      shooters: finalShooters,
+    });
+    onStart?.(round);
+  }
+
+  function handleRemoveShooter(idx) {
+    setShooters(shooters.filter((_, i) => i !== idx));
+  }
+
+  return (
+    <div className="flex flex-col flex-1 min-h-full">
+      {/* Top bar — back arrow comes in stage 6 when home screen lands */}
+      <header className="h-12 flex items-center justify-center border-b-[0.5px] border-[var(--color-text-tertiary)] flex-shrink-0">
+        <h1 className="text-[15px] font-medium text-[var(--color-text-primary)]">New round</h1>
+      </header>
+
+      {/* Body */}
+      <div className="flex-1 px-[18px] py-5 space-y-5">
+        {/* Scorer */}
+        <section>
+          <label className="block text-[13px] font-medium text-[var(--color-text-secondary)] mb-2">
+            Scorer
+          </label>
+          <RosterPicker
+            value={scorerId}
+            onChange={setScorerId}
+            placeholder="Search by name"
+          />
+          <p className="text-[12px] text-[var(--color-text-tertiary)] mt-1.5">
+            Shown on the printed scorecard
+          </p>
+        </section>
+
+        {/* Shooters */}
+        <section>
+          <div className="flex items-baseline justify-between mb-2">
+            <label className="text-[13px] font-medium text-[var(--color-text-secondary)]">
+              Shooters
+            </label>
+            <span className="text-[12px] text-[var(--color-text-tertiary)]">
+              {shooters.length} of {MAX_SHOOTERS}
+            </span>
+          </div>
+
+          {/* Already-added shooters */}
+          {shooters.length > 0 && (
+            <div className="space-y-1.5 mb-3">
+              {shooters.map((s, i) => {
+                const entry = getRosterEntry(s.rosterId);
+                return (
+                  <div
+                    key={s.rosterId}
+                    className="flex items-center gap-3 bg-[var(--color-background-secondary)] rounded-md px-3 py-2"
+                  >
+                    <div className="w-[30px] h-[30px] rounded-full bg-white border-[0.5px] border-[var(--color-text-tertiary)] flex items-center justify-center text-[13px] font-medium text-[var(--color-text-primary)]">
+                      {s.startingPost}
+                    </div>
+                    <span className="flex-1 text-[15px] text-[var(--color-text-primary)] truncate">
+                      {entry ? `${entry.firstName} ${entry.lastName}` : 'unknown'}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveShooter(i)}
+                      aria-label={`Remove ${entry?.firstName ?? 'shooter'}`}
+                      className="p-1 text-[var(--color-text-tertiary)]"
+                    >
+                      <IconX size={20} />
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {/* Active form (hidden once at max) */}
+          {shooters.length < MAX_SHOOTERS && (
+            <div className="bg-white border-[0.5px] border-[var(--color-text-tertiary)] rounded-lg pt-3.5 px-3.5 pb-4 space-y-3">
+              <div>
+                <label className="block text-[12px] font-medium text-[var(--color-text-secondary)] mb-1.5">
+                  Name
+                </label>
+                <RosterPicker
+                  value={draftRosterId}
+                  onChange={setDraftRosterId}
+                  excludeIds={excludeIds}
+                  placeholder="Search by name"
+                />
+              </div>
+              <div>
+                <label className="block text-[12px] font-medium text-[var(--color-text-secondary)] mb-1.5">
+                  Starting post
+                </label>
+                <PostPicker
+                  value={draftPost}
+                  takenPosts={takenPosts}
+                  onChange={setDraftPost}
+                />
+              </div>
+            </div>
+          )}
+        </section>
+      </div>
+
+      {/* CTAs */}
+      <div className="px-[18px] pb-5 pt-3 grid grid-cols-2 gap-2.5 flex-shrink-0">
+        <button
+          type="button"
+          onClick={handleAddAnother}
+          disabled={!canAddAnother}
+          className={`h-12 rounded-md border-[0.5px] border-[var(--color-text-tertiary)] bg-white text-[15px] font-medium text-[var(--color-text-primary)] transition-opacity ${
+            !canAddAnother ? 'opacity-40 cursor-not-allowed' : ''
+          }`}
+        >
+          Add another
+        </button>
+        <button
+          type="button"
+          onClick={handleStartTracking}
+          disabled={!canStart}
+          className={`h-12 rounded-md bg-[var(--color-clay-orange)] text-[15px] font-medium text-white transition-opacity ${
+            !canStart ? 'opacity-40 cursor-not-allowed' : ''
+          }`}
+        >
+          Start tracking
+        </button>
+      </div>
+    </div>
+  );
+}
+</file>
+
+<file path="src/components/OverviewScreen.jsx">
+import { IconStar, IconPencil } from '@tabler/icons-react';
+import {
+  shooterScore,
+  shootersByStartingPost,
+  leaveContext,
+} from '../lib/scoring';
+
+function formatDate(iso) {
+  const d = new Date(iso);
+  const datePart = d.toLocaleDateString('en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+  });
+  const timePart = d.toLocaleTimeString('en-US', {
+    hour: 'numeric',
+    minute: '2-digit',
+  });
+  return `${datePart} · ${timePart}`;
+}
+
+export default function OverviewScreen({ round, rosterById, onEditShooter }) {
+  const sorted = shootersByStartingPost(round);
+
+  return (
+    <div className="flex-1 overflow-y-auto px-4 py-4 md:px-12">
+      {/* Header */}
+      <div className="mb-4">
+        <div
+          className="text-[22px] font-medium"
+          style={{ color: 'var(--color-text-primary)' }}
+        >
+          Results overview
+        </div>
+        <div
+          className="text-[12px] mt-1"
+          style={{ color: 'var(--color-text-tertiary)' }}
+        >
+          {formatDate(round.date)}
+        </div>
+      </div>
+
+      {/* Shooter rows */}
+      <div className="flex flex-col gap-2">
+        {sorted.map(({ shooter, idx }) => {
+          const { hits, total } = shooterScore(round, idx);
+          const leave = leaveContext(round, idx);
+          const isLeft = leave !== null;
+          const isPerfect = !isLeft && hits === 25;
+          const isVarsity = !isLeft && hits >= 19 && total === 25;
+          const firstName = rosterById[shooter.rosterId]?.firstName ?? '?';
+
+          const scoreText = isLeft ? `${hits}/${total}` : `${hits}/25`;
+
+          const rowStyle = isVarsity
+            ? {
+                background: 'var(--color-varsity-green-bg, #EAF3DE)',
+                border: '2px solid var(--color-varsity-green, #639922)',
+              }
+            : {
+                background: 'var(--color-background-secondary)',
+                border: '0.5px solid var(--color-text-tertiary)',
+              };
+
+          const badgeStyle = isVarsity
+            ? {
+                border: '1px solid var(--color-varsity-green, #639922)',
+                color: 'var(--color-varsity-green, #639922)',
+              }
+            : {
+                border: '0.5px solid var(--color-text-secondary)',
+                color: 'var(--color-text-primary)',
+              };
+
+          const scoreColor = isVarsity
+            ? 'var(--color-varsity-green, #639922)'
+            : 'var(--color-text-primary)';
+
+          let leaveSubline = null;
+          if (leave?.kind === 'clean') {
+            leaveSubline = `left after station ${leave.stationsCompleted} of 5`;
+          } else if (leave?.kind === 'mid-station') {
+            leaveSubline = `left during station ${leave.station} after ${leave.shotsTaken} shot${
+              leave.shotsTaken === 1 ? '' : 's'
+            }`;
+          }
+
+          return (
+            <div
+              key={idx}
+              className="flex items-center gap-3 rounded-md"
+              style={{ ...rowStyle, padding: '10px 12px' }}
+            >
+              {/* Post badge */}
+              <div
+                className="flex items-center justify-center rounded-full flex-shrink-0"
+                style={{
+                  width: 26,
+                  height: 26,
+                  fontSize: 12,
+                  fontWeight: 500,
+                  ...badgeStyle,
+                }}
+              >
+                {shooter.startingPost}
+              </div>
+
+              {/* Name + optional leave subline */}
+              <div className="flex-1 min-w-0">
+                <div
+                  className="text-[15px] font-medium truncate"
+                  style={{ color: 'var(--color-text-primary)' }}
+                >
+                  {firstName}
+                </div>
+                {leaveSubline && (
+                  <div
+                    className="text-[12px] mt-0.5"
+                    style={{ color: 'var(--color-text-tertiary)' }}
+                  >
+                    {leaveSubline}
+                  </div>
+                )}
+              </div>
+
+              {/* Score (with optional star for perfect rounds) */}
+              <div className="flex items-center gap-1.5 flex-shrink-0">
+                {isPerfect && (
+                  <IconStar size={16} fill="#854F0B" color="#854F0B" />
+                )}
+                <div
+                  className="text-[15px] font-medium tabular-nums"
+                  style={{ color: scoreColor }}
+                >
+                  {scoreText}
+                </div>
+              </div>
+
+              {/* Edit pencil */}
+              <button
+                onClick={() => onEditShooter && onEditShooter(idx)}
+                className="flex-shrink-0 p-1 -mr-1"
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  cursor: 'pointer',
+                }}
+                aria-label={`Edit ${firstName}'s shots`}
+              >
+                <IconPencil size={18} color="var(--color-text-tertiary)" />
+              </button>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+</file>
+
+<file path="src/index.css">
+/* Fonts: Inter (sans) + Source Serif 4 (serif/wordmark) */
+/* @import must come before @tailwind directives per CSS spec — fixes the
+   "@import must precede all other statements" Vite warning flagged in handoff #10. */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Source+Serif+4:wght@400;500&display=swap');
+
+/* Tailwind directives — these get expanded by PostCSS into all utility classes. */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* SquadScore design tokens. Per handoff #1's "Color palette" + "Visual & UX conventions". */
+:root {
+  /* Text */
+  --color-text-primary:   #2C2C2A;
+  --color-text-secondary: #6B6B68;
+  --color-text-tertiary:  #A3A39E;
+
+  /* Semantic state */
+  --color-text-success: #4F7A1C;   /* darker variant for in-app text on green fills */
+  --color-text-danger:  #B8302F;
+
+  /* Backgrounds */
+  --color-background-primary:   #FFFFFF;
+  --color-background-secondary: #EFEDE5;
+  --color-background-tertiary:  #F5F3EB;
+
+  /* Brand / accent */
+  --color-clay-orange: #D85A30;
+
+  /* Varsity (≥19) + perfect-round */
+  --color-varsity-green:    #639922;
+  --color-varsity-green-bg: #EAF3DE;
+
+  /* Streak / perfect-round chip + star marker */
+  --color-amber-bg:   #FAEEDA;
+  --color-amber-text: #854F0B;
+
+  /* HIT / MISS flash overlays */
+  --color-flash-hit:  #639922;
+  --color-flash-miss: #E24B4A;
+
+  /* Left-the-line un-shot */
+  --color-unshot: #2C2C2A;
+
+  /* PDF paper edge in preview */
+  --color-paper-edge: #B4B2A9;
+
+  /* Border radii */
+  --border-radius-sm: 6px;
+  --border-radius-md: 8px;
+  --border-radius-lg: 12px;
+
+  /* Fonts (also wired up via Tailwind config) */
+  --font-serif: 'Source Serif 4', Georgia, serif;
+}
+
+/* Base body styles. */
+html, body, #root {
+  height: 100%;
+}
+
+/* Lock the page so the whole viewport can't be dragged/zoomed.
+   Internal scroll containers (overflow-y-auto inside EndOfRound, etc.) still work. */
+html {
+  /* Disable pull-to-refresh and overscroll bounce. */
+  overscroll-behavior: none;
+  /* Prevent double-tap zoom on iOS. */
+  touch-action: manipulation;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-weight: 400;
+  color: var(--color-text-primary);
+  background: var(--color-background-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  /* Lock the body — only internal scroll containers can scroll. */
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+/* Disable iOS tap highlight on buttons — they have their own active states. */
+button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Prevent iOS auto-zoom on input focus.
+   Safari zooms in any time an input has font-size < 16px. Setting all
+   form inputs to 16px minimum stops the zoom (and the failed zoom-back-out
+   that leaves the page scrolled). */
+input,
+textarea,
+select {
+  font-size: 16px;
+}
+</file>
+
+<file path="src/components/ActiveShooterCard.jsx">
+// src/components/ActiveShooterCard.jsx
+import { IconFlame } from '@tabler/icons-react';
+import {
+  shooterShots,
+  shooterScore,
+  currentStreak,
+} from '../lib/scoring';
+
+export default function ActiveShooterCard({
+  round,
+  slot,
+  rosterEntry,
+  inReviewMode = false,
+  cursorShotIdx = null,
+}) {
+  if (!slot) return null;
+
+  const { shooterIdx, roundNumber, personalStationShot, personalShotIdx } = slot;
+  const allShots = shooterShots(round, shooterIdx);
+
+  let displayHits, displayTotal;
+  if (inReviewMode && cursorShotIdx !== null) {
+    let hits = 0, total = 0;
+    for (let i = 0; i <= cursorShotIdx && i < round.shots.length; i++) {
+      if (round.shots[i].shooterIdx === shooterIdx) {
+        total += 1;
+        if (round.shots[i].hit) hits += 1;
+      }
+    }
+    displayHits = hits;
+    displayTotal = total;
+  } else {
+    const score = shooterScore(round, shooterIdx);
+    displayHits = score.hits;
+    displayTotal = score.total;
+  }
+
+  const streak = currentStreak(allShots);
+  const showStreak = streak >= 2 && !inReviewMode;
+  const firstName = rosterEntry?.firstName ?? 'Unknown';
+
+  const personalStation = Math.floor(personalShotIdx / 5) + 1;
+  const stationStart = (personalStation - 1) * 5;
+  const stationShotsTaken = allShots.slice(stationStart, stationStart + 5);
+
+  const nameSize = 'clamp(38px, 13vw, 60px)';
+  const stationHeaderSize = 'clamp(11px, 3.4vw, 14px)';
+  const totalSize = 'clamp(12px, 3.6vw, 15px)';
+  const dotSize = 'clamp(20px, 7vw, 32px)';
+  const bannerSize = 'clamp(13px, 3.8vw, 16px)';
+
+  const cardBorder = showStreak
+    ? '2px solid var(--color-amber-text)'
+    : '0.5px solid var(--color-text-tertiary)';
+
+  return (
+    <div
+      className="mx-[14px] mt-3 mb-3"
+      style={{
+        border: cardBorder,
+        borderRadius: 'var(--border-radius-lg)',
+        background: 'var(--color-background-primary)',
+        overflow: 'hidden',
+      }}
+    >
+      {showStreak && (
+        <div
+          style={{
+            background: 'var(--color-amber-bg)',
+            color: 'var(--color-amber-text)',
+            padding: '8px 14px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '6px',
+            fontSize: bannerSize,
+            fontWeight: 500,
+            borderBottom: '2px solid var(--color-amber-text)',
+          }}
+        >
+          <IconFlame size={15} stroke={2} />
+          <span>{streak} in a row</span>
+        </div>
+      )}
+
+      <div style={{ padding: '14px' }}>
+        <div
+          className="font-medium text-[var(--color-text-primary)]"
+          style={{
+            fontSize: nameSize,
+            textAlign: 'center',
+            letterSpacing: '-0.01em',
+            lineHeight: 1.05,
+          }}
+        >
+          {firstName}
+        </div>
+
+        <div
+          className="text-[var(--color-text-tertiary)]"
+          style={{
+            fontSize: stationHeaderSize,
+            textAlign: 'center',
+            marginTop: '4px',
+          }}
+        >
+          Station {roundNumber} · shot {personalStationShot + 1} of 5
+        </div>
+
+        <div
+          className="flex items-center justify-around"
+          style={{ marginTop: '14px' }}
+        >
+          {[0, 1, 2, 3, 4].map((i) => {
+            const taken = i < stationShotsTaken.length;
+            const isCursor = inReviewMode
+              ? i === personalShotIdx % 5
+              : i === stationShotsTaken.length;
+
+            if (taken) {
+              const hit = stationShotsTaken[i].hit;
+              const fillColor = hit
+                ? 'var(--color-text-success)'
+                : 'var(--color-text-danger)';
+
+              if (isCursor && inReviewMode) {
+                return (
+                  <div
+                    key={i}
+                    style={{
+                      width: dotSize,
+                      height: dotSize,
+                      borderRadius: '50%',
+                      background: fillColor,
+                      outline: '2px solid var(--color-clay-orange)',
+                      outlineOffset: '2px',
+                    }}
+                  />
+                );
+              }
+              return (
+                <div
+                  key={i}
+                  style={{
+                    width: dotSize,
+                    height: dotSize,
+                    borderRadius: '50%',
+                    background: fillColor,
+                  }}
+                />
+              );
+            }
+
+            if (isCursor) {
+              return (
+                <div
+                  key={i}
+                  style={{
+                    width: dotSize,
+                    height: dotSize,
+                    borderRadius: '50%',
+                    border: `2px solid ${
+                      inReviewMode
+                        ? 'var(--color-clay-orange)'
+                        : 'var(--color-text-primary)'
+                    }`,
+                    boxSizing: 'border-box',
+                  }}
+                />
+              );
+            }
+
+            return (
+              <div
+                key={i}
+                style={{
+                  width: dotSize,
+                  height: dotSize,
+                  borderRadius: '50%',
+                  border: '1px solid var(--color-text-tertiary)',
+                  opacity: 0.4,
+                  boxSizing: 'border-box',
+                }}
+              />
+            );
+          })}
+        </div>
+
+        <div
+          style={{
+            textAlign: 'center',
+            marginTop: '14px',
+            fontSize: totalSize,
+            color: 'var(--color-text-tertiary)',
+          }}
+        >
+          Running total ·{' '}
+          <span style={{ color: 'var(--color-text-primary)' }}>
+            {displayHits}/{displayTotal}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+</file>
+
+<file path="src/lib/pdfGenerator.js">
+// src/lib/pdfGenerator.js
+//
+// Generates and downloads the printable scorecard for a completed (or partial)
+// round. Letter landscape, black-and-white, per handoff #1's
+// "The downloadable PDF itself" section.
+//
+// Marks (hit ✓ / miss ✗ / unshot square) are drawn geometrically with lines
+// and filled rects rather than typed as Unicode glyphs — jsPDF's built-in
+// fonts are Latin-1 only and can't render ✓/✗/▪. Geometric drawing is
+// crisper at print size anyway and removes the font dependency.
+
+import { jsPDF } from 'jspdf';
+import {
+  shooterShots,
+  shooterScore,
+  longestStreak,
+  shootersByStartingPost,
+  physicalPostOf,
+} from './scoring.js';
+import { TEAM_LOGO_PNG_BASE64 } from './logo.js';
+
+// ---- Layout constants ------------------------------------------------------
+
+const PAGE_W = 792;
+const PAGE_H = 612;
+const MARGIN_X = 36;
+const MARGIN_TOP = 30;
+const MARGIN_BOTTOM = 24;
+
+// Header band
+const HEADER_TITLE_SIZE = 22;
+const HEADER_META_SIZE = 10;
+const HEADER_RULE_GAP = 8;
+const HEADER_RULE_WEIGHT = 1;
+const HEADER_BAND_BOTTOM_GAP = 14;
+
+// Column widths (left to right)
+const NAME_COL_W = 70;
+const NAME_TO_CELLS_GAP = 8;
+const CELLS_TO_TOTALS_GAP = 14;
+const TOTAL_COL_W = 50;
+const TOTALS_TO_STREAK_GAP = 6;
+const STREAK_COL_W = 40;
+
+// Cell geometry
+const CELL_W = 20;
+const CELL_H = 32;
+const STATION_GROUP_GAP = 8;
+const CELL_BORDER_W = 0.75;
+
+// Mark geometry — drawn inside each cell, padding from the border
+const MARK_STROKE = 1.6;
+const MARK_PAD = 5;
+
+// Per-shooter block geometry
+const STATION_LABEL_SIZE = 9;
+const STATION_LABEL_GAP = 4;
+const NAME_SIZE = 13;
+const TOTAL_SIZE = 14;
+const STREAK_SIZE = 14;
+const LEAVE_NOTE_GAP = 6;
+const LEAVE_NOTE_SIZE = 8;
+
+// Totals styling — looser padding + a wider double-circle gap so the perfect-
+// round treatment reads instantly distinct from the single-circle 19+ treatment.
+const CIRCLE_PAD_X = 5;
+const CIRCLE_PAD_Y = 4;
+const DOUBLE_CIRCLE_GAP = 4;
+
+// Perfect-round bounding box geometry. On 25/25 rows, the row's cells are
+// pushed down to make room for the station-path numbers above the box, then
+// a thin rectangle is drawn around the name+cells+total+streak.
+const BOX_BORDER_W = 0.75;
+const BOX_PAD_X = 5;
+const BOX_PAD_Y = 5;
+const PATH_NUMBERS_CLEARANCE = 4;
+// Vertical inset added to the cells-row position on perfect rows.
+const PERFECT_CELLS_INSET = PATH_NUMBERS_CLEARANCE + BOX_PAD_Y;
+
+// Legend + footer
+const LEGEND_SIZE = 10;
+const LEGEND_RULE_WEIGHT = 0.5;
+const LEGEND_RULE_GAP = 6;
+const FOOTER_SIZE = 9;
+const FOOTER_GAP = 12;
+const LEGEND_SWATCH_SIZE = 8;
+const LEGEND_ITEM_GAP = 14;
+
+// Logo (team-customized, drawn centered horizontally above the legend rule)
+const LOGO_SIZE = 110;
+const LOGO_GAP_FROM_LEGEND = 18;
+
+// Colors
+const BLACK = '#000000';
+const UNSHOT_FILL = '#2C2C2A';
+const META_GRAY = '#666666';
+
+// ---- Public API ------------------------------------------------------------
+
+export function generatePdf(round, rosterById) {
+  const doc = new jsPDF({
+    orientation: 'landscape',
+    unit: 'pt',
+    format: 'letter',
+  });
+
+  doc.setTextColor(BLACK);
+
+  const headerEndY = drawHeader(doc, round, rosterById);
+  const footerStartY = drawLegendAndFooter(doc);
+  const bodyEndY = drawLogo(doc, footerStartY);
+  drawBody(doc, round, rosterById, headerEndY, bodyEndY);
+
+  doc.save(buildFilename(round));
+}
+
+// ---- Filename --------------------------------------------------------------
+
+function buildFilename(round) {
+  const d = new Date(round.date);
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
+  const dd = String(d.getDate()).padStart(2, '0');
+  let h = d.getHours();
+  const min = String(d.getMinutes()).padStart(2, '0');
+  const ampm = h >= 12 ? 'pm' : 'am';
+  h = h % 12;
+  if (h === 0) h = 12;
+  return `${yyyy}-${mm}-${dd}-${h}-${min}${ampm}-squadscore.pdf`;
+}
+
+// ---- Header ----------------------------------------------------------------
+
+function drawHeader(doc, round, rosterById) {
+  let y = MARGIN_TOP;
+
+  doc.setFont('times', 'normal');
+  doc.setFontSize(HEADER_TITLE_SIZE);
+  doc.text('Trap round scorecard', MARGIN_X, y + HEADER_TITLE_SIZE);
+  const titleBottom = y + HEADER_TITLE_SIZE;
+
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(HEADER_META_SIZE);
+  const shooterCount = round.shooters.length;
+  const shooterLabel = shooterCount === 1 ? 'shooter' : 'shooters';
+  const metaLine1 = `${shooterCount} ${shooterLabel} · 25 shots each`;
+  const metaLine2 = 'Listed by starting post';
+  const meta1W = doc.getTextWidth(metaLine1);
+  const meta2W = doc.getTextWidth(metaLine2);
+  doc.text(metaLine1, PAGE_W - MARGIN_X - meta1W, y + HEADER_META_SIZE + 2);
+  doc.text(metaLine2, PAGE_W - MARGIN_X - meta2W, y + HEADER_META_SIZE * 2 + 6);
+
+  const date = new Date(round.date);
+  const dateStr = date.toLocaleDateString('en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+  });
+  const timeStr = date.toLocaleTimeString('en-US', {
+    hour: 'numeric',
+    minute: '2-digit',
+  });
+  const scorer = rosterById[round.scorerId];
+  const scorerName = scorer ? `${scorer.firstName} ${scorer.lastName}` : 'Unknown';
+
+  const subY1 = titleBottom + 10;
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(HEADER_META_SIZE);
+  doc.text(`${dateStr} · ${timeStr}`, MARGIN_X, subY1);
+  const subY2 = subY1 + HEADER_META_SIZE + 2;
+  doc.text(`Scored by ${scorerName}`, MARGIN_X, subY2);
+
+  const ruleY = subY2 + HEADER_RULE_GAP;
+  doc.setLineWidth(HEADER_RULE_WEIGHT);
+  doc.setDrawColor(BLACK);
+  doc.line(MARGIN_X, ruleY, PAGE_W - MARGIN_X, ruleY);
+
+  return ruleY + HEADER_BAND_BOTTOM_GAP;
+}
+
+// ---- Logo ------------------------------------------------------------------
+
+function drawLogo(doc, legendRuleY) {
+  const logoX = (PAGE_W - LOGO_SIZE) / 2;
+  const logoY = legendRuleY - LOGO_GAP_FROM_LEGEND - LOGO_SIZE;
+
+  try {
+    doc.addImage(
+      TEAM_LOGO_PNG_BASE64,
+      'PNG',
+      logoX,
+      logoY,
+      LOGO_SIZE,
+      LOGO_SIZE
+    );
+  } catch (err) {
+    console.error('Logo embed failed:', err);
+  }
+
+  return logoY;
+}
+
+// ---- Legend + footer ------------------------------------------------------
+
+function drawLegendAndFooter(doc) {
+  const footerY = PAGE_H - MARGIN_BOTTOM;
+  doc.setFont('helvetica', 'italic');
+  doc.setFontSize(FOOTER_SIZE);
+  const footerText = 'Generated by SquadScore · squadscore.app';
+  const footerW = doc.getTextWidth(footerText);
+  doc.text(footerText, (PAGE_W - footerW) / 2, footerY);
+
+  const legendY = footerY - FOOTER_GAP - LEGEND_SIZE;
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(LEGEND_SIZE);
+  doc.setTextColor(BLACK);
+
+  const items = [
+    { kind: 'hit', label: 'hit' },
+    { kind: 'miss', label: 'miss' },
+    { kind: 'unshot', label: 'unshot' },
+    { kind: 'text', label: 'single-circled = 19+' },
+    { kind: 'text', label: 'double-circled = 25/25' },
+  ];
+
+  const itemWidths = items.map((it) => {
+    const labelW = doc.getTextWidth(it.label);
+    if (it.kind === 'text') return labelW;
+    return LEGEND_SWATCH_SIZE + 4 + labelW;
+  });
+  const totalLegendW =
+    itemWidths.reduce((a, b) => a + b, 0) + (items.length - 1) * LEGEND_ITEM_GAP;
+  let cursorX = (PAGE_W - totalLegendW) / 2;
+
+  for (let i = 0; i < items.length; i++) {
+    const it = items[i];
+    const w = itemWidths[i];
+    if (it.kind === 'hit') {
+      drawCheckmark(doc, cursorX, legendY - LEGEND_SWATCH_SIZE + 1, LEGEND_SWATCH_SIZE);
+      doc.text(it.label, cursorX + LEGEND_SWATCH_SIZE + 4, legendY);
+    } else if (it.kind === 'miss') {
+      drawCross(doc, cursorX, legendY - LEGEND_SWATCH_SIZE + 1, LEGEND_SWATCH_SIZE);
+      doc.text(it.label, cursorX + LEGEND_SWATCH_SIZE + 4, legendY);
+    } else if (it.kind === 'unshot') {
+      doc.setFillColor(UNSHOT_FILL);
+      doc.rect(
+        cursorX,
+        legendY - LEGEND_SWATCH_SIZE + 1,
+        LEGEND_SWATCH_SIZE,
+        LEGEND_SWATCH_SIZE,
+        'F'
+      );
+      doc.text(it.label, cursorX + LEGEND_SWATCH_SIZE + 4, legendY);
+    } else {
+      doc.text(it.label, cursorX, legendY);
+    }
+    cursorX += w + LEGEND_ITEM_GAP;
+  }
+
+  const ruleY = legendY - LEGEND_SIZE - LEGEND_RULE_GAP;
+  doc.setLineWidth(LEGEND_RULE_WEIGHT);
+  doc.setDrawColor(BLACK);
+  doc.line(MARGIN_X, ruleY, PAGE_W - MARGIN_X, ruleY);
+
+  return ruleY;
+}
+
+// ---- Mark drawing ---------------------------------------------------------
+
+function drawCheckmark(doc, x, y, size) {
+  const x1 = x + size * 0.18;
+  const y1 = y + size * 0.55;
+  const x2 = x + size * 0.42;
+  const y2 = y + size * 0.82;
+  const x3 = x + size * 0.85;
+  const y3 = y + size * 0.18;
+  doc.setLineWidth(MARK_STROKE);
+  doc.setDrawColor(BLACK);
+  doc.setLineCap('round');
+  doc.setLineJoin('round');
+  doc.line(x1, y1, x2, y2);
+  doc.line(x2, y2, x3, y3);
+}
+
+function drawCross(doc, x, y, size) {
+  doc.setLineWidth(MARK_STROKE);
+  doc.setDrawColor(BLACK);
+  doc.setLineCap('round');
+  doc.line(x + size * 0.2, y + size * 0.2, x + size * 0.8, y + size * 0.8);
+  doc.line(x + size * 0.8, y + size * 0.2, x + size * 0.2, y + size * 0.8);
+}
+
+// ---- Body (shooter blocks) -------------------------------------------------
+
+function computeCellsAreaWidth() {
+  return 5 * (5 * CELL_W) + 4 * STATION_GROUP_GAP;
+}
+
+function computeColumnPositions() {
+  const cellsStartX = MARGIN_X + NAME_COL_W + NAME_TO_CELLS_GAP;
+  const cellsAreaW = computeCellsAreaWidth();
+  const totalColX = cellsStartX + cellsAreaW + CELLS_TO_TOTALS_GAP;
+  const streakColX = totalColX + TOTAL_COL_W + TOTALS_TO_STREAK_GAP;
+  return { cellsStartX, cellsAreaW, totalColX, streakColX };
+}
+
+function isPerfectRound(round, shooterIdx) {
+  const shooter = round.shooters[shooterIdx];
+  if (shooter.leftAfterShot != null) return false;
+  const { hits } = shooterScore(round, shooterIdx);
+  return hits === 25;
+}
+
+function drawBody(doc, round, rosterById, bodyStartY, bodyEndY) {
+  const sortedShooters = shootersByStartingPost(round);
+  const n = sortedShooters.length;
+
+  // Base per-shooter block height (no perfect-row inset)
+  const blockHBase =
+    STATION_LABEL_SIZE +
+    STATION_LABEL_GAP +
+    CELL_H +
+    LEAVE_NOTE_GAP +
+    LEAVE_NOTE_SIZE;
+
+  // Perfect rows are taller because the cells are pushed down to make room
+  // for the path numbers above the bounding box.
+  const blockHeights = sortedShooters.map(({ idx }) =>
+    isPerfectRound(round, idx) ? blockHBase + PERFECT_CELLS_INSET : blockHBase
+  );
+
+  const { totalColX, streakColX } = computeColumnPositions();
+
+  // Column-header row above the first shooter
+  const headerLabelSize = 9;
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(headerLabelSize);
+  doc.setTextColor(META_GRAY);
+  const totalLabel = 'Total';
+  const streakLabel = 'Streak';
+  const totalLabelW = doc.getTextWidth(totalLabel);
+  const streakLabelW = doc.getTextWidth(streakLabel);
+  doc.text(totalLabel, totalColX + TOTAL_COL_W - totalLabelW, bodyStartY + headerLabelSize);
+  doc.text(streakLabel, streakColX + STREAK_COL_W - streakLabelW, bodyStartY + headerLabelSize);
+  doc.setTextColor(BLACK);
+
+  const bodyTop = bodyStartY + headerLabelSize + 4;
+
+  const availableH = bodyEndY - bodyTop;
+  const totalBlocksH = blockHeights.reduce((a, b) => a + b, 0);
+  const remainingForGaps = availableH - totalBlocksH;
+  const MIN_GAP = 10;
+  const MAX_GAP = 36;
+  let gap = n > 1 ? remainingForGaps / (n - 1) : 0;
+  if (gap < MIN_GAP) gap = MIN_GAP;
+  if (gap > MAX_GAP) gap = MAX_GAP;
+
+  let cursorY = bodyTop;
+  for (let i = 0; i < n; i++) {
+    const { shooter, idx } = sortedShooters[i];
+    drawShooterBlock(doc, round, shooter, idx, rosterById, cursorY);
+    cursorY += blockHeights[i] + gap;
+    if (cursorY > bodyEndY) break;
+  }
+}
+
+function drawShooterBlock(doc, round, shooter, shooterIdx, rosterById, blockTopY) {
+  const firstName = rosterById[shooter.rosterId]?.firstName ?? '?';
+  const shots = shooterShots(round, shooterIdx);
+  const isLeft = shooter.leftAfterShot != null;
+  const totalShotsTaken = isLeft ? shooter.leftAfterShot : shots.length;
+  const { hits } = shooterScore(round, shooterIdx);
+  const longest = longestStreak(shots);
+  const isPerfect = isPerfectRound(round, shooterIdx);
+
+  const path = [];
+  for (let n = 1; n <= 5; n++) {
+    path.push(physicalPostOf(shooter.startingPost, n));
+  }
+
+  const { cellsStartX, totalColX, streakColX } = computeColumnPositions();
+
+  // Path numbers row — always at block top. On perfect rows the row content
+  // below is pushed down to make room for the box around it.
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(STATION_LABEL_SIZE);
+  doc.setTextColor(META_GRAY);
+  for (let g = 0; g < 5; g++) {
+    const groupX = cellsStartX + g * (5 * CELL_W + STATION_GROUP_GAP);
+    const groupCenterX = groupX + (5 * CELL_W) / 2;
+    const label = String(path[g]);
+    const labelW = doc.getTextWidth(label);
+    doc.text(label, groupCenterX - labelW / 2, blockTopY + STATION_LABEL_SIZE);
+  }
+  doc.setTextColor(BLACK);
+
+  // Cells row y — pushed down on perfect rows so the box has clearance above.
+  const cellsRowY = isPerfect
+    ? blockTopY + STATION_LABEL_SIZE + PATH_NUMBERS_CLEARANCE + BOX_PAD_Y
+    : blockTopY + STATION_LABEL_SIZE + STATION_LABEL_GAP;
+
+  // Name
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(NAME_SIZE);
+  doc.text(firstName, MARGIN_X, cellsRowY + CELL_H / 2 + NAME_SIZE / 3);
+  doc.setFont('helvetica', 'normal');
+
+  // 25 cells
+  for (let g = 0; g < 5; g++) {
+    const groupX = cellsStartX + g * (5 * CELL_W + STATION_GROUP_GAP);
+    for (let c = 0; c < 5; c++) {
+      const cellIdx = g * 5 + c;
+      const cellX = groupX + c * CELL_W;
+      const cellY = cellsRowY;
+
+      doc.setLineWidth(CELL_BORDER_W);
+      doc.setDrawColor(BLACK);
+      doc.rect(cellX, cellY, CELL_W, CELL_H);
+
+      const isUnshot = cellIdx >= totalShotsTaken;
+      if (isUnshot) {
+        doc.setFillColor(UNSHOT_FILL);
+        doc.rect(
+          cellX + CELL_BORDER_W / 2,
+          cellY + CELL_BORDER_W / 2,
+          CELL_W - CELL_BORDER_W,
+          CELL_H - CELL_BORDER_W,
+          'F'
+        );
+      } else {
+        const shot = shots[cellIdx];
+        const markBoxX = cellX + MARK_PAD;
+        const markBoxY = cellY + MARK_PAD;
+        const markBoxSize = Math.min(CELL_W, CELL_H) - MARK_PAD * 2;
+        if (shot.hit) {
+          drawCheckmark(doc, markBoxX, markBoxY, markBoxSize);
+        } else {
+          drawCross(doc, markBoxX, markBoxY, markBoxSize);
+        }
+      }
+    }
+  }
+
+  drawTotal(doc, hits, totalShotsTaken, isLeft, totalColX, cellsRowY);
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(STREAK_SIZE);
+  const streakStr = String(longest);
+  const streakW = doc.getTextWidth(streakStr);
+  doc.text(
+    streakStr,
+    streakColX + STREAK_COL_W - streakW,
+    cellsRowY + CELL_H / 2 + STREAK_SIZE / 3
+  );
+  doc.setFont('helvetica', 'normal');
+
+  if (isLeft) {
+    const leaveText = buildLeaveNote(shooter.leftAfterShot);
+    doc.setFont('helvetica', 'italic');
+    doc.setFontSize(LEAVE_NOTE_SIZE);
+    doc.setTextColor(META_GRAY);
+    doc.text(leaveText, cellsStartX, cellsRowY + CELL_H + 10);
+    doc.setTextColor(BLACK);
+    doc.setFont('helvetica', 'normal');
+  }
+
+  // Perfect-round bounding box. Drawn last so it sits on top of everything
+  // it wraps. Encloses name + cells + total + streak; path numbers above
+  // are intentionally left outside.
+  if (isPerfect) {
+    const boxLeft = MARGIN_X - BOX_PAD_X;
+    const boxRight = streakColX + STREAK_COL_W + BOX_PAD_X;
+    const boxTop = cellsRowY - BOX_PAD_Y;
+    const boxBottom = cellsRowY + CELL_H + BOX_PAD_Y;
+
+    doc.setLineWidth(BOX_BORDER_W);
+    doc.setDrawColor(BLACK);
+    doc.rect(boxLeft, boxTop, boxRight - boxLeft, boxBottom - boxTop);
+  }
+}
+
+function buildLeaveNote(leftAfterShot) {
+  if (leftAfterShot % 5 === 0) {
+    const stationsCompleted = leftAfterShot / 5;
+    return `left after station ${stationsCompleted} of 5`;
+  }
+  const station = Math.floor(leftAfterShot / 5) + 1;
+  const shotsTaken = leftAfterShot % 5;
+  const shotLabel = shotsTaken === 1 ? 'shot' : 'shots';
+  return `left during station ${station} after ${shotsTaken} ${shotLabel}`;
+}
+
+// ---- Totals (with optional single / double circle) ------------------------
+
+function drawTotal(doc, hits, total, isLeft, colX, rowY) {
+  const valueText = isLeft ? `${hits}/${total}` : String(hits);
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(TOTAL_SIZE);
+  const w = doc.getTextWidth(valueText);
+  const textX = colX + TOTAL_COL_W - w;
+  const textY = rowY + CELL_H / 2 + TOTAL_SIZE / 3;
+  doc.text(valueText, textX, textY);
+  doc.setFont('helvetica', 'normal');
+
+  if (isLeft) return;
+  if (hits < 19) return;
+
+  const cx = textX + w / 2;
+  const cy = rowY + CELL_H / 2;
+  const rx = w / 2 + CIRCLE_PAD_X;
+  const ry = TOTAL_SIZE / 2 + CIRCLE_PAD_Y;
+
+  doc.setLineWidth(0.75);
+  doc.setDrawColor(BLACK);
+  doc.ellipse(cx, cy, rx, ry);
+
+  if (hits === 25) {
+    doc.ellipse(cx, cy, rx + DOUBLE_CIRCLE_GAP, ry + DOUBLE_CIRCLE_GAP);
+  }
+}
+</file>
+
+<file path="src/lib/scoring.js">
+// src/lib/scoring.js
+//
+// Pure logic for live scoring: rotation math, firing order, streaks, per-shooter
+// queries. Operates on the round shape from handoff #2:
+//
+//   round = {
+//     id, date, scorerId, tag, notes,
+//     shooters: [{ rosterId, startingPost, leftAfterShot? }],
+//     shots: [{ shooterIdx, hit }]   // chronological
+//   }
+//
+// shooterIdx in shots is the index into shooters[].
+// leftAfterShot is the count of THAT shooter's own shots taken when they left.
+//
+// Vocabulary:
+//   station       — a fixed physical location (1-5, left to right). Stations don't move.
+//   round         — five shots taken by one squad at one station. After each round,
+//                   the squad rotates one position.
+//   round number  — which round of the session we're on (1-5). The squad visits all
+//                   5 stations across a session.
+//   session       — five rounds. One full play-through = 25 shots per shooter.
+//   starting post — the station number a shooter begins their session at.
+
+// ----- Rotation math --------------------------------------------------------
+
+// Given a starting post and round number (1-5), where is that shooter physically?
+export function physicalPostOf(startingPost, roundNumber) {
+  return ((startingPost - 1 + roundNumber - 1) % 5) + 1;
+}
+
+// Given a physical post and round number, what starting post would have placed
+// a shooter there? Inverse of physicalPostOf.
+export function startingPostAt(physicalPost, roundNumber) {
+  return (((physicalPost - roundNumber) % 5) + 5) % 5 + 1;
+}
+
+// ----- Firing order ---------------------------------------------------------
+
+// Generate the full chronological plan of shot slots for a round, accounting
+// for any "left the line" markers. Each entry describes one slot:
+//   { shooterIdx, roundNumber, physicalPost, personalStationShot, personalShotIdx }
+// personalStationShot is 0-indexed within a station (0..4).
+// personalShotIdx is 0-indexed across the shooter's whole session.
+//
+// Across the full session, firing order is always S1, S2, S3, S4, S5 cycling.
+// Round boundaries (squad rotations) don't change the lead — S1 starts every
+// round. If a shooter has left the line, they're skipped at the right point
+// in the sequence and the order continues with the next starting-post number.
+export function firingOrder(round) {
+  const plan = [];
+  const personalShotsPlanned = round.shooters.map(() => 0);
+
+  for (let roundNumber = 1; roundNumber <= 5; roundNumber++) {
+    for (let cycle = 0; cycle < 5; cycle++) {
+      for (let startingPost = 1; startingPost <= 5; startingPost++) {
+        const shooterIdx = round.shooters.findIndex(
+          (s) => s.startingPost === startingPost
+        );
+        if (shooterIdx === -1) continue;
+
+        const shooter = round.shooters[shooterIdx];
+        const planned = personalShotsPlanned[shooterIdx];
+
+        if (
+          shooter.leftAfterShot != null &&
+          planned >= shooter.leftAfterShot
+        ) {
+          continue;
+        }
+
+        plan.push({
+          shooterIdx,
+          roundNumber,
+          physicalPost: physicalPostOf(startingPost, roundNumber),
+          personalStationShot: cycle,
+          personalShotIdx: planned,
+        });
+        personalShotsPlanned[shooterIdx]++;
+      }
+    }
+  }
+
+  return plan;
+}
+
+// The next shot to be taken, or null if the round is complete.
+export function activeSlot(round) {
+  return firingOrder(round)[round.shots.length] ?? null;
+}
+
+// The slot for any shot index (existing or future). Returns null if past end.
+export function slotForShot(round, shotIdx) {
+  return firingOrder(round)[shotIdx] ?? null;
+}
+
+export function isRoundComplete(round) {
+  return round.shots.length >= firingOrder(round).length;
+}
+
+// ----- Per-shooter queries --------------------------------------------------
+
+// That shooter's chronological shot list (each entry { shooterIdx, hit }).
+export function shooterShots(round, shooterIdx) {
+  return round.shots.filter((s) => s.shooterIdx === shooterIdx);
+}
+
+// { hits, total } for a shooter.
+export function shooterScore(round, shooterIdx) {
+  const shots = shooterShots(round, shooterIdx);
+  let hits = 0;
+  for (const s of shots) if (s.hit) hits++;
+  return { hits, total: shots.length };
+}
+
+// ----- Streaks --------------------------------------------------------------
+//
+// Single pass through the chronological shot list. Don't reset at station
+// boundaries — that's the footgun called out in handoff #1.
+
+export function longestStreak(shots) {
+  let max = 0;
+  let current = 0;
+  for (const s of shots) {
+    if (s.hit) {
+      current++;
+      if (current > max) max = current;
+    } else {
+      current = 0;
+    }
+  }
+  return max;
+}
+
+// Active streak counted from the latest shot backwards (for the "N in a row" chip).
+export function currentStreak(shots) {
+  let count = 0;
+  for (let i = shots.length - 1; i >= 0; i--) {
+    if (shots[i].hit) count++;
+    else break;
+  }
+  return count;
+}
+
+// ----- Squad-strip helpers --------------------------------------------------
+
+// Round number the squad is currently on. Defaults to 5 if the round is
+// complete (the squad finishes at round 5, station 5).
+export function currentRoundNumber(round) {
+  const slot = activeSlot(round);
+  return slot ? slot.roundNumber : 5;
+}
+
+// Physical-post layout of the squad at a given round number. Returns an array
+// of length 5 indexed by physicalPost-1; each entry is a shooterIdx or null
+// (null means no shooter has rotated into that post — possible when the squad
+// has fewer than 5 shooters).
+export function squadByPhysicalPost(round, roundNumber = null) {
+  const rn = roundNumber ?? currentRoundNumber(round);
+  const layout = [null, null, null, null, null];
+  for (let i = 0; i < round.shooters.length; i++) {
+    const post = physicalPostOf(round.shooters[i].startingPost, rn);
+    layout[post - 1] = i;
+  }
+  return layout;
+}
+
+// ----- End-of-round helpers -------------------------------------------------
+
+// Shooters sorted by their starting post (ascending). Returns an array of
+// { shooter, idx } where idx is the original index into round.shooters.
+// Used by the Overview and per-shooter screens, and by the PDF.
+export function shootersByStartingPost(round) {
+  return round.shooters
+    .map((shooter, idx) => ({ shooter, idx }))
+    .sort((a, b) => a.shooter.startingPost - b.shooter.startingPost);
+}
+
+// Returns the "left the line" context for a shooter, or null if they finished.
+// Two cases:
+//   { kind: 'clean', stationsCompleted }       — left between stations
+//   { kind: 'mid-station', station, shotsTaken } — left during a station
+// `station` is the shooter's chronological station number (1..5) where they left,
+// matching what their per-shooter view shows (not the physical station number).
+export function leaveContext(round, shooterIdx) {
+  const shooter = round.shooters[shooterIdx];
+  if (shooter.leftAfterShot == null) return null;
+  const n = shooter.leftAfterShot;
+  if (n % 5 === 0) {
+    return { kind: 'clean', stationsCompleted: n / 5 };
+  }
+  return {
+    kind: 'mid-station',
+    station: Math.floor(n / 5) + 1,
+    shotsTaken: n % 5,
+  };
+}
+</file>
+
+<file path="src/components/EndOfRound.jsx">
+import { useState, useEffect, useRef } from 'react';
+import { IconChevronLeft, IconChevronRight, IconDots, IconTrash } from '@tabler/icons-react';
+import OverviewScreen from './OverviewScreen';
+import PerShooterScreen from './PerShooterScreen';
+import PdfPreviewScreen from './PdfPreviewScreen';
+import StationEditor from './StationEditor';
+import BottomSheet from './BottomSheet';
+import DeleteRoundModal from './DeleteRoundModal';
+import MoreChangesModal from './MoreChangesModal';
+import { getRound } from '../lib/roundStore';
+
+// Edit-flow phases:
+//   null              — normal carousel view
+//   'shooter'         — landed on a shooter's per-shooter page in edit mode
+//                       (after tapping a pencil on Overview, or returning from
+//                       "Edit more" in the More Changes modal)
+//   'station'         — inside the StationEditor for a specific station
+//   'moreChanges'     — the "More changes for [Name]?" modal is open (the
+//                       station editor has committed and stepped back to the
+//                       shooter view)
+export default function EndOfRound({ round: initialRound, rosterById, onBack, onDelete }) {
+  const SCREEN_COUNT = 2 + initialRound.shooters.length;
+  const [screenIdx, setScreenIdx] = useState(0);
+  const [sheetOpen, setSheetOpen] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+
+  // Holds the latest round state so edits made in StationEditor surface in
+  // the carousel screens without needing to navigate up to App.jsx.
+  const [round, setRound] = useState(initialRound);
+
+  // Edit-flow state
+  const [editPhase, setEditPhase] = useState(null);
+  const [editShooterIdx, setEditShooterIdx] = useState(null);
+  const [editStationN, setEditStationN] = useState(null);
+  const [moreChangesOpen, setMoreChangesOpen] = useState(false);
+
+  const touchStartX = useRef(null);
+  const touchEndX = useRef(null);
+
+  const sortedShooters = round.shooters
+    .map((shooter, idx) => ({ shooter, idx }))
+    .sort((a, b) => a.shooter.startingPost - b.shooter.startingPost);
+
+  // Keyboard arrow support for desktop (carousel only; disabled in edit flow)
+  useEffect(() => {
+    const handleKey = (e) => {
+      if (editPhase !== null) return;
+      if (e.key === 'ArrowLeft') goPrev();
+      if (e.key === 'ArrowRight') goNext();
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  });
+
+  const goPrev = () => setScreenIdx((i) => Math.max(0, i - 1));
+  const goNext = () => setScreenIdx((i) => Math.min(SCREEN_COUNT - 1, i + 1));
+
+  const onTouchStart = (e) => {
+    if (editPhase !== null) return;
+    touchStartX.current = e.touches[0].clientX;
+    touchEndX.current = null;
+  };
+  const onTouchMove = (e) => {
+    if (editPhase !== null) return;
+    touchEndX.current = e.touches[0].clientX;
+  };
+  const onTouchEnd = () => {
+    if (editPhase !== null) return;
+    if (touchStartX.current == null || touchEndX.current == null) return;
+    const dx = touchEndX.current - touchStartX.current;
+    const threshold = 50;
+    if (dx > threshold) goPrev();
+    else if (dx < -threshold) goNext();
+    touchStartX.current = null;
+    touchEndX.current = null;
+  };
+
+  const handleDeleteTap = () => {
+    setSheetOpen(false);
+    setDeleteOpen(true);
+  };
+
+  const handleDeleteConfirm = () => {
+    setDeleteOpen(false);
+    onDelete();
+  };
+
+  const menuItems = [
+    {
+      label: 'Delete round',
+      icon: IconTrash,
+      onClick: handleDeleteTap,
+      danger: true,
+    },
+  ];
+
+  // ---- Edit flow handlers --------------------------------------------------
+
+  function handleEditShooter(shooterIdx) {
+    setEditShooterIdx(shooterIdx);
+    setEditPhase('shooter');
+  }
+
+  function handleStationTap(stationN) {
+    setEditStationN(stationN);
+    setEditPhase('station');
+  }
+
+  function handleStationBack() {
+    // Exit the station editor without committing — go back to the shooter
+    // edit landing.
+    setEditStationN(null);
+    setEditPhase('shooter');
+  }
+
+  function handleStationCommit() {
+    // The station editor finished an edit + flash. Pull the latest round
+    // state from storage so the carousel reflects the change, then open the
+    // "More changes?" modal.
+    const fresh = getRound(round.id);
+    if (fresh) setRound(fresh);
+    setMoreChangesOpen(true);
+  }
+
+  function handleMoreChangesEditMore() {
+    // Return to the shooter's per-shooter edit landing.
+    setMoreChangesOpen(false);
+    setEditStationN(null);
+    setEditPhase('shooter');
+  }
+
+  function handleMoreChangesDone() {
+    // Exit the edit flow entirely; return to the Overview screen.
+    setMoreChangesOpen(false);
+    setEditStationN(null);
+    setEditShooterIdx(null);
+    setEditPhase(null);
+    setScreenIdx(0);
+  }
+
+  // ---- Render --------------------------------------------------------------
+
+  // Station editor is a full-screen takeover.
+  if (editPhase === 'station' && editShooterIdx !== null && editStationN !== null) {
+    const shooter = round.shooters[editShooterIdx];
+    return (
+      <>
+        <StationEditor
+          round={round}
+          shooterIdx={editShooterIdx}
+          stationN={editStationN}
+          rosterEntry={rosterById[shooter.rosterId]}
+          onBack={handleStationBack}
+          onCommit={handleStationCommit}
+        />
+        <MoreChangesModal
+          open={moreChangesOpen}
+          onClose={() => setMoreChangesOpen(false)}
+          name={rosterById[shooter.rosterId]?.firstName}
+          onEditMore={handleMoreChangesEditMore}
+          onDone={handleMoreChangesDone}
+        />
+      </>
+    );
+  }
+
+  const renderScreen = () => {
+    // Edit-mode shooter landing: same per-shooter screen, but in editMode.
+    if (editPhase === 'shooter' && editShooterIdx !== null) {
+      return (
+        <PerShooterScreen
+          round={round}
+          rosterById={rosterById}
+          shooterIdx={editShooterIdx}
+          editMode={true}
+          onStationTap={handleStationTap}
+        />
+      );
+    }
+
+    if (screenIdx === 0) {
+      return (
+        <OverviewScreen
+          round={round}
+          rosterById={rosterById}
+          onEditShooter={handleEditShooter}
+        />
+      );
+    }
+    if (screenIdx === SCREEN_COUNT - 1) {
+      return <PdfPreviewScreen round={round} rosterById={rosterById} />;
+    }
+    const idx = sortedShooters[screenIdx - 1].idx;
+    return (
+      <PerShooterScreen
+        round={round}
+        rosterById={rosterById}
+        shooterIdx={idx}
+      />
+    );
+  };
+
+  const inEditFlow = editPhase !== null;
+
+  return (
+    <div
+      className="flex flex-col h-full"
+      style={{
+        paddingTop: 'max(12px, env(safe-area-inset-top))',
+        paddingBottom: 'max(12px, env(safe-area-inset-bottom))',
+      }}
+    >
+      {/* Top bar */}
+      <div
+        className="flex items-center justify-between px-4 pb-3"
+        style={{ borderBottom: '0.5px solid var(--color-text-tertiary)' }}
+      >
+        <button
+          onClick={inEditFlow ? handleMoreChangesDone : onBack}
+          className="p-1 -ml-1"
+          aria-label={inEditFlow ? 'Cancel edits' : 'Back'}
+        >
+          <IconChevronLeft size={24} color="var(--color-text-primary)" />
+        </button>
+        <div
+          className="text-[13px] font-medium"
+          style={{
+            color: inEditFlow
+              ? 'var(--color-clay-orange)'
+              : 'var(--color-text-secondary)',
+          }}
+        >
+          {inEditFlow ? 'Editing scores' : 'Round complete'}
+        </div>
+        <button
+          onClick={() => !inEditFlow && setSheetOpen(true)}
+          className="p-1 -mr-1"
+          aria-label="Menu"
+          style={{
+            visibility: inEditFlow ? 'hidden' : 'visible',
+          }}
+        >
+          <IconDots size={22} color="var(--color-text-primary)" />
+        </button>
+      </div>
+
+      {/* Screen body */}
+      <div
+        className="flex-1 flex flex-col relative overflow-hidden"
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
+      >
+        {/* Desktop arrows — only in carousel mode */}
+        {!inEditFlow && screenIdx > 0 && (
+          <button
+            onClick={goPrev}
+            className="hidden md:flex absolute left-2 top-1/2 -translate-y-1/2 z-10 items-center justify-center w-10 h-10 rounded-full"
+            style={{
+              background: 'var(--color-background-secondary)',
+              border: '0.5px solid var(--color-text-tertiary)',
+            }}
+            aria-label="Previous screen"
+          >
+            <IconChevronLeft size={22} color="var(--color-text-primary)" />
+          </button>
+        )}
+
+        {!inEditFlow && screenIdx < SCREEN_COUNT - 1 && (
+          <button
+            onClick={goNext}
+            className="hidden md:flex absolute right-2 top-1/2 -translate-y-1/2 z-10 items-center justify-center w-10 h-10 rounded-full"
+            style={{
+              background: 'var(--color-background-secondary)',
+              border: '0.5px solid var(--color-text-tertiary)',
+            }}
+            aria-label="Next screen"
+          >
+            <IconChevronRight size={22} color="var(--color-text-primary)" />
+          </button>
+        )}
+
+        {/* Screen content */}
+        {renderScreen()}
+
+        {/* Pagination dots — hidden during edit flow */}
+        {!inEditFlow && (
+          <div className="flex items-center justify-center gap-2 pb-3">
+            {Array.from({ length: SCREEN_COUNT }).map((_, i) => (
+              <div
+                key={i}
+                className="rounded-full transition-all"
+                style={{
+                  width: i === screenIdx ? 8 : 6,
+                  height: i === screenIdx ? 8 : 6,
+                  background:
+                    i === screenIdx
+                      ? 'var(--color-text-primary)'
+                      : 'var(--color-text-tertiary)',
+                  opacity: i === screenIdx ? 1 : 0.5,
+                }}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+
+      <BottomSheet
+        open={sheetOpen}
+        onClose={() => setSheetOpen(false)}
+        items={menuItems}
+      />
+
+      <DeleteRoundModal
+        open={deleteOpen}
+        onClose={() => setDeleteOpen(false)}
+        shooterCount={round.shooters.length}
+        shotCount={round.shots.length}
+        onConfirm={handleDeleteConfirm}
+      />
+    </div>
+  );
+}
+</file>
+
+<file path="src/App.jsx">
+// src/App.jsx
+import { useState, useMemo, useRef, useEffect } from 'react';
+import {
+  IconChevronLeft,
+  IconCheck,
+  IconX,
+  IconDots,
+  IconPencil,
+  IconLogout2,
+  IconTrash,
+} from '@tabler/icons-react';
+import HomeScreen from './components/HomeScreen';
+import HistoryScreen from './components/HistoryScreen';
+import SetupScreen from './components/SetupScreen';
+import SquadStrip from './components/SquadStrip';
+import ActiveShooterCard from './components/ActiveShooterCard';
+import FlashOverlay from './components/FlashOverlay';
+import BottomSheet from './components/BottomSheet';
+import EditNameModal from './components/EditNameModal';
+import LeaveTheLineModal from './components/LeaveTheLineModal';
+import DeleteRoundModal from './components/DeleteRoundModal';
+import EndOfRound from './components/EndOfRound';
+import { getRoster } from './lib/roster';
+import {
+  activeSlot,
+  slotForShot,
+  isRoundComplete,
+  shooterScore,
+} from './lib/scoring';
+import {
+  appendShot,
+  editShot,
+  renameShooter,
+  markShooterLeft,
+  deleteRound,
+} from './lib/roundStore';
+
+function LiveScoringScreen({ round: initialRound, onBack, onDelete, onComplete }) {
+  const [round, setRound] = useState(initialRound);
+  const [cursorIdx, setCursorIdx] = useState(null);
+  const [flashType, setFlashType] = useState(null);
+  const [flashFading, setFlashFading] = useState(false);
+  const [sheetOpen, setSheetOpen] = useState(false);
+  const [editNameOpen, setEditNameOpen] = useState(false);
+  const [leaveOpen, setLeaveOpen] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [rosterVersion, setRosterVersion] = useState(0);
+  const flashTimers = useRef([]);
+
+  const roster = useMemo(() => getRoster(), [rosterVersion]);
+  const rosterById = useMemo(() => {
+    const map = {};
+    for (const entry of roster) map[entry.id] = entry;
+    return map;
+  }, [roster]);
+
+  const liveSlot = activeSlot(round);
+  const complete = isRoundComplete(round);
+  const inReviewMode = cursorIdx !== null;
+
+  const displaySlot = inReviewMode ? slotForShot(round, cursorIdx) : liveSlot;
+  const displayShooter = displaySlot ? round.shooters[displaySlot.shooterIdx] : null;
+  const displayRosterEntry = displayShooter ? rosterById[displayShooter.rosterId] : null;
+
+  const liveShooter = liveSlot ? round.shooters[liveSlot.shooterIdx] : null;
+  const liveRosterEntry = liveShooter ? rosterById[liveShooter.rosterId] : null;
+  const liveScore = liveSlot ? shooterScore(round, liveSlot.shooterIdx) : null;
+
+  const recordedAtCursor =
+    inReviewMode && cursorIdx < round.shots.length
+      ? round.shots[cursorIdx].hit
+      : null;
+
+  useEffect(() => {
+    const timers = flashTimers.current;
+    return () => timers.forEach(clearTimeout);
+  }, []);
+
+  function playFlash(hit) {
+    setFlashType(hit ? 'hit' : 'miss');
+    setFlashFading(false);
+    const t1 = setTimeout(() => setFlashFading(true), 1000);
+    const t2 = setTimeout(() => {
+      setFlashType(null);
+      setFlashFading(false);
+    }, 1130);
+    flashTimers.current.push(t1, t2);
+  }
+
+  function handleShoot(hit) {
+    if (flashType !== null || complete) return;
+
+    if (inReviewMode) {
+      const updated = editShot(round.id, cursorIdx, hit);
+      setRound(updated);
+      setCursorIdx(null);
+      playFlash(hit);
+    } else {
+      const updated = appendShot(round.id, hit);
+      setRound(updated);
+      playFlash(hit);
+      if (isRoundComplete(updated)) {
+        const t = setTimeout(() => onComplete(updated), 1130);
+        flashTimers.current.push(t);
+      }
+    }
+  }
+
+  function handlePrev() {
+    if (flashType !== null) return;
+    if (cursorIdx === null) {
+      if (round.shots.length === 0) return;
+      setCursorIdx(round.shots.length - 1);
+    } else if (cursorIdx > 0) {
+      setCursorIdx(cursorIdx - 1);
+    }
+  }
+
+  function handleNext() {
+    if (flashType !== null) return;
+    if (cursorIdx === null) return;
+    if (cursorIdx >= round.shots.length - 1) {
+      setCursorIdx(null);
+    } else {
+      setCursorIdx(cursorIdx + 1);
+    }
+  }
+
+  function handleEditName() {
+    setSheetOpen(false);
+    setEditNameOpen(true);
+  }
+
+  function handleEditNameSave(newName) {
+    if (!liveShooter) return;
+    renameShooter(round.id, liveSlot.shooterIdx, newName);
+    setEditNameOpen(false);
+    setRosterVersion((v) => v + 1);
+  }
+
+  function handleLeaveTheLine() {
+    setSheetOpen(false);
+    setLeaveOpen(true);
+  }
+
+  function handleLeaveConfirm() {
+    if (!liveSlot) return;
+    const updated = markShooterLeft(round.id, liveSlot.shooterIdx);
+    setRound(updated);
+    setLeaveOpen(false);
+    setCursorIdx(null);
+    if (isRoundComplete(updated)) {
+      onComplete(updated);
+    }
+  }
+
+  function handleDeleteRound() {
+    setSheetOpen(false);
+    setDeleteOpen(true);
+  }
+
+  function handleDeleteConfirm() {
+    deleteRound(round.id);
+    setDeleteOpen(false);
+    onDelete();
+  }
+
+  const menuItems = [
+    {
+      label: 'Edit shooter name',
+      icon: IconPencil,
+      onClick: handleEditName,
+    },
+    {
+      label: 'Shooter left the line',
+      icon: IconLogout2,
+      onClick: handleLeaveTheLine,
+    },
+    {
+      label: 'Delete round',
+      icon: IconTrash,
+      onClick: handleDeleteRound,
+      danger: true,
+    },
+  ];
+
+  const buttonsDisabled = flashType !== null || complete;
+  const prevDisabled =
+    flashType !== null ||
+    cursorIdx === 0 ||
+    (cursorIdx === null && round.shots.length === 0);
+  const nextDisabled = flashType !== null || cursorIdx === null;
+
+  return (
+    <div
+      className="min-h-screen flex flex-col relative bg-[var(--color-background-primary)]"
+      style={{
+        paddingTop: 'max(12px, env(safe-area-inset-top))',
+        paddingBottom: 'max(12px, env(safe-area-inset-bottom))',
+      }}
+    >
+      <div
+        className="flex items-center justify-between px-3 py-2"
+        style={{ borderBottom: '0.5px solid var(--color-text-tertiary)' }}
+      >
+        <button onClick={onBack} className="p-2 -ml-2" aria-label="Save and exit">
+          <IconChevronLeft size={22} stroke={1.75} />
+        </button>
+        <div
+          className="text-[13px] font-medium"
+          style={{
+            color: inReviewMode
+              ? 'var(--color-clay-orange)'
+              : 'var(--color-text-secondary)',
+          }}
+        >
+          {complete
+            ? 'Round complete'
+            : inReviewMode
+            ? 'Reviewing previous shot'
+            : 'Round in progress'}
+        </div>
+        <button
+          onClick={() => setSheetOpen(true)}
+          className="p-2 -mr-2"
+          aria-label="More options"
+        >
+          <IconDots size={22} stroke={1.75} />
+        </button>
+      </div>
+
+      <div className="px-[14px] pt-3">
+        <SquadStrip
+          round={round}
+          activeShooterIdx={displaySlot?.shooterIdx ?? null}
+          rosterById={rosterById}
+        />
+      </div>
+
+      {displaySlot ? (
+        <ActiveShooterCard
+          round={round}
+          slot={displaySlot}
+          rosterEntry={displayRosterEntry}
+          inReviewMode={inReviewMode}
+          cursorShotIdx={cursorIdx}
+        />
+      ) : (
+        <div className="px-[18px] pt-10 pb-4 text-center">
+          <div className="text-[24px] font-medium text-[var(--color-text-primary)]">
+            Round complete
+          </div>
+          <div className="text-[13px] text-[var(--color-text-secondary)] mt-2">
+            {round.shots.length} shots scored.
+          </div>
+        </div>
+      )}
+
+      {displaySlot && (
+        <div
+          className="flex-1 flex flex-col px-[14px]"
+          style={{
+            gap: '10px',
+            paddingBottom: '4px',
+            maxHeight: '320px',
+            minHeight: '184px',
+          }}
+        >
+          <div className="grid grid-cols-2 gap-3" style={{ flex: 3 }}>
+            <button
+              onClick={() => handleShoot(false)}
+              disabled={buttonsDisabled}
+              className="flex flex-col items-center justify-center gap-2 disabled:opacity-50 transition-opacity"
+              style={{
+                background: '#FBEAEA',
+                color: 'var(--color-text-danger)',
+                borderRadius: 'var(--border-radius-lg)',
+                boxShadow:
+                  inReviewMode && recordedAtCursor === false
+                    ? 'inset 0 0 0 3px var(--color-text-danger)'
+                    : 'none',
+              }}
+            >
+              <IconX size={34} stroke={2.5} />
+              <span className="text-[22px] font-medium leading-none">Miss</span>
+            </button>
+            <button
+              onClick={() => handleShoot(true)}
+              disabled={buttonsDisabled}
+              className="flex flex-col items-center justify-center gap-2 disabled:opacity-50 transition-opacity"
+              style={{
+                background: 'var(--color-varsity-green-bg)',
+                color: 'var(--color-varsity-green)',
+                borderRadius: 'var(--border-radius-lg)',
+                boxShadow:
+                  inReviewMode && recordedAtCursor === true
+                    ? 'inset 0 0 0 3px var(--color-varsity-green)'
+                    : 'none',
+              }}
+            >
+              <IconCheck size={34} stroke={2.5} />
+              <span className="text-[22px] font-medium leading-none">Hit</span>
+            </button>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3" style={{ flex: 1 }}>
+            <button
+              onClick={handlePrev}
+              disabled={prevDisabled}
+              className="flex items-center justify-center gap-2 disabled:opacity-30 transition-opacity"
+              style={{
+                background: 'white',
+                color: 'var(--color-text-primary)',
+                border: '0.5px solid var(--color-text-tertiary)',
+                borderRadius: 'var(--border-radius-md)',
+              }}
+            >
+              <IconChevronLeft size={18} stroke={2} />
+              <span className="text-[13px] font-medium">Previous shot</span>
+            </button>
+            <button
+              onClick={handleNext}
+              disabled={nextDisabled}
+              className="flex items-center justify-center gap-2 disabled:opacity-30 transition-opacity"
+              style={{
+                background: 'white',
+                color: 'var(--color-text-primary)',
+                border: '0.5px solid var(--color-text-tertiary)',
+                borderRadius: 'var(--border-radius-md)',
+              }}
+            >
+              <span className="text-[13px] font-medium">Next shot</span>
+              <IconChevronLeft
+                size={18}
+                stroke={2}
+                style={{ transform: 'scaleX(-1)' }}
+              />
+            </button>
+          </div>
+        </div>
+      )}
+
+      <FlashOverlay type={flashType} fading={flashFading} />
+
+      <BottomSheet
+        open={sheetOpen}
+        onClose={() => setSheetOpen(false)}
+        items={menuItems}
+      />
+
+      <EditNameModal
+        open={editNameOpen}
+        onClose={() => setEditNameOpen(false)}
+        currentName={liveRosterEntry?.firstName}
+        onSave={handleEditNameSave}
+      />
+
+      <LeaveTheLineModal
+        open={leaveOpen}
+        onClose={() => setLeaveOpen(false)}
+        shooterName={liveRosterEntry?.firstName}
+        hits={liveScore?.hits ?? 0}
+        total={liveScore?.total ?? 0}
+        onConfirm={handleLeaveConfirm}
+      />
+
+      <DeleteRoundModal
+        open={deleteOpen}
+        onClose={() => setDeleteOpen(false)}
+        shooterCount={round.shooters.length}
+        shotCount={round.shots.length}
+        onConfirm={handleDeleteConfirm}
+      />
+    </div>
+  );
+}
+
+// ---- Top-level app navigation ---------------------------------------------
+//
+// Screens: home | setup | live | end-of-round carousel | history
+//
+// Navigation rules:
+//   • Home is the entry surface. Tapping "New round" → setup.
+//   • Tapping a round on home or history:
+//       completed round → end-of-round carousel
+//       unfinished round → resume live scoring at the correct shot
+//   • Back arrow from any screen returns to home.
+//   • Deleting a round (live, carousel, or history) returns to home.
+//
+// View state is encoded with two pieces:
+//   • `view` — which screen is showing ('home' | 'setup' | 'live' | 'end' | 'history')
+//   • `activeRound` — the round being scored or viewed (null on home/setup/history)
+//
+// A `rosterTick` counter forces the roster lookup to refresh after renames
+// or after a round is added or deleted.
+
+export default function App() {
+  const [view, setView] = useState('home');
+  const [activeRound, setActiveRound] = useState(null);
+  const [rosterTick, setRosterTick] = useState(0);
+
+  const rosterById = useMemo(() => {
+    const roster = getRoster();
+    const map = {};
+    for (const entry of roster) map[entry.id] = entry;
+    return map;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rosterTick, view]);
+
+  function openRound(round) {
+    setActiveRound(round);
+    setView(isRoundComplete(round) ? 'end' : 'live');
+  }
+
+  function goHome() {
+    setActiveRound(null);
+    setView('home');
+    setRosterTick((t) => t + 1);
+  }
+
+  if (view === 'setup') {
+    return (
+      <SetupScreen
+        onStart={(round) => {
+          setActiveRound(round);
+          setView('live');
+          setRosterTick((t) => t + 1);
+        }}
+      />
+    );
+  }
+
+  if (view === 'live' && activeRound) {
+    return (
+      <LiveScoringScreen
+        key={activeRound.id}
+        round={activeRound}
+        onBack={goHome}
+        onDelete={goHome}
+        onComplete={(finalRound) => {
+          setActiveRound(finalRound);
+          setView('end');
+        }}
+      />
+    );
+  }
+
+  if (view === 'end' && activeRound) {
+    return (
+      <EndOfRound
+        round={activeRound}
+        rosterById={rosterById}
+        onBack={goHome}
+        onDelete={() => {
+          deleteRound(activeRound.id);
+          goHome();
+        }}
+      />
+    );
+  }
+
+  if (view === 'history') {
+    return (
+      <HistoryScreen
+        rosterById={rosterById}
+        onBack={() => setView('home')}
+        onOpenRound={openRound}
+      />
+    );
+  }
+
+  // Default: home
+  return (
+    <HomeScreen
+      rosterById={rosterById}
+      onNewRound={() => setView('setup')}
+      onOpenRound={openRound}
+      onSeeAllRounds={() => setView('history')}
+    />
+  );
+}
+</file>
+
+</files>
