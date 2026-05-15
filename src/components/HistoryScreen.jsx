@@ -9,6 +9,12 @@
 // Ordering rule matches HomeScreen: unfinished rounds at the very top
 // (newest first), then completed rounds (newest first) grouped under date
 // section headers. Empty state hides everything below the top bar.
+//
+// Height: this screen uses fixed viewport height (h-screen) rather than
+// min-h-screen so the inner flex-1 body has a bounded height for its
+// overflow-y-auto to scroll inside. With body { overflow: hidden } locked
+// globally, min-h-screen would let the page grow past the viewport and
+// the inner scroll would clip instead of scrolling.
 
 import { useMemo } from 'react';
 import { IconChevronLeft, IconChevronRight, IconStar } from '@tabler/icons-react';
@@ -77,8 +83,9 @@ export default function HistoryScreen({ rosterById, onBack, onOpenRound }) {
 
   return (
     <div
-      className="min-h-screen flex flex-col"
+      className="flex flex-col"
       style={{
+        height: '100vh',
         background: 'var(--color-background-primary)',
         paddingTop: 'max(12px, env(safe-area-inset-top))',
         paddingBottom: 'max(12px, env(safe-area-inset-bottom))',
@@ -87,7 +94,10 @@ export default function HistoryScreen({ rosterById, onBack, onOpenRound }) {
       {/* Top bar */}
       <div
         className="flex items-center justify-between px-3 pb-3"
-        style={{ borderBottom: '0.5px solid var(--color-text-tertiary)' }}
+        style={{
+          borderBottom: '0.5px solid var(--color-text-tertiary)',
+          flexShrink: 0,
+        }}
       >
         <button onClick={onBack} className="p-2 -ml-2" aria-label="Back">
           <IconChevronLeft size={22} stroke={1.75} />
@@ -105,8 +115,14 @@ export default function HistoryScreen({ rosterById, onBack, onOpenRound }) {
         <div style={{ width: 38 }} />
       </div>
 
-      {/* Body */}
-      <div className="flex-1 overflow-y-auto" style={{ padding: '0 18px' }}>
+      {/* Body — scrollable */}
+      <div
+        className="flex-1 overflow-y-auto"
+        style={{
+          padding: '0 18px 16px',
+          minHeight: 0,
+        }}
+      >
         {!hasAny && null}
 
         {unfinished.length > 0 && (
