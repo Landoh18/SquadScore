@@ -76,9 +76,8 @@ const FOOTER_GAP = 12;
 const LEGEND_SWATCH_SIZE = 8;
 const LEGEND_ITEM_GAP = 14;
 
-// Logo (team-customized, drawn in bottom-right above the legend rule)
+// Logo (team-customized, drawn centered horizontally above the legend rule)
 const LOGO_SIZE = 110;            // square logo box width/height in pt
-const LOGO_RIGHT_INSET = 0;       // distance from right margin
 const LOGO_GAP_FROM_LEGEND = 18;  // vertical gap above legend rule
 
 // Colors
@@ -170,13 +169,12 @@ function drawHeader(doc, round, rosterById) {
 }
 
 // ---- Logo ------------------------------------------------------------------
-// Draws the team logo in the bottom-right corner just above the legend rule.
-// Returns the y-coordinate the body should not draw past (i.e. the top of the
-// logo, minus a small gap) so the body's vertical fill calculation can avoid
-// the logo's space when there are few shooters.
+// Draws the team logo centered horizontally, just above the legend rule.
+// Returns the y-coordinate the body should not draw past (the top of the
+// logo) so the body's vertical fill avoids the logo's space.
 
 function drawLogo(doc, legendRuleY) {
-  const logoX = PAGE_W - MARGIN_X - LOGO_RIGHT_INSET - LOGO_SIZE;
+  const logoX = (PAGE_W - LOGO_SIZE) / 2;
   const logoY = legendRuleY - LOGO_GAP_FROM_LEGEND - LOGO_SIZE;
 
   try {
@@ -193,10 +191,6 @@ function drawLogo(doc, legendRuleY) {
     console.error('Logo embed failed:', err);
   }
 
-  // Body can use space to the left of the logo for its last shooter row, but
-  // for vertical-fill purposes the safest bottom is the top of the logo zone.
-  // Return the top of the logo so drawBody can fan its rows down to that point
-  // without overlapping the logo or the legend.
   return logoY;
 }
 
