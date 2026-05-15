@@ -67,6 +67,16 @@ const CIRCLE_PAD_X = 5;
 const CIRCLE_PAD_Y = 4;
 const DOUBLE_CIRCLE_GAP = 4;
 
+// Perfect-round bounding box geometry. On 25/25 rows, the row's cells are
+// pushed down to make room for the station-path numbers above the box, then
+// a thin rectangle is drawn around the name+cells+total+streak.
+const BOX_BORDER_W = 0.75;
+const BOX_PAD_X = 5;
+const BOX_PAD_Y = 5;
+const PATH_NUMBERS_CLEARANCE = 4;
+// Vertical inset added to the cells-row position on perfect rows.
+const PERFECT_CELLS_INSET = PATH_NUMBERS_CLEARANCE + BOX_PAD_Y;
+
 // Legend + footer
 const LEGEND_SIZE = 10;
 const LEGEND_RULE_WEIGHT = 0.5;
@@ -77,8 +87,8 @@ const LEGEND_SWATCH_SIZE = 8;
 const LEGEND_ITEM_GAP = 14;
 
 // Logo (team-customized, drawn centered horizontally above the legend rule)
-const LOGO_SIZE = 110;            // square logo box width/height in pt
-const LOGO_GAP_FROM_LEGEND = 18;  // vertical gap above legend rule
+const LOGO_SIZE = 110;
+const LOGO_GAP_FROM_LEGEND = 18;
 
 // Colors
 const BLACK = '#000000';
@@ -169,9 +179,6 @@ function drawHeader(doc, round, rosterById) {
 }
 
 // ---- Logo ------------------------------------------------------------------
-// Draws the team logo centered horizontally, just above the legend rule.
-// Returns the y-coordinate the body should not draw past (the top of the
-// logo) so the body's vertical fill avoids the logo's space.
 
 function drawLogo(doc, legendRuleY) {
   const logoX = (PAGE_W - LOGO_SIZE) / 2;
@@ -187,7 +194,6 @@ function drawLogo(doc, legendRuleY) {
       LOGO_SIZE
     );
   } catch (err) {
-    // Logo failed to embed — log and continue. Page renders without it.
     console.error('Logo embed failed:', err);
   }
 
@@ -298,17 +304,30 @@ function computeColumnPositions() {
   return { cellsStartX, cellsAreaW, totalColX, streakColX };
 }
 
+function isPerfectRound(round, shooterIdx) {
+  const shooter = round.shooters[shooterIdx];
+  if (shooter.leftAfterShot != null) return false;
+  const { hits } = shooterScore(round, shooterIdx);
+  return hits === 25;
+}
+
 function drawBody(doc, round, rosterById, bodyStartY, bodyEndY) {
   const sortedShooters = shootersByStartingPost(round);
   const n = sortedShooters.length;
 
-  // Per-shooter block height (without inter-block gap)
-  const blockH =
+  // Base per-shooter block height (no perfect-row inset)
+  const blockHBase =
     STATION_LABEL_SIZE +
     STATION_LABEL_GAP +
     CELL_H +
     LEAVE_NOTE_GAP +
     LEAVE_NOTE_SIZE;
+
+  // Perfect rows are taller because the cells are pushed down to make room
+  // for the path numbers above the bounding box.
+  const blockHeights = sortedShooters.map(({ idx }) =>
+    isPerfectRound(round, idx) ? blockHBase + PERFECT_CELLS_INSET : blockHBase
+  );
 
   const { totalColX, streakColX } = computeColumnPositions();
 
@@ -327,10 +346,8 @@ function drawBody(doc, round, rosterById, bodyStartY, bodyEndY) {
 
   const bodyTop = bodyStartY + headerLabelSize + 4;
 
-  // Vertical-fill calculation: spread n blocks evenly across the available
-  // height, with a minimum gap between rows for legibility.
   const availableH = bodyEndY - bodyTop;
-  const totalBlocksH = n * blockH;
+  const totalBlocksH = blockHeights.reduce((a, b) => a + b, 0);
   const remainingForGaps = availableH - totalBlocksH;
   const MIN_GAP = 10;
   const MAX_GAP = 36;
@@ -342,7 +359,7 @@ function drawBody(doc, round, rosterById, bodyStartY, bodyEndY) {
   for (let i = 0; i < n; i++) {
     const { shooter, idx } = sortedShooters[i];
     drawShooterBlock(doc, round, shooter, idx, rosterById, cursorY);
-    cursorY += blockH + gap;
+    cursorY += blockHeights[i] + gap;
     if (cursorY > bodyEndY) break;
   }
 }
@@ -354,6 +371,7 @@ function drawShooterBlock(doc, round, shooter, shooterIdx, rosterById, blockTopY
   const totalShotsTaken = isLeft ? shooter.leftAfterShot : shots.length;
   const { hits } = shooterScore(round, shooterIdx);
   const longest = longestStreak(shots);
+  const isPerfect = isPerfectRound(round, shooterIdx);
 
   const path = [];
   for (let n = 1; n <= 5; n++) {
@@ -362,6 +380,8 @@ function drawShooterBlock(doc, round, shooter, shooterIdx, rosterById, blockTopY
 
   const { cellsStartX, totalColX, streakColX } = computeColumnPositions();
 
+  // Path numbers row — always at block top. On perfect rows the row content
+  // below is pushed down to make room for the box around it.
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(STATION_LABEL_SIZE);
   doc.setTextColor(META_GRAY);
@@ -374,13 +394,18 @@ function drawShooterBlock(doc, round, shooter, shooterIdx, rosterById, blockTopY
   }
   doc.setTextColor(BLACK);
 
-  const cellsRowY = blockTopY + STATION_LABEL_SIZE + STATION_LABEL_GAP;
+  // Cells row y — pushed down on perfect rows so the box has clearance above.
+  const cellsRowY = isPerfect
+    ? blockTopY + STATION_LABEL_SIZE + PATH_NUMBERS_CLEARANCE + BOX_PAD_Y
+    : blockTopY + STATION_LABEL_SIZE + STATION_LABEL_GAP;
 
+  // Name
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(NAME_SIZE);
   doc.text(firstName, MARGIN_X, cellsRowY + CELL_H / 2 + NAME_SIZE / 3);
   doc.setFont('helvetica', 'normal');
 
+  // 25 cells
   for (let g = 0; g < 5; g++) {
     const groupX = cellsStartX + g * (5 * CELL_W + STATION_GROUP_GAP);
     for (let c = 0; c < 5; c++) {
@@ -437,6 +462,20 @@ function drawShooterBlock(doc, round, shooter, shooterIdx, rosterById, blockTopY
     doc.text(leaveText, cellsStartX, cellsRowY + CELL_H + 10);
     doc.setTextColor(BLACK);
     doc.setFont('helvetica', 'normal');
+  }
+
+  // Perfect-round bounding box. Drawn last so it sits on top of everything
+  // it wraps. Encloses name + cells + total + streak; path numbers above
+  // are intentionally left outside.
+  if (isPerfect) {
+    const boxLeft = MARGIN_X - BOX_PAD_X;
+    const boxRight = streakColX + STREAK_COL_W + BOX_PAD_X;
+    const boxTop = cellsRowY - BOX_PAD_Y;
+    const boxBottom = cellsRowY + CELL_H + BOX_PAD_Y;
+
+    doc.setLineWidth(BOX_BORDER_W);
+    doc.setDrawColor(BLACK);
+    doc.rect(boxLeft, boxTop, boxRight - boxLeft, boxBottom - boxTop);
   }
 }
 
