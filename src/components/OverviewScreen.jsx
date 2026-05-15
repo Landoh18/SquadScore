@@ -19,7 +19,7 @@ function formatDate(iso) {
   return `${datePart} · ${timePart}`;
 }
 
-export default function OverviewScreen({ round, rosterById }) {
+export default function OverviewScreen({ round, rosterById, onEditShooter }) {
   const sorted = shootersByStartingPost(round);
 
   return (
@@ -136,10 +136,19 @@ export default function OverviewScreen({ round, rosterById }) {
                 </div>
               </div>
 
-              {/* Edit pencil — non-interactive, wired in paste 6 */}
-              <div className="flex-shrink-0 opacity-60">
+              {/* Edit pencil */}
+              <button
+                onClick={() => onEditShooter && onEditShooter(idx)}
+                className="flex-shrink-0 p-1 -mr-1"
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  cursor: 'pointer',
+                }}
+                aria-label={`Edit ${firstName}'s shots`}
+              >
                 <IconPencil size={18} color="var(--color-text-tertiary)" />
-              </div>
+              </button>
             </div>
           );
         })}

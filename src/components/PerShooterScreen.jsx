@@ -3,9 +3,9 @@
 // The real per-shooter end-of-round screen. Renders screens 2..N of the
 // EndOfRound carousel, one per shooter in starting-post order.
 //
-// Visual layout matches PerShooterMock (which this file replaces), with the
-// "Mock preview" banner removed and helpers pulled from scoring.js so this
-// screen and OverviewScreen share the same shootersByStartingPost / leaveContext.
+// Edit mode: when editMode=true, station rows that have shots become tappable
+// buttons that fire onStationTap(stationN). The parent (EndOfRound) opens the
+// StationEditor for that station. "Did not shoot" rows stay non-tappable.
 
 import { IconStar, IconFlame } from '@tabler/icons-react';
 import {
@@ -16,12 +16,6 @@ import {
   leaveContext,
 } from '../lib/scoring';
 
-// Build the 5 station boxes for a shooter, in their chronological order
-// (the shooter's path through the session: start, start+1, ... wrapping 5→1).
-// Each box is one of:
-//   { post, kind: 'full',        shots, hits, total: 5 }
-//   { post, kind: 'partial',     shots, unshot, hits, total }
-//   { post, kind: 'didNotShoot', post }
 function buildStations(round, shooterIdx) {
   const shooter = round.shooters[shooterIdx];
   const shots = shooterShots(round, shooterIdx);
@@ -35,10 +29,11 @@ function buildStations(round, shooterIdx) {
     const expected = Math.max(0, Math.min(5, totalShots - startIdx));
 
     if (expected === 0) {
-      stations.push({ post: physicalPost, kind: 'didNotShoot' });
+      stations.push({ stationN, post: physicalPost, kind: 'didNotShoot' });
     } else if (expected < 5) {
       const hits = stationShots.filter((s) => s.hit).length;
       stations.push({
+        stationN,
         post: physicalPost,
         kind: 'partial',
         shots: stationShots,
@@ -49,6 +44,7 @@ function buildStations(round, shooterIdx) {
     } else {
       const hits = stationShots.filter((s) => s.hit).length;
       stations.push({
+        stationN,
         post: physicalPost,
         kind: 'full',
         shots: stationShots,
@@ -60,7 +56,13 @@ function buildStations(round, shooterIdx) {
   return stations;
 }
 
-export default function PerShooterScreen({ round, rosterById, shooterIdx }) {
+export default function PerShooterScreen({
+  round,
+  rosterById,
+  shooterIdx,
+  editMode = false,
+  onStationTap,
+}) {
   const shooter = round.shooters[shooterIdx];
   const firstName = rosterById[shooter.rosterId]?.firstName ?? '?';
   const allShots = shooterShots(round, shooterIdx);
@@ -90,6 +92,19 @@ export default function PerShooterScreen({ round, rosterById, shooterIdx }) {
 
   return (
     <div className="flex-1 overflow-y-auto px-4 py-4 md:px-12">
+      {editMode && (
+        <div
+          className="mb-3 text-center"
+          style={{
+            color: 'var(--color-clay-orange)',
+            fontSize: 12,
+            fontWeight: 500,
+          }}
+        >
+          Tap a station to edit its shots
+        </div>
+      )}
+
       <div className="flex items-start justify-between mb-3">
         <div>
           <div style={{ color: 'var(--color-text-tertiary)', fontSize: 12 }}>
@@ -160,7 +175,11 @@ export default function PerShooterScreen({ round, rosterById, shooterIdx }) {
                 />
               </div>
             )}
-            <StationBox station={station} />
+            <StationBox
+              station={station}
+              editMode={editMode}
+              onTap={() => onStationTap && onStationTap(station.stationN)}
+            />
           </div>
         ))}
       </div>
@@ -168,7 +187,7 @@ export default function PerShooterScreen({ round, rosterById, shooterIdx }) {
   );
 }
 
-function StationBox({ station }) {
+function StationBox({ station, editMode, onTap }) {
   if (station.kind === 'didNotShoot') {
     return (
       <div
@@ -206,15 +225,8 @@ function StationBox({ station }) {
 
   const isPerfectStation = station.kind === 'full' && station.hits === 5;
 
-  return (
-    <div
-      className="flex items-center rounded-md"
-      style={{
-        padding: '12px 14px',
-        background: isPerfectStation ? '#EAF3DE' : 'var(--color-background-secondary)',
-        border: isPerfectStation ? '2px solid #639922' : 'none',
-      }}
-    >
+  const content = (
+    <>
       <div
         style={{
           width: 70,
@@ -259,6 +271,30 @@ function StationBox({ station }) {
       >
         {station.hits}/{station.total}
       </div>
+    </>
+  );
+
+  const baseStyle = {
+    padding: '12px 14px',
+    background: isPerfectStation ? '#EAF3DE' : 'var(--color-background-secondary)',
+    border: isPerfectStation ? '2px solid #639922' : 'none',
+  };
+
+  if (editMode) {
+    return (
+      <button
+        onClick={onTap}
+        className="w-full flex items-center rounded-md text-left"
+        style={{ ...baseStyle, cursor: 'pointer' }}
+      >
+        {content}
+      </button>
+    );
+  }
+
+  return (
+    <div className="flex items-center rounded-md" style={baseStyle}>
+      {content}
     </div>
   );
 }
