@@ -1,12 +1,16 @@
 import { useState, useEffect, useRef } from 'react';
-import { IconChevronLeft, IconChevronRight, IconDots } from '@tabler/icons-react';
+import { IconChevronLeft, IconChevronRight, IconDots, IconTrash } from '@tabler/icons-react';
 import OverviewScreen from './OverviewScreen';
 import PerShooterScreen from './PerShooterScreen';
 import PdfPreviewMock from './PdfPreviewMock';
+import BottomSheet from './BottomSheet';
+import DeleteRoundModal from './DeleteRoundModal';
 
 export default function EndOfRound({ round, rosterById, onBack, onDelete }) {
   const SCREEN_COUNT = 2 + round.shooters.length;
   const [screenIdx, setScreenIdx] = useState(0);
+  const [sheetOpen, setSheetOpen] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
   const touchStartX = useRef(null);
   const touchEndX = useRef(null);
 
@@ -43,6 +47,25 @@ export default function EndOfRound({ round, rosterById, onBack, onDelete }) {
     touchStartX.current = null;
     touchEndX.current = null;
   };
+
+  const handleDeleteTap = () => {
+    setSheetOpen(false);
+    setDeleteOpen(true);
+  };
+
+  const handleDeleteConfirm = () => {
+    setDeleteOpen(false);
+    onDelete();
+  };
+
+  const menuItems = [
+    {
+      label: 'Delete round',
+      icon: IconTrash,
+      onClick: handleDeleteTap,
+      danger: true,
+    },
+  ];
 
   const renderScreen = () => {
     if (screenIdx === 0) {
@@ -88,6 +111,7 @@ export default function EndOfRound({ round, rosterById, onBack, onDelete }) {
           Round complete
         </div>
         <button
+          onClick={() => setSheetOpen(true)}
           className="p-1 -mr-1"
           aria-label="Menu"
         >
@@ -154,6 +178,20 @@ export default function EndOfRound({ round, rosterById, onBack, onDelete }) {
           ))}
         </div>
       </div>
+
+      <BottomSheet
+        open={sheetOpen}
+        onClose={() => setSheetOpen(false)}
+        items={menuItems}
+      />
+
+      <DeleteRoundModal
+        open={deleteOpen}
+        onClose={() => setDeleteOpen(false)}
+        shooterCount={round.shooters.length}
+        shotCount={round.shots.length}
+        onConfirm={handleDeleteConfirm}
+      />
     </div>
   );
 }

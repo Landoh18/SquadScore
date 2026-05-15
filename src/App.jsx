@@ -9,6 +9,8 @@ import {
   IconLogout2,
   IconTrash,
 } from '@tabler/icons-react';
+import HomeScreen from './components/HomeScreen';
+import HistoryScreen from './components/HistoryScreen';
 import SetupScreen from './components/SetupScreen';
 import SquadStrip from './components/SquadStrip';
 import ActiveShooterCard from './components/ActiveShooterCard';
@@ -373,51 +375,107 @@ function LiveScoringScreen({ round: initialRound, onBack, onDelete, onComplete }
   );
 }
 
-export default function App() {
-  const [round, setRound] = useState(null);
-  const [completedRound, setCompletedRound] = useState(null);
+// ---- Top-level app navigation ---------------------------------------------
+//
+// Screens: home | setup | live | end-of-round carousel | history
+//
+// Navigation rules:
+//   • Home is the entry surface. Tapping "New round" → setup.
+//   • Tapping a round on home or history:
+//       completed round → end-of-round carousel
+//       unfinished round → resume live scoring at the correct shot
+//   • Back arrow from any screen returns to home.
+//   • Deleting a round (live, carousel, or history) returns to home.
+//
+// View state is encoded with two pieces:
+//   • `view` — which screen is showing ('home' | 'setup' | 'live' | 'end' | 'history')
+//   • `activeRound` — the round being scored or viewed (null on home/setup/history)
+//
+// A `rosterTick` counter forces the roster lookup to refresh after renames
+// or after a round is added or deleted.
 
-  // Roster lookup for EndOfRound. Recomputed when the completed round changes.
+export default function App() {
+  const [view, setView] = useState('home');
+  const [activeRound, setActiveRound] = useState(null);
+  const [rosterTick, setRosterTick] = useState(0);
+
   const rosterById = useMemo(() => {
-    if (!completedRound) return null;
     const roster = getRoster();
     const map = {};
     for (const entry of roster) map[entry.id] = entry;
     return map;
-  }, [completedRound]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rosterTick, view]);
 
-  if (completedRound) {
+  function openRound(round) {
+    setActiveRound(round);
+    setView(isRoundComplete(round) ? 'end' : 'live');
+  }
+
+  function goHome() {
+    setActiveRound(null);
+    setView('home');
+    setRosterTick((t) => t + 1);
+  }
+
+  if (view === 'setup') {
     return (
-      <EndOfRound
-        round={completedRound}
-        rosterById={rosterById}
-        onBack={() => {
-          setCompletedRound(null);
-          setRound(null);
-        }}
-        onDelete={() => {
-          deleteRound(completedRound.id);
-          setCompletedRound(null);
-          setRound(null);
+      <SetupScreen
+        onStart={(round) => {
+          setActiveRound(round);
+          setView('live');
+          setRosterTick((t) => t + 1);
         }}
       />
     );
   }
 
-  if (round) {
+  if (view === 'live' && activeRound) {
     return (
       <LiveScoringScreen
-        key={round.id}
-        round={round}
-        onBack={() => setRound(null)}
-        onDelete={() => setRound(null)}
+        key={activeRound.id}
+        round={activeRound}
+        onBack={goHome}
+        onDelete={goHome}
         onComplete={(finalRound) => {
-          setCompletedRound(finalRound);
-          setRound(null);
+          setActiveRound(finalRound);
+          setView('end');
         }}
       />
     );
   }
 
-  return <SetupScreen onStart={setRound} />;
+  if (view === 'end' && activeRound) {
+    return (
+      <EndOfRound
+        round={activeRound}
+        rosterById={rosterById}
+        onBack={goHome}
+        onDelete={() => {
+          deleteRound(activeRound.id);
+          goHome();
+        }}
+      />
+    );
+  }
+
+  if (view === 'history') {
+    return (
+      <HistoryScreen
+        rosterById={rosterById}
+        onBack={() => setView('home')}
+        onOpenRound={openRound}
+      />
+    );
+  }
+
+  // Default: home
+  return (
+    <HomeScreen
+      rosterById={rosterById}
+      onNewRound={() => setView('setup')}
+      onOpenRound={openRound}
+      onSeeAllRounds={() => setView('history')}
+    />
+  );
 }
